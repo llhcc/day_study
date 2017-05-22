@@ -1,0 +1,3369 @@
+<2014-09-15>
+一、创建多模块web项目
+搭建多模块项目，必须要有一个packaging为pom的根目录。创建好这个maven项目后，我们对着项目右键-->new-->Maven Module
+
+easyframework-root
+说明一下这些项目具体都是干嘛的：
+
+easyframework-model：数据模型，与数据库表字段对应的实体类
+
+easyframework-core：核心业务项目。主要是Service处理业务逻辑
+
+easyframework-persist：数据持久层，操作低层数据库。
+
+easyframework-utils：工具类，所有工具类都提取出来写在这个项目中。
+
+easyframework-web :这个就是整个项目的web层了，页面的显示以及控制层
+
+备注：创建这些项目的时候，只有easyframework-web是web项目即maven的：maven-archetype-webapp，其他的都是java项目：maven-archetype-quicktart
+
+
+二、使用Nexus搭建Maven私服
+为什么要搭建nexus私服，原因很简单，有些公司都不提供外网给项目组人员，因此就不能使用maven访问远程的仓库地址，所以很有必要在局域网里找一台有外网权限的机器，搭建nexus私服，然后开发人员连到这台私服上，这样的话就可以通过这台搭建了nexus
+
+
+三、oracle数据库中ORA-28000: the account is locked问题
+这个用户已经被锁住了，一般是用错误的密码尝试次数太多，得解锁
+用system或sys用户登陆，然后
+ALTER USER username ACCOUNT UNLOCK;
+
+四、
+
+</2014-09-15>
+
+<2014-09-16>
+一、PLSQL
+oracle导入导出主要由两种方式，一种是用命令方式（imp/exp 用户名/密码@oracle连接名称 file=路径名+文件名 full=y；其中full=y是说明全部导入或者导出，若只针对其中的几个表可以通过table=（表名，表名….）实现）；一种是通过PLSQL中Tool工具栏下面的import和export工具。
+
+导入导出的格式分为三种，分别是Oracle Export，Sql Insert，pl/sql developer。
+
+1、第一种是导出.dmp的文件格式，.dmp文件是二进制的，可以跨平台，还能包含权限，效率也很不错，用得最广。
+
+2、第二种是导出.sql文件的，可用文本编辑器查看，通用性比较好，但效率不如第一种，适合小数据量导入导出。尤其注意的是表中不能有大字段（blob,clob），如果有，会提示不能导出。
+
+3、第三种是导出.pde格式的，.pde为Pl/sql developer自有的文件格式，只能用Pl/sql developer自己导入导出；不能用编辑器查看。
+
+
+二、oracle 导出时找不到exp.exe文件
+在安装oracle客户端时，共有三个模式：管理员模式、运行时模式和最小模式，只有选择了管理员模式时才有exp和imp工具。
+
+三、bootstrap
+
+
+</2014-09-16>
+<2014-09-17>
+一、集群技术
+
+
+二、sql语句
+1、select 1 与 select *的区别 
+    selelct 常量 from ... 对应所有行，返回的永远只有一个值，即常量 。所以正常只会用来判断是否有还是没有（比如exists子句）。而select * from ... 是返回所有行的所有列。 
+    性能上的差异，关键看你的from和where子句。比如说如果你的where条件中可以通过索引，那显然 select 1 from ... 的性能比 select * from ... 好。 
+2、select count(1)与select count(*)的区别 
+   跟表结构有关系： 
+   如果表中没有主键，那么count(1)比count(*)快 
+   如果有主键，那么count(主键，联合主键)比count(*)快 
+   如果表中只有一个字段，count(*)最快 
+3、select sum(1)的使用 
+   select count(*)返回所有满足条件的记录数，此时同select sum(1) 
+   但是sum()可以传任意数字，负数、浮点数都可以，返回的值是传入值n*满足条件记录数m 
+
+
+三、Solr 删除数据的几种方式
+1、先来看 curl 方式：
+
+curl http://localhost:8080/solr/update --data-binary "<delete><query>title:abc</query></delete>" -H 'Content-type:text/xml; charset=utf-8'  
+  
+#删除完后，要提交  
+  
+curl http://localhost:8080/solr/update --data-binary "<commit/>" -H 'Content-type:text/xml; charset=utf-8'  
+2、用自带的 post.jar，在 apache-solr-XXX\example\exampledocs 目录下：
+
+java -Ddata=args  -jar post.jar "<delete><id>42</id></delete>"  
+  
+#怎么使用 post.jar 查看帮助  
+  
+java -jar post.jar -help  
+3、直接用 url，使用 stream 相关参数：
+
+比如：
+
+http://localhost:8080/solr/update/?stream.body=<delete><id>123</id></delete>&stream.contentType=text/xml;charset=utf-8&commit=true
+
+stream 相关参数还有：stream.file=（服务器本地文件），stream.url 分别指到你的删除文本，这里是直接字符串内容用 stream.body 参数。commit 参数是指提交，提交了才能看到删除效果。
+
+小结：其实，方式1、2原理一样，直接 POST xml 数据过去。方式3就是直接可以告诉服务器从那些地方取删除的 xml 内容。
+
+删除指令有两种，一是：用 <id></id> 包装；二是：<query></query> 包装。指令都很明显，一个是 id 值（是在 schema.xml 的 uniqueKey 所指字段的值，而不是索引内部的 docId）；query 值是查询串，如：title:"solr lucene"。
+
+
+四、Oracle中有多少种索引类型
+逻辑上：
+Single column 单行索引
+Concatenated 多行索引
+Unique 唯一索引
+NonUnique 非唯一索引
+Function-based函数索引
+Domain 域索引
+ 
+物理上：
+Partitioned 分区索引
+NonPartitioned 非分区索引
+B-tree：
+Normal 正常型B树
+Rever Key 反转型B树 
+Bitmap 位图索引
+ 
+索引结构：
+B-tree：
+适合与大量的增、删、改（OLTP）；
+不能用包含OR操作符的查询；
+适合高基数的列（唯一值多）
+典型的树状结构；
+每个结点都是数据块；
+大多都是物理上一层、两层或三层不定，逻辑上三层；
+叶子块数据是排序的，从左向右递增；
+在分支块和根块中放的是索引的范围；
+Bitmap:
+适合与决策支持系统；
+做UPDATE代价非常高；
+非常适合OR操作符的查询； 
+基数比较少的时候才能建位图索引；
+ 
+树型结构：
+索引头 
+开始ROWID，结束ROWID（先列出索引的最大范围）
+BITMAP
+每一个BIT对应着一个ROWID，它的值是1还是0，如果是1，表示着BIT对应的ROWID有值
+
+五、建立索引的目的：
+ 
+l       提高对表的查询速度；
+2       对表有关列的取值进行检查。
+ 
+但是，对表进行insert,update,delete处理时，由于要表的存放位置记录到索引项中而会降低一些速度。
+注意：一个基表不能建太多的索引；
+      空值不能被索引
+      只有唯一索引才真正提高速度,一般的索引只能提高30%左右。
+
+REBUILD 是 根据原来的索引结构重新建立索引，实际是删除原来的索引后再重新建立。
+ 
+提示：DBA经常用 REBUILD 来重建索引可以减少硬盘碎片和提高应用系统的性能。
+ 
+例：
+alter index pk_detno rebuild storage(initial 1m next 512k);
+ 
+ALTER INDEX emp_ix REBUILD REVERSE;
+
+
+索引是用于加速数据存取数据对象，合理的使用索引可以大大降低I/O次数，从而提高数据访问性能。索引有很多种我们主要介绍常用的几种。
+
+ 
+
+1、单列索引
+
+单列索引是基于单个列所建立的索引。
+
+sql>create index 索引名 on 表名(列名);
+
+ 
+
+2、复合索引
+
+复合索引是基于两列或是多列的索引，在同一张表上可以有多个索引，但是要求列的组合必须不同。
+
+sql>create index emp_index1 on emp(ename,job);
+
+sql>create index emp_index2 on emp(job,ename);
+
+ 
+
+使用原则：
+
+1、在大表上建立索引才有意义。
+
+2、在where子句或是连接条件上经常饮用的列上建立索引。
+
+3、索引的层次不要超过4层。
+
+ 
+
+索引有一些先天不足：
+
+1、建立索引，系统要占用大约为表的1.2倍的硬盘和内存空间来保存索引。
+
+2、更新数据的时候，系统必须要有额外的时间来同时对索引进行更新，一维持数据和索引的一致性。
+
+实践表明，不恰当的索引不但于事无补，反而会降低系统性能。因为大量的索引在进行插入、修改和删除操作时比没有索引花费更多的系统时间。
+
+比如在如下字段建立索引应该是不恰当的：
+
+1、很少或从不引用的字段。
+
+2、逻辑型的字段，如男或女（是或否）等。
+
+综上所述，提高查询效率是以消耗一定的系统资源为代价的，索引不能盲目的建立，这是考验一个DBA是否优秀的很重要的指标。
+
+
+1、显示表的所有索引
+
+在同一张表上可以有多个索引，通过查询数据字典视图dba_indexs和user_indexs，可以显示索引信息。其中dba_indexs用于显示数据库所有的索引信息，而user_indexs用于显示当前用户的索引信息。
+
+sql>select index_name,index_type from user_indexes where table_name='表名';
+
+ 
+2、显示索引列
+
+通过查询数据字典视图user_ind_columns，可以显示索引对应的列的信息。
+
+sql>select table_name,column_name from user_ind_columns where index_name='IND_ENAME';
+
+
+六、Oracle 触发器（trigger）
+触发器是在事件发生时隐式地自动运行的PL/SQL程序块，不能接收参数，不能被调用。
+DML触发器触发事件：表插入，表更新，表删除
+DML触发器：语句级触发器，行级触发器
+DML触发器触发时间（时机）：before，after
+
+触发器的定义就是说某个条件成立的时候，你触发器里面所定义的语句就会被自动的执行。因此触发器不需要人为的去调用，也不能调用。
+
+然后，触发器的触发条件其实在你定义的时候就已经设定好的了。这里面需要说明一下，触发器可以分为语句级触发器和行级触发器。详细的介绍可以参考网上的资料，简单的说就是语句级的触发器可以在某些语句执行前或执行后被触发。而行级触发器则是在定义的了触发的表中的行数据改变时就会被触发一次。
+具体举例：
+1. 在一个表中定义的语句级的触发器，当这个表被删除时，程序就会自动执行触发器里面定义的操作过程。这个就是删除表的操作就是触发器执行的条件了。
+2. 在一个表吕定义了行级的触发器，那当这个表中一行数据发生变化的时候，比如删除了一行记录，那触发器也会被自动执行了。
+
+创建触发器的一般语法是:
+ 
+CREATE [OR REPLACE] TRIGGER trigger_name
+{BEFORE | AFTER }
+{INSERT | DELETE | UPDATE [OF column [, column …]]}
+[OR {INSERT | DELETE | UPDATE [OF column [, column …]]}...]
+ON [schema.]table_name | [schema.]view_name 
+[REFERENCING {OLD [AS] old | NEW [AS] new| PARENT as parent}]
+[FOR EACH ROW ]
+[WHEN condition]
+PL/SQL_BLOCK | CALL procedure_name;
+ 
+ 
+其中：
+BEFORE 和AFTER指出触发器的触发时序分别为前触发和后触发方式，前触发是在执行触发事件之前触发当前所创建的触发器，后触发是在执行触发事件之后触发当前所创建的触发器。
+       FOR EACH ROW选项说明触发器为行触发器。行触发器和语句触发器的区别表现在：行触发器要求当一个DML语句操作影响数据库中的多行数据时，对于其中的每个数据行，只要它们符合触发约束条件，均激活一次触发器；而语句触发器将整个语句操作作为触发事件，当它符合约束条件时，激活一次触发器。当省略FOR EACH ROW 选项时，BEFORE 和AFTER 触发器为语句触发器，而INSTEAD OF 触发器则只能为行触发器。
+           REFERENCING 子句说明相关名称，在行触发器的PL/SQL块和WHEN 子句中可以使用相关名称参照当前的新、旧列值，默认的相关名称分别为OLD和NEW。触发器的PL/SQL块中应用相关名称时，必须在它们之前加冒号(:)，但在WHEN子句中则不能加冒号。
+WHEN 子句说明触发约束条件。Condition 为一个逻辑表达时，其中必须包含相关名称，而不能包含查询语句，也不能调用PL/SQL 函数。WHEN 子句指定的触发约束条件只能用在BEFORE 和AFTER 行触发器中，不能用在INSTEAD OF 行触发器和其它类型的触发器中。
+    当一个基表被修改( INSERT, UPDATE, DELETE)时要执行的存储过程，执行时根据其所依附的基表改动而自动触发，因此与应用程序无关，用数据库触发器可以保证数据的一致性和完整性。
+
+七、两个经典的Oracle触发器示例
+题目：
+--触发器：
+--添加员工信息,流水号作为自动编号(通过序列生成),
+--并且判断如果工资小于0,则改为0;如果大于10000,则改为10000。
+
+CREATE TABLE emp2(
+e_id NUMBER,
+e_no NUMBER,
+e_name VARCHAR2(20),
+e_sal NUMBER
+)
+
+SELECT * FROM emp2;
+
+CREATE SEQUENCE seq_trg_id;
+
+INSERT INTO emp2(e_id,e_no,e_name,e_sal) VALUES(seq_trg_id.nextval,7788,'章子',
+ 1000000000000)
+INSERT INTO emp2(e_id,e_no,e_name,e_sal) VALUES(seq_trg_id.nextval,7788,'章子怡',-10)
+
+
+CREATE OR REPLACE TRIGGER trg_add_emp_info
+  BEFORE INSERT
+  ON emp2
+  FOR EACH ROW
+  DECLARE
+    -- local variables here
+  BEGIN
+    SELECT seq_trg_id.NEXTVAL INTO :NEW.e_id FROM dual;
+    IF  :NEW.e_sal < 0 THEN
+       :NEW.e_sal := 0;
+    ELSIF  :NEW.e_sal > 10000 THEN
+       :NEW.e_sal := 10000;
+    END IF;
+  END;
+
+ 
+
+【 案例二】
+
+题目：
+
+--扩充练习：
+--为emp建立触发器,将删除的记录放到emp3表中(autoid,deptno,empno,ename,del_rq-删除日期)
+--测试代码
+
+CREATE TABLE emp3(
+autoid NUMBER PRIMARY KEY,
+deptno NUMBER,
+empno NUMBER,
+ename VARCHAR2(20),
+del_rq DATE
+)
+
+CREATE SEQUENCE seq_trg_del_autoid;
+
+INSERT INTO emp
+  (empno, ename, deptno)
+VALUES
+  (114, '阿娇', 10);
+ COMMIT;
+ 
+ SELECT * FROM emp;
+ 
+ DELETE emp WHERE empno = 114;
+ SELECT * FROM emp3;
+ 
+ 答案：
+
+CREATE OR REPLACE TRIGGER trg_del_emp_info
+  BEFORE DELETE
+  ON emp
+  FOR EACH ROW
+  DECLARE
+    -- local variables here
+  BEGIN
+    INSERT INTO emp3(autoid,deptno,empno,ename,del_rq)
+          VALUES(seq_trg_del_autoid.NEXTVAL,:OLD.deptno,:OLD.empno,:OLD.ename,sysdate);
+  END;
+-------------------
+CREATE OR REPLACE TRIGGER tr_attach
+before INSERT OR UPDATE  ON t_attach_file
+FOR EACH ROW
+BEGIN
+  :NEW.log_time := sysdate;
+END;
+
+八、select...into
+下面的例子通过从 "Persons" 表中提取居住在 "Beijing" 的人的信息，创建了一个带有两个列的名为 "Persons_backup" 的表：
+SELECT LastName,Firstname INTO Persons_backup FROM Persons WHERE City='Beijing'
+
+SQL SELECT INTO 实例 - 被连接的表
+从一个以上的表中选取数据也是可以做到的。
+下面的例子会创建一个名为 "Persons_Order_Backup" 的新表，其中包含了从 Persons 和 Orders 两个表中取得的信息：
+SELECT Persons.LastName,Orders.OrderNo
+INTO Persons_Order_Backup
+FROM Persons
+INNER JOIN Orders
+ON Persons.Id_P=Orders.Id_P
+
+------
+CREATE OR REPLACE TRIGGER tr_t_resource
+before INSERT OR UPDATE  ON t_resource
+FOR EACH ROW
+DECLARE
+
+BEGIN
+   if( :NEW.textbook_id is not null ) then
+        select PERIOD_ID,GRADE_ID,SUBJECT_ID,VOLUME_ID,EDITION_ID into 
+            :new.PERIOD_ID,:new.GRADE_ID,:new.SUBJECT_ID, :new.VOLUME_ID, :new.EDITION_ID 
+        from T_TEXTBOOK where rownum<2 and textbook_id=:new.textbook_id;
+   end if;
+   EXCEPTION
+   WHEN OTHERS THEN
+      DBMS_OUTPUT.PUT_LINE(SQLCODE||'---'||SQLERRM);
+END;
+
+-------------->
+九、存储过程
+存储过程和函数也是一种PL/SQL块，是存入数据库的PL/SQL块。但存储过程和函数不同于已经介绍过的PL/SQL程序，我们通常把PL/SQL程序称为无名块，而存储过程和函数是以命名的方式存储于数据库中的。和PL/SQL程序相比，存储过程有很多优点，具体归纳如下：
+* 存储过程和函数以命名的数据库对象形式存储于数据库当中。存储在数据库中的优点是很明显的，因为代码不保存在本地，用户可以在任何客户机上登录到数据库，并调用或修改代码。
+* 存储过程和函数可由数据库提供安全保证，要想使用存储过程和函数，需要有存储过程和函数的所有者的授权，只有被授权的用户或创建者本身才能执行存储过程或调用函数。 
+* 存储过程和函数的信息是写入数据字典的，所以存储过程可以看作是一个公用模块，用户编写的PL/SQL程序或其他存储过程都可以调用它(但存储过程和函数不能调用PL/SQL程序)。一个重复使用的功能，可以设计成为存储过程，比如：显示一张工资统计表，可以设计成为存储过程；一个经常调用的计算，可以设计成为存储函数；根据雇员编号返回雇员的姓名，可以设计成存储函数。
+* 像其他高级语言的过程和函数一样，可以传递参数给存储过程或函数，参数的传递也有多种方式。存储过程可以有返回值，也可以没有返回值，存储过程的返回值必须通过参数带回；函数有一定的数据类型，像其他的标准函数一样，我们可以通过对函数名的调用返回函数值。
+   存储过程和函数需要进行编译，以排除语法错误，只有编译通过才能调用。 
+
+create or replace procedure delRes0804
+is
+v_filesize varchar2(30);
+cursor cur1 is 
+    select res_id from t_resource where to_char(CREATE_TIME,'yyyy-mm-dd')='2014-08-04';
+begin
+    for record in cur1 loop
+        delete t_resource where res_id = record.res_id;
+        commit;
+    end loop;
+end;
+
+
+create or replace procedure resCreateTime
+is
+t_count int;
+cursor cur1 is
+ select e.dir_id as dir_id from t_res_owner e where e.dir_id in (select e.dir_id from t_res_owner e where e.create_time is null);
+begin
+  t_count := 0;
+  for record in cur1 loop
+   t_count := t_count + 1;
+   update t_res_owner t set t.create_time = to_date('2014-09-01 00:00:00','yyyy-MM-dd hh24:mi:ss')+ t_count/24/60/60 where t.dir_id = record.dir_id;
+   commit;
+  end loop;
+end;
+
+
+create or replace procedure updatefilesize
+is
+v_filesize varchar2(30);
+cursor cur1 is 
+    select fid,file_length from t_attach_file where file_size is null ; 
+begin
+    for record in cur1 loop
+        if(record.file_length < 1024) then
+            v_filesize := round(record.file_length)||'B';
+        elsif(record.file_length < 1024 * 1024) then
+            v_filesize := round(record.file_length/1024,2)||'KB';
+        elsif(record.file_length < 1024 * 1024 * 1024) then
+            v_filesize := round(record.file_length/(1024*1024),2)||'MB';
+        else
+            v_filesize := round(record.file_length/(1024*1024*1024),2)||'GB';
+        end if;
+        update t_attach_file set file_size=v_filesize where fid=record.fid;
+        commit;
+    end loop;
+end;
+
+十、cursor
+cursor.游标是SQL的一个内存工作区，由系统或用户以变量的形式定义。游标的作用就是用于临时存储从数据库中提取的数据块。
+ 隐式游标 
+1)Select …INTO…语句，DML语句，使用隐式Cursor。此外，还有一种使用FOR LOOP的Implicit Cursor用法。
+Every time you run either a SQL DML statement or a PL/SQLSELECTINTO statement, PL/SQL opens animplicit cursor. You can get information about this cursor from its attributes, but you cannot control it. After the statement runs, the database closes the cursor; however, its attribute values remain available until another DML orSELECTINTO statement runs. 
+2)可以通过隐式Cusor的属性来了解操作的状态和结果。Cursor的属性包含： 
+SQL%ROWCOUNT 整型 代表DML语句成功执行的数据行数 
+SQL%FOUND  布尔型  值为TRUE代表插入、删除、更新或单行查询操作成功 
+SQL%NOTFOUND 布尔型 与SQL%FOUND属性返回值相反 
+SQL%ISOPEN 布尔型 DML执行过程中为真，结束后为假 
+3) 隐式Cursor由系统自动打开和关闭. 
+例如：
+set serveroutput on  
+declare  
+begin    
+  update employees set employee_name='Mike' where employee_id=1001;  
+  if SQL%FOUND then    
+    dbms_output.put_line('Name is updated');  
+  else  
+    dbms_output.put_line('Name is not updated');  
+  end if;  
+end;  
+/  
+ 
+set serveroutput on  
+declare  
+begin    
+  for tableInfo in (select * from user_tables) loop  
+    dbms_output.put_line(tableInfo.table_name);  
+  end loop;  
+exception  
+  when others then  
+    dbms_output.put_line(sqlerrm);  
+end;  
+/  
+
+十一、SqlPlus安装配置
+下载oracle 10g sqlplus软件
+http://www.oracle.com/technology/software/tech/oci/instantclient/index.html
+oracle-instantclient-basic-10.2.0.4-1.i386.rpm
+oracle-instantclient-sqlplus-10.2.0.4-1.i386.rpm
+oracle-instantclient-devel-10.2.0.4-1.i386.rpm
+安装rpm包
+rpm -ivh oracle-instantclient-basic-10.2.0.4-1.i386.rpm
+rpm -ivh oracle-instantclient-sqlplus-10.2.0.4-1.i386.rpm
+rpm -ivh oracle-instantclient-devel-10.2.0.4-1.i386.rpm
+
+指定sqlplus运行所需要的库
+由于是RPM包安装的，因此，oracle客户端默认所在的路径为/usr/lib/oracle/10.2.0.4/client/lib/
+#vi /etc/ld.so.conf
+在最后加入：/usr/lib/oracle/10.2.0.4/client/lib
+
+重启ldconfig
+ldconfig
+
+启动sqlplus
+sqlplus /nolog
+配置oracle环境变量
+#vi /etc/profile最后加入
+export ORACLE_HOME=/usr/lib/oracle/10.2.0.4/client
+export LD_LIBRARY_PATH=:$ORACLE_HOME/lib:/usr/local/lib:$LD_LIBRARY_PATH:.
+export TNS_ADMIN=$ORACLE_HOME
+export PATH=$PATH:$ORACLE_HOME/bin:.
+
+配置连接tnsnames.ora
+#cd $ORACLE_HOME加入
+test =
+  (DESCRIPTION =
+    (ADDRESS_LIST =
+      (ADDRESS = (PROTOCOL = TCP)(HOST = ip)(PORT = 1521))
+    )
+    (CONNECT_DATA =
+      (SID = test )
+      (SERVER=DEDICATED )
+    )
+  )
+
+启动
+# sqlplus 用户名/密码@test 
+
+十二、linux oracle sqlplus常用命令
+进入sqlplus
+
+1
+#su – oracle 切换到oracle用户且切换到它的环境
+2
+$lsnrctl status 查看监听及数据库状态
+3
+$lsnrctl start 启动监听
+4
+$sqlplus /nolog 进入sqlplus
+5
+SQL>conn / as sysdba 以DBA身份登录
+登陆:
+
+1
+sqlplus sys/123 as sysdba
+解锁:
+
+1
+alter user user1 account unlock
+修改密码:
+
+1
+alter user user1 identified by 密码
+忘记密码怎么办？以system为例
+首先，使用上面提到的方法进入sqlplus
+
+1
+SQL> conn /assysdba
+2
+Connect.
+3
+SQL> alter usersystem identified by manager;
+4
+User altered.
+5
+SQL>commit;
+6
+Commitcomplete.
+7
+SQL>connsystem/manager;
+8
+Connected.
+修改登陆失败10次后账号锁定的问题
+
+01
+select resource_name, limit from dba_profiles where resource_name = 'FAILED_LOGIN_ATTEMPTS';
+02
+RESOURCE_NAME LIMIT
+03
+-------------------------------- ----------------------------------------
+04
+FAILED_LOGIN_ATTEMPTS 10
+05
+FAILED_LOGIN_ATTEMPTS UNLIMITED
+06
+ 
+07
+修改
+08
+alter profile default limit failed_login_attempts unlimited;
+09
+Profile altered
+10
+接着执行select发现已经修改；
+11
+RESOURCE_NAME LIMIT
+12
+-------------------------------- ----------------------------------------
+13
+FAILED_LOGIN_ATTEMPTS UNLIMITED
+查看登陆失败次数
+
+1
+select NAME,LCOUNT from user$ where name ='ECC_VIEW';
+2
+FAILED_LOGIN_ATTEMPTS UNLIMITED
+
+
+</2014-09-17>
+
+<2014-09-18>
+一、更新时间
+注:oracle时间加减是以天数为单位,设改变量为n,所以换算成年月,日
+     select to_char(sysdate,'yyyy-mm-dd hh24:mi:ss'),to_char(sysdate+n*365,'yyyy-mm-dd hh24:mi:ss') as newTime from dual        //改变时间-年
+     select to_char(sysdate,'yyyy-mm-dd hh24:mi:ss'),add_months(sysdate,n) as newTime from dual                                 //改变时间-月
+     select to_char(sysdate,'yyyy-mm-dd hh24:mi:ss'),to_char(sysdate+n,'yyyy-mm-dd hh24:mi:ss') as newTime from dual            //改变时间-日
+     select to_char(sysdate,'yyyy-mm-dd hh24:mi:ss'),to_char(sysdate+n/24,'yyyy-mm-dd hh24:mi:ss') as newTime from dual         //改变时间-时
+     select to_char(sysdate,'yyyy-mm-dd hh24:mi:ss'),to_char(sysdate+n/24/60,'yyyy-mm-dd hh24:mi:ss') as newTime from dual      //改变时间-分
+     select to_char(sysdate,'yyyy-mm-dd hh24:mi:ss'),to_char(sysdate+n/24/60/60,'yyyy-mm-dd hh24:mi:ss') as newTime from dual   //改变时间-秒
+------------
+declare
+  t_count  int := 1;
+  v_dir_id t_res_owner.Dir_Id%TYPE;
+  cursor cur1 is
+    select e.dir_id as dir_id
+      from t_res_owner e
+     where e.dir_id in
+           (select e.dir_id
+              from t_res_owner e
+             where e.create_time = to_date('2014-09-02', 'yyyy-MM-dd'));
+begin
+  open cur1;
+  loop
+    fetch cur1
+      into v_dir_id;
+    exit when cur1%NOTFOUND;
+    update t_res_owner t
+       set t.create_time = to_date('2014-09-02 00:00:00',
+                                   'yyyy-MM-dd hh24:mi:ss') +
+                           t_count / 24 / 60 / 60
+     where t.dir_id = v_dir_id;
+    commit;
+    t_count := t_count + 1;
+  end loop;
+  close cur1;
+end;
+
+
+二、Oracle的nvl函数
+
+NVL( string1, replace_with)
+如果string1为NULL，则NVL函数返回replace_with的值，否则返回string1的值。
+
+NVL2函数 Oracle/PLSQL中的一个函数Oracle在NVL函数的功能上扩展，提供了NVL2函数。NVL2(E1, E2, E3)的功能为：如果E1为NULL，则函数返回E3，若E1不为null，则返回E2。
+
+
+三、Oracle集群
+Oracle集群，最早称作OPS(Oracle Parallel Server)出现在Oracle 7版本中，从Oracle 9i开始正式改称为Oracle RAC，RAC即Real Application Clusters的简写，译为“真正应用集群”；RAC是Oracle新版数据库中采用的一项新技术，也是Oracle数据库支持网格计算环境的核心技术。
+10g以前的OPS或者RAC都依赖于第三方集群软件(Vendor Clusterware)方能正常工作，在10g版本中Oracle推出了Oracle Clusterware集群软件以及ASM自动存储管理技术，换而言之10g以后版本的RAC不再依赖于第三方的集群软件(譬如IBM的HACMP,Veritas的VCS等)，但必须安装Oracle自己的Clusterware集群软件。
+
+
+四、负载均衡
+负载均衡 （Load Balancing） 建立在现有网络结构之上，它提供了一种廉价有效透明的方法扩展网络设备和服务器的带宽、增加吞吐量、加强网络数据处理能力、提高网络的灵活性和可用性。
+
+
+</2014-09-18>
+<2014-09-19>
+
+netstat
+
+/a
+</2014-09-19>
+<2014-09-23>
+一、DBObject
+
+</2014-09-23>
+<2014-09-24>
+一、sz，rz，rm
+
+</2014-09-24>
+
+<2014-09-28>
+一、抓包
+就是将网络传输发送与接收的数据包进行截获、重发、编辑、转存等操作，也用来检查网络安全，但往往被某些人用来网游作弊，等
+你是网络管理员吗？你是不是有过这样的经历：在某一天的早上你突然发现网络性能急剧下降，网络服务不能正常提供，服务器访问速度极慢甚至不能访问，网络交换机端口指示灯疯狂地闪烁、网络出口处的路由器已经处于满负荷的工作状态、路由器CPU已经到了百分之百的负荷……重启动后没有几分钟现象又重新出现了。
+这是什么问题？设备坏了吗？不可能几台设备同时出问题。一定是有什么大流量的数据文件，耗尽了网络设备的资源，它们是什么？怎么看到它们？这时有经验的网管人员会想到用局域网抓包工具来分析一下。
+你一定听说过红色代码、Nimda、冲击波以及震荡波这些臭名昭著的网络杀手。就是它们制造了上述种种恶行。它们来势汹汹，阻塞网络、感染主机，让网络管理员苦不堪言。当网络病毒出现时，如何才能及时发现染毒主机？下面我根据网络病毒都有扫描网络地址的特点，给大家介绍一个很实用的方法：用抓包工具寻找病毒源。
+
+二、SCP
+
+
+三、一台服务器映射两个外网ip的问题
+现在内网有一台服务器，端口是18080，服务器只有一张网卡。然后外网是通过两条光纤接入（电信和网通），能不能在路由器上做一个映射，把服务器的ip映射到两个外网ip，用两个外网ip都能同时访问这台服务器？
+需要2个WAN口的路由器
+设置如下：
+电信WAN口配置电信的IP，并在路由器内配置一条策略，内容为“外部任意IP从此WAN口访问‘XX端口’（如80端口）时，映射到指定的内网IP地址为XXX.XXX.XXX.XXX的服务器及18080端口上。”
+
+网通WAN口配置网通的IP，并在路由器内配置一条策略，内容为“外部任意IP从此WAN口访问‘XX端口’（如80端口）时，映射到指定的内网IP地址为XXX.XXX.XXX.XXX的服务器及18080端口上。”
+
+
+四、同一域名映射多个IP的问题？
+这里我有两台服务器，就是一台做备用，我在DNS上两台服务器的IP映射一个域名！
+我客户端访问服务器，是不是DNS解析成IP，放回客户端？
+这里DNS解析的时候如果一台服务器出了问题，他会自动跳想另外一台？
+他同一时间只能访问一台？而访问那一台的优先权是不是能设定？
+假如优先的服务器坏了，用了备用的服务器，过了一会优先的服务器修好了！是不是就自动跳转到优先服务器了？
+这个DNS全部是他自己做的吗?
+
+两台服务器在同一个网段里可以用负载均衡来做。
+但用DNS来做解析是不行的。
+DNS 是可以解析到两个IP或者多个上，主要是用来判断来路的。就是不同来路解析到不同的服务器，但注意的是,DNS本身是没办法去判断目标服务器是否工作正常。自然也就没办法完成一台挂了，就自动切换。。就算你用程序去判断目标服务器是否当机，可以切换，但DNS的解析速度是有问题的，全球完全同步可能要48个小时，这之间的时候差，就决定了这种方法不行。另外DNS解析，除MX记录外，A记录和别名都是没办法设置优先级的。只能用其他程序来做
+只能用负载均衡来做。。或者通过网站前端缓存反向代理（如Squid等）来做。再种方法，有很大区别。
+当然在你知道出问题后，手动临时切换，也是没办法的事。
+
+五、Maven nexus
+1、 为什么使用Nexus
+        如果没有私服，我们所需的所有构件都需要通过maven的中央仓库和第三方的Maven仓库下载到本地，而一个团队中的所有人都重复的从maven仓库下载构件无疑加大了仓库的负载和浪费了外网带宽，如果网速慢的话，还会影响项目的进程。很多情况下项目的开发都是在内网进行的，连接不到maven仓库怎么办呢？开发的公共构件怎么让其它项目使用？这个时候我们不得不为自己的团队搭建属于自己的maven私服，这样既节省了网络带宽也会加速项目搭建的进程，当然前提条件就是你的私服中拥有项目所需的所有构件。
+
+
+</2014-09-28>
+
+<2014-9-29>
+一、jquery 获取 自定义属性（attr 和 prop）
+$("form").attr("check"); 
+$("form").prop("check"); 
+两种都可以，不过新版jquery推荐第二种，两个在其他方面都差不多，我发现的唯一不同就是在checkbox上的时候，需要用prop，不然IE浏览器会不兼容
+
+二、jQuery
+$.fn是指jquery的命名空间，加上fn上的方法及属性，会对jquery实例每一个有效。 
+如扩展$.fn.abc(),即$.fn.abc()是对jquery扩展了一个abc方法,那么后面你的每一个jquery实例都可以引用这个方法了. 
+那么你可以这样子：$("#div").abc(); 
+
+Query为开发插件提拱了两个方法，分别是： 
+
+jQuery.extend(object);为扩展jQuery类本身.为类添加新的方法。 
+jQuery.fn.extend(object);给jQuery对象添加方法。
+
+原来 jQuery.fn =jQuery.prototype.对prototype肯定不会陌生啦。 
+jQuery便是一个封装得非常好的类，比如我们用语句　$("#btn1") 会生成一个 jQuery类的实例。 
+
+jQuery.extend(object);　为jQuery类添加添加类方法，可以理解为添加静态方法。如：
+$.extend({ 
+　　add:function(a,b){returna+b;} 
+}); 
+便为　jQuery　添加一个为add　的　“静态方法”，之后便可以在引入 jQuery　的地方，使用这个方法了， 
+$.add(3,4); //return 7 
+
+jQuery.fn.extend(object);对jQuery.prototype进得扩展，就是为jQuery类添加“成员函数”。jQuery类的实例可以使用这个“成员函数”。 
+比如我们要开发一个插件，做一个特殊的编辑框，当它被点击时，便alert当前编辑框里的内容。可以这么做：
+$.fn.extend({ 
+
+alertWhileClick:function(){ 
+
+$(this).click(function(){ 
+
+alert($(this).val()); 
+}); 
+} 
+}); 
+
+三、js Array 对象的方法 
+concat()	向数组的副本添加新的元素，返回新的数组，原数组不受影响	
+join()	把数组的所有元素放入一个字符串。元素通过指定的分隔符进行分隔。	
+pop()	删除并返回数组的最后一个元素	
+push()	向数组的末尾添加一个或更多元素，并返回新的长度。	
+reverse()	颠倒数组中元素的顺序。
+shift()	删除并返回数组的第一个元素	
+slice()	从某个已有的数组返回选定的元素	
+sort()	对数组的元素进行排序，有一个可选参数，为比较函数。	
+splice()	删除元素，并向数组添加新元素。	
+toSource()	代表对象的源代码	
+toString()	把数组转换为字符串，并返回结果。	
+toLocaleString()	把数组转换为本地数组，并返回结果。	
+unshift()	向数组的开头添加一个或更多元素，并返回新的长度。	
+valueOf()	返回数组对象的原始值
+
+四、目录问题
+
+F:\wh\workspace\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps
+--------------
+信息: Set web app root system property: 'webapp.root' = [ D:\workSpace\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\zhgy\ ]
+打开该目录可以很清楚的看到存在zhgy这样一个文件夹，这就是我们现在可以访问的项目目录。
+    
+        再打开 D:\workSpace\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\   这个目录，可以看到这个目录下的结构和 D:\Tomcat 6.0 的目录结构是一模一样的，只是多了个wtpwebapps目录。其实 D:\workSpace\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\ 这个目录就是eclipse的对 D:\Tomcat 6.0 目录的一个克隆，从而使 D:\workSpace\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\ 也能够具备源服务器的功能。
+ 
+      如果再new几个服务器，就会在 D:\workSpace\.metadata\.plugins\org.eclipse.wst.server.core\ 目录下依次出现temp0、temp1、temp2等多个克隆服务器，但是这里每次只能启动上面一个克隆服务器，因为他们都使用的是相同的启动端口（当然还有相同的关闭端口等）。
+
+这样会给我们带来很多的不方便。举个例子：就上述工程而言，当我们在进行开发的时候，项目需要将上传的图片放入到工程的同级目录的upload文件夹的时候，会发现图片是上传到了所在的目录 D:\workSpace\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\upload\ ，但是无法在浏览器中访问到上传的图片。这时候我们可以手动将该upload目录整个复制到 D:\workSpace\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\webapps\ ，这时在浏览器中的确就可以访问了。造成这种现象的原因是tomcat服务器默认webapps为工程目录，而不是 wtpwebapps 目录。之所能够通过浏览器访问 D:\workSpace\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\zhgy\ 下的zhgy这个项目，是由于eclipse通过tomcat发布项目的时候在 D:\workSpace-jx\.metadata\.plugins\org.eclipse.wst.server.core\tmp3\conf 目录的server.xml文件中有如下的设置：
+<Context docBase="D:\workSpace\.metadata\.plugins\org.eclipse.wst.server.core\tmp3\wtpwebapps\zhgy" path="/zhgy" reloadable="true" source="org.eclipse.jst.jee.server:zhgy"/>  
+
+五、Memcache
+telnet 127.0.0.1 11211
+SET：添加一个新的条目到memcached，或是用新的数据替换掉已存在的条目
+
+set test1 0 0 10
+testing001
+STORED
+
+ADD：仅当key不存在的情况下存储数据。如果一个key已经存在，将得到NOT_STORED的响应
+
+add test1 0 0 10
+testing002
+NOT_STORED
+add test2 0 0 10
+testing002
+STORED
+
+REPLACE：仅当key已经存在的情况下存储数据。如果一个key不存在，将得到NOT_STORED的响应
+
+replace test1 0 0 10
+testing003
+STORED
+replace test3 0 0 10
+testing003
+NOT_STORED
+
+GET：从memcached中返回数据。从缓存中返回数据时，将在第一行得到key的名字，flag的值和返回的value的长度。真正的数据在第二行，最后返回END。如果key并不存在，那么在第一行就直接返回END。
+
+get test1
+VALUE test1 0 10
+testing003
+END
+get test4
+END
+get test1 test2
+VALUE test1 0 10
+testing003
+END
+---------------
+1、启动Memcache 常用参数
+memcached 1.4.3
+-p <num>      设置端口号(默认不设置为: 11211)
+-U <num>      UDP监听端口 (默认: 11211, 0 时关闭)  
+-l <ip_addr>  绑定地址 (默认:所有都允许,无论内外网或者本机更换IP，有安全隐患，若设置为127.0.0.1就只能本机访问)
+-d            独立进程运行
+-u <username> 绑定使用指定用于运行进程 <username>
+-m <num>      允许最大内存用量，单位M (默认: 64 MB)
+-P <file>     将PID写入文件<file>，这样可以使得后边进行快速进程终止, 需要与 -d 一起使用
+如：
+在linux下：./usr/local/bin/memcached -d -u jb-mc -l 192.168.1.197 -m 2048 -p 12121
+在window下：d:\App_Serv\memcached\memcached.exe -d RunService -l 127.0.0.1 -p 11211 -m 500
+在windows下注册为服务后运行：
+sc.exe create jb-Memcached binpath= “d:\App_Serv\memcached\memcached.exe -d RunService -p 11211 -m 500″ start= auto
+net start jb-Memcached
+
+2、连接：telnet 127.0.0.1 11211
+不要说不会用这个？
+
+3、写入memcache
+<command name> <key> <flags> <exptime> <bytes>\r\n <data block>\r\n
+a) <command name> 可以是”set”, “add”, “replace”。
+“set”表示按照相应的<key>存储该数据，没有的时候增加，有的覆盖。
+“add”表示按照相应的<key>添加该数据,但是如果该<key>已经存在则会操作失败。
+“replace”表示按照相应的<key>替换数据,但是如果该<key>不存在则操作失败
+
+b) <key> 客户端需要保存数据的key。
+
+c) <flags> 是一个16位的无符号的整数(以十进制的方式表示)。
+该标志将和需要存储的数据一起存储,并在客户端get数据时返回。
+客户可以将此标志用做特殊用途，此标志对服务器来说是不透明的。
+
+d) <exptime> 过期的时间。
+若为0表示存储的数据永远不过时(但可被服务器算法：LRU 等替换)。
+如果非0(unix时间或者距离此时的秒数),当过期后,服务器可以保证用户得不到该数据(以服务器时间为标准)。
+
+e) <bytes> 需要存储的字节数(不包含最后的”\r\n”),当用户希望存储空数据时,<bytes>可以为0
+
+f) 最后客户端需要加上”\r\n”作为”命令头”的结束标志。
+<data block>\r\n
+
+紧接着”命令头”结束之后就要发送数据块(即希望存储的数据内容),最后加上”\r\n”作为此次通讯的结束。
+
+结果响应：reply
+当以上数据发送结束之后,服务器将返回一个应答。可能有如下的情况:
+
+a) “STORED\r\n”：表示存储成功
+b) “NOT_STORED\r\n” ： 表示存储失败,但是该失败不是由于错误。
+通常这是由于”add”或者”replace”命令本身的要求所引起的,或者该项在删除队列之中。
+
+如： set key 33 0 4\r\n
+ffff\r\n
+
+4、获取/检查KeyValue
+get <key>*\r\n
+a) <key>* 表示一个或者多个key(以空格分开)
+b) “\r\n” 命令头的结束
+
+结果响应：reply
+服务器端将返回0个或者多个的数据项。每个数据项都是由一个文本行和一个数据块组成。当所有的数据项都接收完毕将收到”END\r\n”
+每一项的数据结构：
+VALUE <key> <flags> <bytes>\r\n
+<data block>\r\n
+
+a) <key> 希望得到存储数据的key
+b) <falg> 发送set命令时设置的标志项
+c) <bytes> 发送数据块的长度(不包含”\r\n”)
+d) “\r\n” 文本行的结束标志
+e) <data block> 希望接收的数据项。
+f) “\r\n” 接收一个数据项的结束标志。
+
+如果有些key出现在get命令行中但是没有返回相应的数据，这意味着服务器中不存在这些项，这些项过时了，或者被删除了
+如：get aa
+VALUE aa 33 4
+ffff
+END
+
+5、删除KeyValue：
+delete <key> <time>\r\n
+
+a) <key> 需要被删除数据的key
+b) <time> 客户端希望服务器将该数据删除的时间(unix时间或者从现在开始的秒数)
+c) “\r\n” 命令头的结束
+
+6、检查Memcache服务器状态：
+stats\r\n
+在这里可以看到memcache的获取次数，当前连接数，写入次数，已经命中率等；
+
+pid ： 进程id
+uptime ：总的运行时间，秒数
+time ： 当前时间
+version ： 版本号
+……
+curr_items ： 当前缓存中的KeyValue数量
+total_items ： 曾经总共经过缓存的KeyValue数量
+bytes ： 所有的缓存使用的内存量
+curr_connections 当前连接数
+….
+cmd_get ： 总获取次数
+cmd_set ： 总的写入次数
+get_hits ： 总的命中次数
+miss_hits :  获取失败次数
+…..
+bytes_read ： 总共读取的流量字节数
+bytes_written ： 总的写入流量字节
+limit_maxbytes ： 最大允许使用的内存量，字节
+
+7、高级缓存细节查看方法：
+stats reset
+清空统计数据
+
+stats malloc
+显示内存分配数据
+
+stats cachedump slab_id limit_num
+显示某个slab中的前limit_num个key列表，显示格式如下
+ITEM key_name [ value_length b; expire_time|access_time s]
+其中，memcached 1.2.2及以前版本显示的是  访问时间(timestamp)
+1.2.4以上版本，包括1.2.4显示 过期时间(timestamp)
+如果是永不过期的key，expire_time会显示为服务器启动的时间
+
+stats cachedump 7 2
+ITEM copy_test1 [250 b; 1207795754 s]
+ITEM copy_test [248 b; 1207793649 s]
+
+stats slabs
+显示各个slab的信息，包括chunk的大小、数目、使用情况等
+
+stats items
+显示各个slab中item的数目和最老item的年龄(最后一次访问距离现在的秒数)
+
+stats detail [on|off|dump]
+设置或者显示详细操作记录
+
+参数为on，打开详细操作记录
+参数为off，关闭详细操作记录
+参数为dump，显示详细操作记录(每一个键值get、set、hit、del的次数)
+
+8、清空所有键值
+flush_all
+注：flush并不会将items删除，只是将所有的items标记为expired，因此这时memcache依旧占用所有内存。
+
+8、退出
+quit\r\n
+
+
+六、
+
+</2014-9-29>
+<2014-9-30>
+一、JNI（本地调用程序）
+
+</2014-9-30>
+
+<2014-10-8>
+一、itextpdf
+iText是一个开放源码的Java类库，可以用来方便地生成PDF文件。
+如果生成的PDF文件中需要出现中文、日文、韩文字符，则还需要通过访问http://itext.sourceforge.net/downloads/iTextAsian.jar 
+下载iTextAsian.jar包。
+
+二、Ajax实现文件上传...怎么设置multipart/form-data
+只要用到上传图片一般都是用的Iframe来实现那种"无刷新"。
+ajax传参数只能通过URL传就头疼,担心URL传递的参数有限,表单里的值还要通过组合成URL传。
+
+</2014-10-8>
+
+<2014-10-9>
+一、基于crawler4j、jsoup、javacsv的爬虫实践
+
+
+二、Byte b=1,c=2;Byte a=b+c;
+b+c的结果是int型，存储时需要2个字节，byte存储时为1个字节。Byte a=b+c 是指把一个int型的数装在byte里面。这相当于 把一个卡车放在一个只能允许小汽车进入的停车厂，它装不进去。所以引起了异常。
+
+三、request.getSession(true)和request.getSession(false)的区别
+request.getSession(true)：若存在会话则返回该会话，否则新建一个会话。
+request.getSession(false)：若存在会话则返回该会话，否则返回NULL
+
+四、多用户并发操作（http://programerni.diandian.com/post/2011-12-16/15751396）
+
+比如我的表中存储有订单的行项目，每次只允许一个用户对行项目进行编辑。
+建立“锁定表”，每当用户编辑订单时，在"锁定表"中加入订单号。当加入失败时则说明已有用户在编辑订单，当用户退出订单或锁定时间超过一个阈值时则删除锁定记录，允许其他用户编辑并锁定订单。
+这样处理适合锁定多行的订单类数据，锁定表中可以保存其他附加信息。
+还有一种方法在数据库中使用事务。使用事务更新数据库，这样可以保证同一时间只有一个用户可以对行更新。
+
+五、表单form的post，get提交区别
+
+
+
+六、事务嵌套：调用事务和被调用事务（http://www.cnblogs.com/daxin/p/3393855.html）
+
+
+
+</2014-10-9>
+<2014-10-10>
+一、引入 JPEGCodec;JPEGImageEncoder; 图片处理
+在Eclipse中处理图片，需要引入两个包：
+import com.sun.image.codec.jpeg.JPEGCodec;
+import com.sun.image.codec.jpeg.JPEGImageEncoder;
+报错:
+Access restriction: The type JPEGImageEncoder is not accessible due to restriction on required library C:\Java\jre1.6.0_07\lib\rt.jar
+
+
+此时解决办法：
+Eclipse默认把这些受访问限制的API设成了ERROR。只要把Windows-Preferences-Java-Complicer-Errors/Warnings里面的Deprecated and restricted API中的Forbidden references(access rules)选为Warning就可以编译通过。
+</2014-10-10>
+
+<2014-10-13>
+一、CKEditor
+
+
+</2014-10-13>
+<2014-10-15>
+一、文本框邮箱地址自动提示jQuery插件
+
+二、
+tomcat 记录 访问者 ip  log4j日志
+在tomcat 目录  server.xml里面 加入
+ <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"  
+               prefix="localhost_access_log." suffix=".txt" pattern="common" resolveHosts="false"/>
+
+三、tomcat优化配置
+
+
+四、增量打包工具类
+package com.whty.eop.cms.rest.common.util;
+
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.apache.commons.io.FileUtils;
+
+/**
+ * 
+ * 增量打包工具类
+ * 
+ * @author 
+ * @since 1.0
+ * @version 2013-11-9 
+ */
+public class IncremenPublish {
+
+	private String javaPath;
+
+	private Date lastDate;
+
+	private String classPath;
+
+	private String webPath;
+
+	private static final String tempFileDir = "D:\\publish";
+
+	/**
+	 * 
+	 * 构造函数
+	 * 
+	 * @param lastDate
+	 * @param webDirName 存放web应用的目录名称，比如说webapps、webContent等
+	 */
+	public IncremenPublish(String lastDate, String webDirName) {
+		this.javaPath = System.getProperty("user.dir") + "\\src";
+		this.lastDate = parseDate(lastDate);
+		classPath = IncremenPublish.class.getClass().getResource("/").getPath();
+		classPath = classPath.substring(1, classPath.length() - 1);
+		webPath = System.getProperty("user.dir") + File.separator + webDirName;
+	}
+
+	/**
+	 * 
+	 * 获取增量文件
+	 * 
+	 * @Date 2013-11-9
+	 * @author 
+	 */
+	public void getIncremenPublishClassFile() {
+		System.out.println("########################开始获取增量#####################");
+		System.out.println("###上次发布时间：" + lastDate.toString());
+		try {
+			File tempFile = new File(tempFileDir);
+			FileUtils.deleteDirectory(tempFile);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		File file = new File(tempFileDir);
+		if (!file.exists()) {
+			file.mkdirs();
+		}
+		// 获取class增量
+		System.out.println("**********开始获取class增量**********");
+		moveIncremenFile(javaPath, "classes");
+		System.out.println("**********开始获取jsp增量**********");
+		moveIncremenFile(webPath, null);
+		System.out.println("########################获取增量完成#####################");
+	}
+
+	/**
+	 * 获取增量文件
+	 */
+	public boolean moveIncremenFile(String javaPath, String dirName) {
+		try {
+			File file = new File(javaPath);
+			if (!file.isDirectory()) {
+				Date fileDate = new Date(file.lastModified());
+				if (fileDate.getTime() > lastDate.getTime()) {
+					copyFile(file, dirName);
+				}
+			} else if (file.isDirectory() && !file.getAbsolutePath().contains("svn")
+					&& !file.getAbsolutePath().endsWith("WEB-INF")) {
+				String[] filelist = file.list();
+				for (int i = 0; i < filelist.length; i++) {
+					File readfile = new File(javaPath + File.separator + filelist[i]);
+					if (!readfile.isDirectory()) {
+						Date fileDate = new Date(readfile.lastModified());
+						if (fileDate.getTime() > lastDate.getTime()) {
+							copyFile(readfile, dirName);
+						}
+					} else if (readfile.isDirectory()) {
+						moveIncremenFile(javaPath + File.separator + filelist[i], dirName);
+					}
+				}
+			}
+		} catch (Exception e) {
+			System.out.println("获取增量文件  Exception:" + e.getMessage());
+		}
+		return true;
+	}
+
+	public static void main(String[] args) {
+		IncremenPublish publish = new IncremenPublish("2014-09-11", "WebContent");
+		publish.getIncremenPublishClassFile();
+	}
+
+	/**
+	 * 
+	 * parseDate
+	 * 
+	 * @Date 2013-11-12
+	 * @author 
+	 * @param strDate
+	 * @return
+	 */
+	public static Date parseDate(String strDate) {
+		Date date = null;
+		String pattern = "yyyy-MM-dd";
+		try {
+			SimpleDateFormat format = new SimpleDateFormat(pattern);
+			date = format.parse(strDate);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return date;
+	}
+
+	/**
+	 * 
+	 * 移动增量文件
+	 * 
+	 * @Date 2013-11-12
+	 * @author 
+	 * @param file
+	 * @param dirName
+	 */
+	private void copyFile(File file, String dirName) {
+		if (dirName == null) {
+			copyJspFile(file);
+		} else {
+			copyClassFile(file, dirName);
+		}
+
+	}
+
+	/**
+	 * 
+	 * 迁移class文件
+	 * 
+	 * @Date 2013-11-12
+	 * @author 
+	 * @param file
+	 * @param dirName
+	 */
+	private void copyClassFile(File file, String dirName) {
+		String path1 = file.getPath().replace(javaPath, classPath).replace("java", "class");
+		File tempFile = new File(path1);
+		String path2 = path1.replace(classPath, tempFileDir + File.separator + dirName);
+		File tempFile1 = new File(path2);
+		tempFile1.getParentFile().mkdirs();
+		try {
+			FileUtils.copyFile(tempFile, tempFile1);
+		} catch (Exception e) {
+			System.out.println("拷贝class文件出错");
+		}
+		System.out.println("path=" + path2);
+	}
+
+	/**
+	 * 
+	 * 迁移jsp文件
+	 * 
+	 * @Date 2013-11-12
+	 * @author 
+	 * @param file
+	 */
+	private void copyJspFile(File file) {
+		String path = file.getPath().replace(System.getProperty("user.dir"), tempFileDir);
+		File tempFile = new File(path);
+		tempFile.getParentFile().mkdirs();
+		try {
+			FileUtils.copyFile(file, tempFile);
+		} catch (Exception e) {
+			System.out.println("拷贝jsp文件出错");
+		}
+		System.out.println("path=" + path);
+	}
+
+}
+
+</2014-10-15>
+<2014-10-22>
+一、能不能用java实现node的async库的部分功能
+Node.js 是一个基于Chrome JavaScript 运行时建立的一个平台， 用来方便地搭建快速的 易于扩展的网络应用· Node.js 借助事件驱动， 非阻塞I/O 模型变得轻量和高效， 非常适合 运行在分布式设备 的 数据密集型 的实时应用。
+
+
+二、node-webkit（http://damoqiongqiu.iteye.com/blog/2010720）
+
+
+</2014-10-22>
+<2014-10-24>
+一、限制IP访问
+
+二、GWT
+Google Web Toolkit的缩写，有了 GWT可以使用 Java 编程语言编写 AJAX 前端，然后 GWT 会交叉编译到优化的JavaScript 中，而 JavaScript 可以自动在所有主要浏览器上运行。GWT允许开发人员使用 Java 编程语言快速构建和维护复杂但性能高的 JavaScript 前端应用程序，从而降低了开发难度，尤其是与 Eclipse Google 插件结合使用时，优势更明显。
+如今，编写网络应用程序是一个单调乏味且易于出错的过程。开发人员可能要花费 90% 的时间来处理浏览器行话。此外，构建、重复使用以及维护大量JavaScript 代码库和 AJAX 组件可能困难且不可靠。Google Web 工具包 (GWT) 通过允许开发人员用Java编程语言快速构建和维护复杂但高性能的 JavaScript 前端应用程序来减轻该负担。
+有了 Google Web 工具包 (GWT)，可以使用 Java 编程语言编写 AJAX 前端，然后 GWT 会交叉编译到优化的JavaScript 中，而 JavaScript 可以自动在所有主要浏览器上运行。在开发过程中，您可以用 JavaScript按习惯的相同“编辑 - 刷新 - 查看”循环快速反复，还有另一个好处就是能够调试和逐行单步调试Java 代码。准备好进行部署后，GWT 会将Java源代码编译到优化且独立的 JavaScript 文件中。使用 Google Web 工具包可以轻松地为现有网页或整个应用程序构建一个Widget。
+
+三、Nginx（发音同 engine x）是一款轻量级的Web 服务器/反向代理服务器及电子邮件（IMAP/POP3）代理服务器，并在一个BSD-like 协议下发行。
+
+
+
+
+</2014-10-24>
+<2014-10-28>
+一、
+$("#collectNum").text(function(index,oldNum){
+			return parseInt(oldNum) + 1;
+});
+
+
+</2014-10-28>
+<2014-10-30>
+一、
+<select id="selectPerResCount" parameterType="hashmap" resultType="int">
+		SELECT count(1) FROM T_RES_OWNER
+		<where>
+			<if test="isFolder != null and isFolder != ''">
+				IS_FOLDER = #{isFolder}
+			</if>
+			<if test="ownerType != null and ownerType != ''">
+				AND OWNER_TYPE = #{ownerType}
+			</if>
+			<if test="createTime != null and createTime != ''">
+				AND CREATE_TIME > #{createTime,jdbcType=TIMESTAMP}
+			</if>
+		</where>
+	</select>
+
+二、多线程
+/**
+ * 对监视线程的抽象。封装一种特殊的线程行为：一旦被创建就永远循环地做某件事情，
+ * 直到该线程被杀死。这是一个抽象类，从Thread类继承而来，不能直接实例化，其子类 需要覆盖方法task()来完成具体的功能。
+ * 
+ * @version 1.0
+ */
+public abstract class WatchThread extends Thread {
+
+	/** 该线程存活标志，kill()方法将该标志置为false。 */
+	private boolean alive = true;
+
+	/** 当前线程状态信息。用于告知外界该线程正在做什么。 */
+	private String status = null;
+
+	/** 该类的所有子类对象均创建到这个线程组中。 */
+	public static final ThreadGroup tg = new ThreadGroup("watch-thread");
+
+	/**
+	 * 构造函数，提供一个线程名参数。构造方法只创建线程，并不启动。
+	 * 
+	 * @param name
+	 *            线程的名字，为线程起个好名字对调试和日志记录很有帮助。
+	 */
+	public WatchThread(String name) {
+		super(tg, name);
+		setDaemon(true); // 设置成精灵线程（程序在只剩下精灵线程运行时将自动结束）
+	}
+
+	/**
+	 * 杀死该线程的方法，将alive标志置为false，当run()方法的while循环发现该标志为
+	 * false时将跳出循环结束线程。需注意的是kill()方法返回时并不一定线程立即死掉。 要等到线程主体从一次task()方法返回后才会结束。
+	 */
+	public void kill() {
+		alive = false;
+	}
+
+	/**
+	 * 线程主体，循环运行task()方法，直到调用了kill()方法。
+	 */
+	/**
+	 * public void run() {
+	 * 
+	 * //无论出现什么异常都不能使该线程终止！ while (alive) { try { task(); } catch (Exception ex)
+	 * { ex.printStackTrace(); } catch (Throwable t) { //出现严重错误，搞不好系统会死掉
+	 * t.printStackTrace(); } } }
+	 **/
+
+	public void run() {
+		// 无论出现什么异常都不能使该线程终止！
+		while (alive) {
+			try {
+				task();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			} catch (Throwable t) { // 出现严重错误，搞不好系统会死掉
+				t.printStackTrace();
+			}
+		}
+	}
+
+	/**
+	 * 设置状态信息。用来告诉外界该线程正在干什么。
+	 * 
+	 * @param state
+	 *            新的状态信息。
+	 */
+	protected void setStatus(String newStatus) {
+		this.status = newStatus;
+	}
+
+	/**
+	 * 获取状态信息。告诉外界该线程正在干什么。
+	 * 
+	 * @return 状态信息。
+	 */
+	public String getStatus() {
+		return this.status;
+	}
+
+	/**
+	 * 子类必须覆盖的抽象方法，需要循环做的事情。
+	 */
+	abstract protected void task();
+}
+-----------------------
+public class DoUploadThread extends WatchThread {
+
+	protected final MongoBaseDao mongoBaseDao = (MongoBaseDao) BeanLocator
+			.getInstance().getBean("mongoBaseDao");
+
+	private final static Logger LOGGER = Logger.getLogger(DoUploadThread.class);
+
+	protected String appType;
+
+	/**
+	 * 构造函数
+	 * 
+	 * @param name
+	 */
+	public DoUploadThread(String name, String appType) {
+		super(name);
+		this.appType = appType;
+	}
+
+	/**
+	 * 
+	 * @see com.whty.eop.cms.ftptools.common.WatchThread#task()
+	 */
+	@Override
+	protected void task() {
+		int size = 10;//并行运行10个线程
+		ExecutorService  executor = Executors.newFixedThreadPool(size);
+		while (true) {
+			List<RdfFile> lstRdf = getUnUploadData();
+			if (lstRdf != null && lstRdf.size() > 0) {
+				LOGGER.info(appType + "执行upload程序---count=" + lstRdf.size());
+				CountDownLatch counter = new CountDownLatch(lstRdf.size());//线程计数器
+				//多线程
+				for (RdfFile rdfFile : lstRdf) {
+					executor.execute(new UploadFileThread(rdfFile, counter, this.appType));
+				}
+				try {//本批次所有线程跑完，才跑进行下一个轮询
+					counter.await();
+				} catch (InterruptedException e) {
+					LOGGER.error(e.getMessage(), e);
+				}
+			} else {
+				break;
+			}
+		}
+		executor.shutdown();
+		try {
+			sleep(Constants.DO_UPLOAD_TIME);
+		} catch (InterruptedException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+
+	}
+
+	/**
+	 * 
+	 * 获取未转码
+	 * 
+	 * @Date 2013-12-12
+	 * @author 李鹏
+	 * @return
+	 */
+	protected List<RdfFile> getUnUploadData() {
+		Query query = new Query();
+		query.addCriteria(new Criteria("status")
+				.is(RdfFile.STATUS_DOSAVE_DOSAG_UNUPLOAD));
+		query.addCriteria(new Criteria("appType").is(appType));
+		query.limit(50);
+		List<RdfFile> lstRdf = mongoBaseDao.mongoOperations.find(query,
+				RdfFile.class);
+		return lstRdf;
+	}
+
+}
+
+
+</2014-10-30>
+<2014-10-31>
+一、tar
+范例一：将整个 /etc 目录下的文件全部打包成为 /tmp/etc.tar
+[root@linux ~]# tar -cvf /tmp/etc.tar /etc ==仅打包，不压缩！
+[root@linux ~]# tar -zcvf /tmp/etc.tar.gz /etc ==打包后，以 gzip 压缩
+[root@linux ~]# tar -jcvf /tmp/etc.tar.bz2 /etc ==打包后，以 bzip2 压缩
+
+二、passwd
+passwd cmsuser
+
+
+三、rz(上传)加回车，sz下载
+
+
+四、防火墙
+
+
+五、杀毒
+
+六、Oracle的JDBC Url的几种方式
+1.普通SID方式
+jdbc:oracle:thin:username/password@x.x.x.1:1521:SID
+2.普通ServerName方式
+jdbc:oracle:thin:username/password@//x.x.x.1:1522/ABCD
+3.RAC方式
+jdbc:oracle:thin:@(DESCRIPTION=
+(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=x.x.x.1)(PORT=1521))
+              (ADDRESS=(PROTOCOL=TCP)(HOST=x.x.x.2)(PORT=1521)))
+(LOAD_BALANCE=yes)(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=xxrac)))
+
+
+jdbc:oracle:thin:@(DESCRIPTION=
+(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.200.33)(PORT=1521))
+(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.200.34)(PORT=1521))
+(LOAD_BALANCE=yes)(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=edu)))
+
+
+七、oracle的jdbc连接方式:oci和thin
+ oci和thin是Oracle提供的两套Java访问Oracle数据库方式。
+
+    thin是一种瘦客户端的连接方式，即采用这种连接方式不需要安装oracle客户端,只要求classpath中包含jdbc驱动的jar包就行。thin就是纯粹用Java写的ORACLE数据库访问接口。
+oci是一种胖客户端的连接方式，即采用这种连接方式需要安装oracle客户端。oci是Oracle Call Interface的首字母缩写，是ORACLE公司提供了访问接口，就是使用Java来调用本机的Oracle客户端，然后再访问数据库，优点是速度 快，但是需要安装和配置数据库。
+
+     从相关资料可以总结出以下几点：
+1. 从使用上来说，oci必须在客户机上安装oracle客户端或才能连接，而thin就不需要，因此从使用上来讲thin还是更加方便，这也是thin比较常见的原因。 
+2. 原理上来看，thin是纯java实现tcp/ip的c/s通讯；而oci方式,客户端通过native java method调用c library访问服务端，而这个c library就是oci(oracle called interface)，因此这个oci总是需要随着oracle客户端安装（从oracle10.1.0开始，单独提供OCI Instant Client，不用再完整的安装client） 
+3. 它们分别是不同的驱动类别，oci是二类驱动， thin是四类驱动，但它们在功能上并无差异。
+
+    从使用thin驱动切换到oci驱动在配置来说很简单，只需把连接字符串java:oracle:thin:@hostip:1521:实例名换为java:oracle:oci@本地服务名即可。如:从　　
+jdbc:oracle:thin:@10.1.1.2:1521:shdb　　
+改成　　
+jdbc:oracle:oci8:@shdb　　
+但 这里这台机需安装oracle数据库的客户端并配置本地服务名，同时还需指定NLS_LANG环境变量，NLS_LANG环境变量是用来控制客户端在显示 oracle数据库的数据时所用的字符集和本地化习惯。通常把NLS_LANG的字符集部分指定为数据库所用的字符集则就不会存在java显示的乱码问题 了。　　
+
+</2014-10-31>
+
+<2014-11-4>
+一、保存某个表
+create table  t_res_owner_20141104 as (select * from t_res_owner);
+
+
+二、存储过程
+create or replace procedure delResOwnerData is
+--所有用户
+cursor users is
+select e.user_id from t_res_owner e where e.user_id is not null group by e.user_id;
+begin
+  for user in users loop
+    declare
+    cursor cur1 is
+     select e.dir_id,e.parent_id from t_res_owner e where e.parent_id is not null and e.parent_id !='0' and e.user_id=user.user_id;
+      begin
+        for record in cur1 loop
+            delete t_res_owner t where ((t.dir_id=record.parent_id and t.parent_id=record.dir_id) or t.dir_id=t.parent_id) and t.user_id=user.user_id;
+            commit;
+            end loop;
+       end;
+      --第一次删除
+      delete from t_res_owner t1 where t1.parent_id !='0' and t1.parent_id is not null and t1.parent_id not in(
+      select t.dir_id from t_res_owner t where t.user_id=user.user_id
+      ) and t1.user_id=user.user_id;
+      commit;
+      --第二次删除
+      delete from t_res_owner t1 where t1.parent_id !='0' and t1.parent_id is not null and t1.parent_id not in(
+      select t.dir_id from t_res_owner t where t.user_id=user.user_id
+      ) and t1.user_id=user.user_id;
+      commit;
+  end loop;
+end;
+
+</2014-11-4>
+
+<2014-11-5>
+一、sftp
+sftp是Secure File Transfer Protocol的缩写，安全文件传送协议。可以为传输文件提供一种安全的加密方法。sftp 与 ftp 有着几乎一样的语法和功能。SFTP 为 SSH的一部份，是一种传输档案至 Blogger 伺服器的安全方式。其实在SSH软件包中，已经包含了一个叫作SFTP(Secure File Transfer Protocol)的安全文件传输子系统，SFTP本身没有单独的守护进程，它必须使用sshd守护进程（端口号默认是22）来完成相应的连接操作，所以从某种意义上来说，SFTP并不像一个服务器程序，而更像是一个客户端程序。SFTP同样是使用加密传输认证信息和传输的数据，所以，使用SFTP是非常安全的。但是，由于这种传输方式使用了加密/解密技术，所以传输效率比普通的FTP要低得多，如果您对网络安全性要求更高时，可以使用SFTP代替FTP。
+
+</2014-11-5>
+<2014-11-6>
+一、 No 'Access-Control-Allow-Origin' header is present on the requested resource.
+
+</2014-11-6>
+
+<2014-11-8>
+一、jquery.uploadify.min.js
+
+
+二、断点续传
+FTP（文件传输协议的简称）（File Transfer Protocol、 FTP）客户端软件断点续传指的是在下载或上传时，将下载或上传任务（一个文件或一个压缩包）人为的划分为几个部分，每一个部分采用一个线程进行上传或下载，如果碰到网络故障，可以从已经上传或下载的部分开始继续上传下载未完成的部分，而没有必要从头开始上传下载。用户可以节省时间，提高速度。
+
+三、内网和外网有什么区别
+内外网是相对于防火墙而言的，在防火墙内部叫做内网，反之就是外网。在一定程度上外网等同于公网，内网等同于私网。地址为如下3个区域就是处于私网：
+1.10.*.*.*
+2.172.16.*.*至172.31.*.*
+3.192.168.*.*  （*为0到255之间的任意数字）
+以上3个区域外的就是处于公网之中了。
+在WIN9X中点开始菜单中的运行，输入"Command"后回车
+在2000/XP/03中点开始菜单的运行，输入“CMD”，再输入Winipcfg或者IPConfig回车就可以看见自己的IP地址，从而判断自己处于外网还是内网。
+外网是直接连接的，内网要透过防火墙，所以外网速度要快些
+
+四、跨域注意
+内网与外网跨域，不可连，
+用内网的IP在正常情况下确实不能访问自己外网的IP。
+
+如果楼主要让内网用户能用域名访问自己公司的站点，就必须通知ISP，让他们在DNS服务器上设置一下，把从你们IP地址发过来的DNS请求解析成你们的内网IP。
+
+五、IVMS-4500
+
+
+六、花生壳动态域名
+
+
+
+</2014-11-8>
+<2014-11-10>
+一、RCP
+Eclipse常常作为一款优秀的IDE（Integrated Development Environment，集成开发环境）出现在开发者面前的。它不仅仅是Java的IDE，还可以是C语言的IDE、Python的IDE——只要开发出相应语言的插件，Eclipse就可以成为任何语言的IDE。但是，这些严格来说都是Eclipse RCP的应用。真正的Eclipse，是一个提供了一个完善的插件机制RCP（Rich Client Platform，胖客户端平台）平台；它以SWT/JFace作为界面元素组件，提供给用户一个名为Workbench的UI平台；加上它本身优秀的插件机制，它能够构造出扩展能力强、性能优秀、并能提供给用户良好UI体验的服客户端平台。
+
+Eclipse RCP是一项位于Eclipse平台核心的功能。大多数人想到Eclipse时，会想到Java集成开发环境(IDE)。如果将Eclipse中关于IDE的内容剥去，剩下的就是一个提供基本工作台功能的核心，包括对可移动以及可叠加的窗口组件(编辑器和视图)、菜单、工具栏、按钮、表格、树形结构等等的支持，而这个核心就是Eclipse RCP。
+
+二、SWT
+SWT(Standard Widget Toolkit) Standard Widget Toolkit是一个开源的GUI编程框架，与AWT/Swing有相似的用处，著名的开源IDE-eclipse就是用SWT开发的。 在SWT之前，Sun已经提供了一个跨平台GUI开发工具包AWT (Abstract Windowing Toolkit).AWT框架不使用原生窗口部件(native widgets)，一直未能突破LCD问题。LCD问题导致了一些主要平台特征的遗失。
+
+
+三、Swing
+
+
+
+</2014-11-10>
+<2014-11-11>
+union和union all的区别是,union会自动压缩多个结果集合中的重复结果，而union all则将所有的结果全部显示出来，不管是不是重复。 
+
+Union：对两个结果集进行并集操作，不包括重复行，同时进行默认规则的排序； 
+
+Union All：对两个结果集进行并集操作，包括重复行，不进行排序； 
+----------------
+select distinct d.*, f.FILE_EXT,d.create_time AS DD
+          from T_DOWNLOAD_LOG d
+          left join t_product p
+            on p.PRODUCT_CODE = d.PRODUCT_CODE
+          left join t_attach_file f
+            on f.FILE_ID = p.FILE_ID
+         where d.user_id = 'F259F9A50F947692E04010AC73D40970'
+           and d.down_type = '1'
+           union 
+           select distinct d.*, f.FILE_EXT,d.create_time AS DD 
+          from T_DOWNLOAD_LOG d
+          left join t_resource t on t.RES_ID = d.RES_ID left join t_attach_file f on t.fid = f.fid
+         where d.user_id = 'F259F9A50F947692E04010AC73D40970'
+           and d.down_type = '2' order by DD desc
+----------------
+</2014-11-11>
+
+<2014-11-14>
+一、查看系统信息
+df -h
+
+二、设置该目录为用户：用户组权限
+chown -R cmsuser:cmsuser 目录
+</2014-11-14>
+<2014-11-17>
+一、LoadRunner
+LoadRunner，是一种预测系统行为和性能的负载测试工具。通过以模拟上千万用户实施并发负载及实时性能监测的方式来确认和查找问题，LoadRunner能够对整个企业架构进行测试。通过使用 LoadRunner，企业能最大限度地缩短测试时间，优化性能和加速应用系统的发布周期。 LoadRunner是一种适用于各种体系架构的自动负载测试工具，它能预测系统行为并评估系统性能。
+
+二、打造您的 Eclipse RCP 产品（http://www.ibm.com/developerworks/cn/opensource/os-eclipse-brand/）
+
+三、jquery 选择器，模糊匹配
+按姓名匹配 
+1,name前缀为aa的所有div的jquery对象 
+Js代码  收藏代码
+$("div[name^='aa']");  
+
+2,name后缀为aa的所有div的jquery对象 
+Js代码  收藏代码
+$("div[name$='aa']");  
+
+3,name中包含aa的所有div的jquery对象 
+Js代码  收藏代码
+$("div[id*='aa']");  
+
+以上返回的都是jquery的集合对象，因此都可以用 
+Java代码  收藏代码
+.each(function(i){  
+  
+});  
+进行遍历 
+
+下面的格式可用于集合，也可以用于匹配单个jquery对象 
+1,
+Js代码  收藏代码
+$("tag:type[tagattribute='xx']");  
+
+例如: 
+Js代码  收藏代码
+$("input:text[name='xx']")  
+</2014-11-17>
+
+<2014-11-18>
+一、RCP
+当我们在做RCP开发时，都是在product文件进行runtime（以及发布）的一些设置，打开product文件，在Configuration页面可以看到设置start level （specify custom start levels for plug-ins）的地方。如果不进行设置，很可能会出现下面的问题
+
+Unable to acquire application service. Ensure that the org.eclipse.core.runtime bundle is resolved and started (see config.ini)
+java.lang.NullPointerException at org.eclipse.e4.ui.internal.workbench.ModelServiceImpl.<init> (ModelServiceImpl.java:92)
+1、解决办法是把org.eclipse.core.runtime的start level设置为1（或者其他小于4的数），把auto-start设置为true
+2、解决办法是把org.eclipse.equinox.ds和org.eclipse.equinox.event的start level设置为1（或者其他小于4的数），把auto-start设置为true
+
+
+二、网络爬虫
+随着网络的迅速发展，万维网成为大量信息的载体，如何有效地提取并利用这些信息成为一个巨大的挑战。搜索引擎(Search Engine)，例如传统的通用搜索引擎AltaVista，Yahoo!和Google等，作为一个辅助人们检索信息的工具成为用户访问万维网的入口和指南。但是，这些通用性搜索引擎也存在着一定的局限性，如：
+(1) 不同领域、不同背景的用户往往具有不同的检索目的和需求，通用搜索引擎所返回的结果包含大量用户不关心的网页。
+(2)通用搜索引擎的目标是尽可能大的网络覆盖率，有限的搜索引擎服务器资源与无限的网络数据资源之间的矛盾将进一步加深。
+(3)万维网数据形式的丰富和网络技术的不断发展，图片、数据库、音频、视频多媒体等不同数据大量出现，通用搜索引擎往往对这些信息含量密集且具有一定结构的数据无能为力，不能很好地发现和获取。
+(4)通用搜索引擎大多提供基于关键字的检索，难以支持根据语义信息提出的查询。
+为了解决上述问题，定向抓取相关网页资源的聚焦爬虫应运而生。聚焦爬虫是一个自动下载网页的程序，它根据既定的抓取目标，有选择的访问万维网上的网页与相关的链接，获取所需要的信息。与通用爬虫(general?purpose web crawler)不同，聚焦爬虫并不追求大的覆盖，而将目标定为抓取与某一特定主题内容相关的网页，为面向主题的用户查询准备数据资源。
+--------------
+网页的抓取策略可以分为深度优先、广度优先和最佳优先三种。深度优先在很多情况下会导致爬虫的陷入(trapped)问题，目前常见的是广度优先和最佳优先方法。
+--------------
+网页分析算法可以归纳为基于网络拓扑、基于网页内容和基于用户访问行为三种类型。
+
+四、深度优先搜索
+深度优先搜索属于图算法的一种，英文缩写为DFS即Depth First Search.其过程简要来说是对每一个可能的分支路径深入到不能再深入为止，而且每个节点只能访问一次.
+
+五、rcp utf-8
+
+
+六、scp
+scp -r 文件名 cmsuser@192.168.27.25:/home/cmsuer
+
+七、修改文件名
+mv 旧文件名 新文件名
+
+八、设置权限
+chmod 777 *  所有用户都可读、写、执行
+</2014-11-18>
+<2014-11-19>
+一、sudo vi hosts
+cd /etc
+
+二、wget http://192.168.27.25:30000
+
+
+三、数据库（http://www.blogjava.net/wolfman09/archive/2009/05/01/268536.html）
+创建表空间
+create tablespace CMS logging
+datafile '/oracle/oradata/ORCL/datafile/CMS.dbf' size 512M
+autoextend on
+next 64M maxsize unlimited
+extent management local;
+创建用户
+设置默认表空间
+临时表空间
+create user cmsuser identified by cmsuser
+default tablespace CMS
+temporary tablespace TEMP;
+授权
+grant dba to cmsuser;
+
+exp CMSUSER/CMSUSER@orcl full=y file=/home/oracle/zj_cms.dmp
+exp CMSUSER/CMSUSER@orcl owner=cmsuser file=/home/oracle/zj_cms.dmp
+exp cmsuser/cmsuser@orcl full=y file=/home/oracle/cms.dmp
+imp 
+
+imp cmsuser/cmsuser@orcl file=/data.dmp fromuser=cmsuser touser=cmsuser
+
+
+四、pwd显示当前路径
+
+df -h 显示磁盘信息
+</2014-11-19>
+<2014-11-21>
+一、
+tar 解压缩命令
+tar
+
+-c: 建立压缩档案
+-x：解压
+-t：查看内容
+-r：向压缩归档文件末尾追加文件
+-u：更新原压缩包中的文件
+
+这五个是独立的命令，压缩解压都要用到其中一个，可以和别的命令连用但只能用其中一个。下面的参数是根据需要在压缩或解压档案时可选的。
+
+-z：有gzip属性的
+-j：有bz2属性的
+-Z：有compress属性的
+-v：显示所有过程
+-O：将文件解开到标准输出
+
+下面的参数-f是必须的
+
+-f: 使用档案名字，切记，这个参数是最后一个参数，后面只能接档案名。
+
+# tar -cf all.tar *.jpg 
+这条命令是将所有.jpg的文件打成一个名为all.tar的包。-c是表示产生新的包，-f指定包的文件名。
+
+# tar -rf all.tar *.gif 
+这条命令是将所有.gif的文件增加到all.tar的包里面去。-r是表示增加文件的意思。
+
+# tar -uf all.tar logo.gif 
+这条命令是更新原来tar包all.tar中logo.gif文件，-u是表示更新文件的意思。
+
+# tar -tf all.tar 
+这条命令是列出all.tar包中所有文件，-t是列出文件的意思
+
+# tar -xf all.tar 
+这条命令是解出all.tar包中所有文件，-x是解开的意思
+
+压缩
+
+
+tar –cvf jpg.tar *.jpg //将目录里所有jpg文件打包成tar.jpg
+
+
+tar –czf jpg.tar.gz *.jpg   //将目录里所有jpg文件打包成jpg.tar后，并且将其用gzip压缩，生成一个gzip压缩过的包，命名为jpg.tar.gz
+
+
+tar –cjf jpg.tar.bz2 *.jpg //将目录里所有jpg文件打包成jpg.tar后，并且将其用bzip2压缩，生成一个bzip2压缩过的包，命名为jpg.tar.bz2
+
+
+tar –cZf jpg.tar.Z *.jpg   //将目录里所有jpg文件打包成jpg.tar后，并且将其用compress压缩，生成一个umcompress压缩过的包，命名为jpg.tar.Z
+
+
+rar a jpg.rar *.jpg //rar格式的压缩，需要先下载rar for linux
+
+
+zip jpg.zip *.jpg //zip格式的压缩，需要先下载zip for linux
+
+ 
+
+解压
+
+
+tar –xvf file.tar //解压 tar包
+
+
+tar -xzvf file.tar.gz //解压tar.gz
+
+
+tar -xjvf file.tar.bz2   //解压 tar.bz2
+
+
+tar –xZvf file.tar.Z   //解压tar.Z
+
+unrar e file.rar //解压rar
+
+unzip file.zip //解压zip
+
+总结
+
+1、*.tar 用 tar –xvf 解压
+
+2、*.gz 用 gzip -d或者gunzip 解压
+
+3、*.tar.gz和*.tgz 用 tar –xzf 解压
+
+4、*.bz2 用 bzip2 -d或者用bunzip2 解压
+
+5、*.tar.bz2用tar –xjf 解压
+
+6、*.Z 用 uncompress 解压
+
+7、*.tar.Z 用tar –xZf 解压
+
+8、*.rar 用 unrar e解压
+
+9、*.zip 用 unzip 解压
+
+
+</2014-11-21>
+<2014-11-28>
+一、jps命令
+
+
+
+
+</2014-11-28>
+
+<2014-11-29>
+一、/etc/profile
+
+JAVA_HOME=/opt/jdk1.6.0_37
+PATH=$PATH:$JAVA_HOME/bin:$JAVA_HOME/jre/bin
+CLASSPATH=.:$JAVA_HOME/lib:$JAVA_HOME/jre/lib:$CLASSPATH
+export PATH USER LOGNAME MAIL HOSTNAME HISTSIZE INPUTRC JAVA_HOME CLASSPATH
+
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/eduyun2.0/sag/server/cache/libevent/lib
+PATH=$PATH:$HOME/bin
+
+export ORACLE_HOME=/home/oracle 
+export LD_LIBRARY_PATH=/home/oracle/lib 
+
+</2014-11-29>
+
+<2014-11-30>
+一、js处理时间
+Date.prototype.Format = function(fmt)   
+	{    
+	  var o = {   
+	    "M+" : this.getMonth()+1,                 //月份   
+	    "d+" : this.getDate(),                    //日   
+	    "h+" : this.getHours(),                   //小时   
+	    "m+" : this.getMinutes(),                 //分   
+	    "s+" : this.getSeconds(),                 //秒   
+	    "q+" : Math.floor((this.getMonth()+3)/3), //季度   
+	    "S"  : this.getMilliseconds()             //毫秒   
+	  };   
+	  if(/(y+)/.test(fmt))   
+	    fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length));   
+	  for(var k in o)   
+	    if(new RegExp("("+ k +")").test(fmt))   
+	  fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));   
+	  return fmt;   
+	}
+
+二、js正则exec()和test()的区别,RegExp.$1意义
+
+var r = /(\d+)-(\w+)/;//RegExp.$1为第一个子匹配（表达式中括号的部分）,最多是$99  
+var b=r.exec("2013-love-b");//返回整个匹配的字符串  
+alert(b+" "+RegExp.$1+"=="+RegExp.$2);  
+  
+b = r.test("1997-good");//返回是否存在满足匹配  
+alert(b+" "+RegExp.$1+"=="+RegExp.$2);  
+
+上面弹出显示为：
+2013-love,2013,love 2013==love
+true 1997==good
+</2014-11-30>
+
+<2014-12-3>
+一、log4j配置祥解
+第一步：加入log4j-1.2.8.jar到lib下。
+
+第二步：在CLASSPATH下建立log4j.properties。内容如下：
+
+1 log4j.rootCategory=INFO, stdout , R
+
+2
+
+3 log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+
+4 log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+
+5 log4j.appender.stdout.layout.ConversionPattern=[QC] %p [%t] %C.%M(%L) | %m%n
+
+6
+
+7 log4j.appender.R=org.apache.log4j.DailyRollingFileAppender
+
+8 log4j.appender.R.File=D:\Tomcat 5.5\logs\qc.log
+
+9 log4j.appender.R.layout=org.apache.log4j.PatternLayout
+
+10 log4j.appender.R.layout.ConversionPattern=%d-[TS] %p %t %c - %m%n
+
+11
+
+12 log4j.logger.com.neusoft=DEBUG
+
+13 log4j.logger.com.opensymphony.oscache=ERROR
+
+14 log4j.logger.net.sf.navigator=ERROR
+
+15 log4j.logger.org.apache.commons=ERROR
+
+16 log4j.logger.org.apache.struts=WARN
+
+17 log4j.logger.org.displaytag=ERROR
+
+18 log4j.logger.org.springframework=DEBUG
+
+19 log4j.logger.com.ibatis.db=WARN
+
+20 log4j.logger.org.apache.velocity=FATAL
+
+21
+
+22 log4j.logger.com.canoo.webtest=WARN
+
+23
+
+24 log4j.logger.org.hibernate.ps.PreparedStatementCache=WARN
+
+25 log4j.logger.org.hibernate=DEBUG
+
+26 log4j.logger.org.logicalcobwebs=WARN
+
+第三步：相应的修改其中属性，修改之前就必须知道这些都是干什么的，在第二部分讲解。
+
+第四步：在要输出日志的类中加入相关语句：
+
+定义属性：protected final Log log = LogFactory.getLog(getClass());
+
+在相应的方法中：
+
+if (log.isDebugEnabled())
+
+{
+
+log.debug(“System …..”);
+
+}
+
+二、Log4j说明
+
+1 log4j.rootCategory=INFO, stdout , R
+
+此句为将等级为INFO的日志信息输出到stdout和R这两个目的地，stdout和R的定义在下面的代码，可以任意起名。等级可分为OFF、 FATAL、ERROR、WARN、INFO、DEBUG、ALL，如果配置OFF则不打出任何信息，如果配置为INFO这样只显示INFO, WARN, ERROR的log信息，而DEBUG信息不会被显示，具体讲解可参照第三部分定义配置文件中的logger。
+
+3 log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+
+此句为定义名为stdout的输出端是哪种类型，可以是
+
+org.apache.log4j.ConsoleAppender（控制台），
+
+org.apache.log4j.FileAppender（文件），
+
+org.apache.log4j.DailyRollingFileAppender（每天产生一个日志文件），
+
+org.apache.log4j.RollingFileAppender（文件大小到达指定尺寸的时候产生一个新的文件）
+
+org.apache.log4j.WriterAppender（将日志信息以流格式发送到任意指定的地方）
+
+具体讲解可参照第三部分定义配置文件中的Appender。
+
+4 log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+
+此句为定义名为stdout的输出端的layout是哪种类型，可以是
+
+org.apache.log4j.HTMLLayout（以HTML表格形式布局），
+
+org.apache.log4j.PatternLayout（可以灵活地指定布局模式），
+
+org.apache.log4j.SimpleLayout（包含日志信息的级别和信息字符串），
+
+org.apache.log4j.TTCCLayout（包含日志产生的时间、线程、类别等等信息）
+
+具体讲解可参照第三部分定义配置文件中的Layout。
+
+5 log4j.appender.stdout.layout.ConversionPattern= [QC] %p [%t] %C.%M(%L) | %m%n
+
+如果使用pattern布局就要指定的打印信息的具体格式ConversionPattern，打印参数如下：
+
+%m 输出代码中指定的消息
+
+%p 输出优先级，即DEBUG，INFO，WARN，ERROR，FATAL
+
+%r 输出自应用启动到输出该log信息耗费的毫秒数
+
+%c 输出所属的类目，通常就是所在类的全名
+
+%t 输出产生该日志事件的线程名
+
+%n 输出一个回车换行符，Windows平台为“rn”，Unix平台为“n”
+
+%d 输出日志时间点的日期或时间，默认格式为ISO8601，也可以在其后指定格式，比如：%d{yyyy MMM dd HH:mm:ss,SSS}，输出类似：2002年10月18日 22：10：28，921
+
+%l 输出日志事件的发生位置，包括类目名、发生的线程，以及在代码中的行数。
+
+[QC]是log信息的开头，可以为任意字符，一般为项目简称。
+
+输出的信息
+
+[TS] DEBUG [main] AbstractBeanFactory.getBean(189) | Returning cached instance of singleton bean 'MyAutoProxy'
+
+具体讲解可参照第三部分定义配置文件中的格式化日志信息。
+
+7 log4j.appender.R=org.apache.log4j.DailyRollingFileAppender
+
+此句与第3行一样。定义名为R的输出端的类型为每天产生一个日志文件。
+
+8 log4j.appender.R.File=D:\Tomcat 5.5\logs\qc.log
+
+此句为定义名为R的输出端的文件名为D:\Tomcat 5.5\logs\qc.log
+
+可以自行修改。
+
+9 log4j.appender.R.layout=org.apache.log4j.PatternLayout
+
+与第4行相同。
+
+10 log4j.appender.R.layout.ConversionPattern=%d-[TS] %p %t %c - %m%n
+
+与第5行相同。
+
+12 log4j.logger.com. neusoft =DEBUG
+
+指定com.neusoft包下的所有类的等级为DEBUG。
+
+可以把com.neusoft改为自己项目所用的包名。
+
+13 log4j.logger.com.opensymphony.oscache=ERROR
+
+14 log4j.logger.net.sf.navigator=ERROR
+
+这两句是把这两个包下出现的错误的等级设为ERROR，如果项目中没有配置EHCache，则不需要这两句。
+
+15 log4j.logger.org.apache.commons=ERROR
+
+16 log4j.logger.org.apache.struts=WARN
+
+这两句是struts的包。
+
+17 log4j.logger.org.displaytag=ERROR
+
+这句是displaytag的包。（QC问题列表页面所用）
+
+18 log4j.logger.org.springframework=DEBUG
+
+此句为Spring的包。
+
+24 log4j.logger.org.hibernate.ps.PreparedStatementCache=WARN
+
+25 log4j.logger.org.hibernate=DEBUG
+
+此两句是hibernate的包。
+
+以上这些包的设置可根据项目的实际情况而自行定制。
+
+三、log4j详解
+
+1、定义配置文件
+
+Log4j支持两种配置文件格式，一种是XML格式的文件，一种是Java特性文件log4j.properties（键=值）。下面将介绍使用log4j.properties文件作为配置文件的方法:
+
+①、配置根Logger
+
+Logger 负责处理日志记录的大部分操作。
+
+其语法为：
+
+log4j.rootLogger = [ level ] , appenderName, appenderName, …
+
+其中，level 是日志记录的优先级，分为OFF、FATAL、ERROR、WARN、INFO、DEBUG、ALL或者自定义的级别。Log4j建议只使用四个级别，优 先级从高到低分别是ERROR、WARN、INFO、DEBUG。通过在这里定义的级别，您可以控制到应用程序中相应级别的日志信息的开关。比如在这里定 义了INFO级别，只有等于及高于这个级别的才进行处理，则应用程序中所有DEBUG级别的日志信息将不被打印出来。ALL:打印所有的日志，OFF：关 闭所有的日志输出。 appenderName就是指定日志信息输出到哪个地方。可同时指定多个输出目的地。
+
+②、配置日志信息输出目的地 Appender
+
+Appender 负责控制日志记录操作的输出。
+
+其语法为：
+
+log4j.appender.appenderName = fully.qualified.name.of.appender.class
+
+log4j.appender.appenderName.option1 = value1
+
+…
+
+log4j.appender.appenderName.optionN = valueN
+
+这里的appenderName为在①里定义的，可任意起名。
+
+其中，Log4j提供的appender有以下几种：
+
+org.apache.log4j.ConsoleAppender（控制台），
+
+org.apache.log4j.FileAppender（文件），
+
+org.apache.log4j.DailyRollingFileAppender（每天产生一个日志文件），
+
+org.apache.log4j.RollingFileAppender（文件大小到达指定尺寸的时候产生一个新的文件），可通过 log4j.appender.R.MaxFileSize=100KB设置文件大小，还可通过 log4j.appender.R.MaxBackupIndex=1设置为保存一个备份文件。
+
+org.apache.log4j.WriterAppender（将日志信息以流格式发送到任意指定的地方）
+
+例如：log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+
+定义一个名为stdout的输出目的地，ConsoleAppender为控制台。
+
+③、配置日志信息的格式（布局）Layout
+
+Layout 负责格式化Appender的输出。
+
+其语法为：
+
+log4j.appender.appenderName.layout = fully.qualified.name.of.layout.class
+
+log4j.appender.appenderName.layout.option1 = value1
+
+…
+
+log4j.appender.appenderName.layout.optionN = valueN
+
+其中，Log4j提供的layout有以下几种：
+
+org.apache.log4j.HTMLLayout（以HTML表格形式布局），
+
+org.apache.log4j.PatternLayout（可以灵活地指定布局模式），
+
+org.apache.log4j.SimpleLayout（包含日志信息的级别和信息字符串），
+
+org.apache.log4j.TTCCLayout（包含日志产生的时间、线程、类别等等信息）
+
+2、格式化日志信息
+
+Log4J采用类似C语言中的printf函数的打印格式格式化日志信息，打印参数如下：
+
+%m 输出代码中指定的消息
+
+%p 输出优先级，即DEBUG，INFO，WARN，ERROR，FATAL
+
+%r 输出自应用启动到输出该log信息耗费的毫秒数
+
+%c 输出所属的类目，通常就是所在类的全名
+
+%t 输出产生该日志事件的线程名
+
+%n 输出一个回车换行符，Windows平台为“rn”，Unix平台为“n”
+
+%d 输出日志时间点的日期或时间，默认格式为ISO8601，也可以在其后指定格式，比如：%d{yyyy MMM dd HH:mm:ss,SSS}，输出类似：2002年10月18日 22：10：28，921
+
+%l 输出日志事件的发生位置，包括类目名、发生的线程，以及在代码中的行数。
+
+3、在代码中使用Log4j
+
+我们在需要输出日志信息的类中做如下的三个工作：
+
+1、导入所有需的commongs-logging类：
+
+import org.apache.commons.logging.Log;
+
+import org.apache.commons.logging.LogFactory;
+
+2、在自己的类中定义一个org.apache.commons.logging.Log类的私有静态类成员：
+
+private final Log log = LogFactory.getLog(getClass());
+
+LogFactory.getLog()方法的参数使用的是当前类的class。
+
+3、使用org.apache.commons.logging.Log类的成员方法输出日志信息：
+
+if (log.isDebugEnabled())
+{
+log.debug("111");
+}
+if (log.isInfoEnabled())
+{
+log.info("222");
+}
+if (log.isWarnEnabled())
+{
+log.warn("333");
+}
+if (log.isErrorEnabled())
+{
+log.error("444");
+}
+if (log.isFatalEnabled())
+{
+log.fatal("555")
+}
+-----------------------------------------------
+og4j.rootLogger=info,RollingFile  
+  
+log4j.appender.RollingFile=org.apache.log4j.RollingFileAppender  
+log4j.appender.RollingFile.layout=org.apache.log4j.PatternLayout  
+log4j.appender.RollingFile.layout.ConversionPattern=[%d{yyyy-MM-dd HH:mm:ss}][%p] - %m%n  
+log4j.appender.RollingFile.File=/usr/userfile/logs/rtp.log  
+log4j.appender.RollingFile.MaxFileSize=5MB  
+log4j.appender.RollingFile.MaxBackupIndex=20  
+File 指定了日志输出到 /usr/userfile/logs/rtp.log，MaxFileSize 指定了当文件大小到达指定尺寸的时候产生新文件 rtp.log.1，MaxBackupIndex 指定了最大备份数。
+        就是说，rtp.log 最大为 5MB，超过这个大小，老的数据放进备份文件 rtp.log.1，rtp.log.1 超出 5MB，其老的数据放进 备份文件 rtp.log.2……依次类推，最多有 20 个备份文件，即 rtp.log.20 产生的老数据丢弃。
+        这样子，rtp.log 保存的永远是最新信息，rtp.log.1 保存的是旧一点的信息……rtp.log.20 保存的是最老的信息。
+
+
+二、Aspectj
+
+
+三、zookeeper
+你运行一个zookeeper也是可以的，但是在生产环境中，你最好部署3，5，7个节点。部署的越多，可靠性就越高，当然最好是部署奇数个，偶数个不是不可以的，但是zookeeper集群是以宕机个数过半才会让整个集群宕机的，所以奇数个集群更佳。你需要给每个zookeeper 1G左右的内存，如果可能的话，最好有独立的磁盘。 (独立磁盘可以确保zookeeper是高性能的。).如果你的集群负载很重，不要把Zookeeper和RegionServer运行在同一台机器上面。就像DataNodes 和 TaskTrackers一样。
+(宕机是台湾计算机术语，在大陆就叫当机，就是通常说的死机，之所以叫宕机，应该是从英文音译过来的，即英文：down，就直接叫宕机了。)
+
+
+四、单点登录
+String usessionid = null;
+// _const_cas_assertion_是CAS中存放登录用户名的session标志
+Object object = request.getSession().getAttribute(AbstractCasFilter.CONST_CAS_ASSERTION);
+if (object != null) {
+	Assertion assertion = (Assertion) object;
+	usessionid = assertion.getPrincipal().getName();
+}
+
+五、ContextLoaderListener作用详解
+ContextLoaderListener监听器的作用就是启动Web容器时，自动装配ApplicationContext的配置信息。因为它实现了ServletContextListener这个接口，在web.xml配置这个监听器，启动容器时，就会默认执行它实现的方法。
+
+六、DispatcherServlet
+<!-- rest servlet -->
+	<servlet>
+		<servlet-name>RestServlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>classpath:webmvc-config.xml</param-value>
+		</init-param>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>RestServlet</servlet-name>
+		<url-pattern>/*</url-pattern>
+	</servlet-mapping>
+
+=============================================
+<!-- front controller servlet -->
+	<servlet>
+		<servlet-name>DispatcherServlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>classpath:webmvc-config.xml</param-value>
+		</init-param>
+	</servlet>
+	<!-- servlet mapping -->
+	<servlet-mapping>
+		<servlet-name>DispatcherServlet</servlet-name>
+		<url-pattern>*.do</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>DispatcherServlet</servlet-name>
+		<url-pattern>*.html</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>DispatcherServlet</servlet-name>
+		<url-pattern>*.htm</url-pattern>
+	</servlet-mapping>
+
+
+</2014-12-3>
+
+<2014-12-4>
+一、就是空白区判断
+//判断目标是否在列表空白区域
+	jQuery.fn.isBlank = function(){
+		if(this.parent().andSelf().hasClass("ckboxTb")){
+			return false;
+		}
+		if(this.hasClass("notBlank")){
+			return false;
+		}
+		if(!this.hasClass("datalist")){
+			var tFlag = true;
+			this.parents().each(function(e1){
+				if($(this).hasClass("notBlank")){
+					tFlag = false;
+					return false;
+				}
+				if($(this).hasClass("datalist")){//跳出遍历
+					return false;
+				}
+			});
+			return tFlag;
+		}
+		return true;
+	}
+	var timeFn = null;
+	$(".xy_nd_list").children().dblclick(function(e){
+		//取消上次延时未执行的方法
+		clearTimeout(timeFn);
+		var $target = $(e.target);
+		if(!$target.isBlank()){
+			return;
+		}
+		var jObj;
+		if($target.hasClass("datalist")){
+			jObj = $target;
+		}else{
+			jObj = $target.parents(".datalist").first();
+		}
+		jObj.find(".enterClick").click();
+		return;
+	});
+	$(".xy_nd_list").children().click(function(e){
+		//取消上次延时未执行的方法
+		clearTimeout(timeFn);
+		timeFn = setTimeout(function(){
+			var $target = $(e.target);
+			if(!$target.isBlank()){
+				return;
+			}
+			var jObj;
+			if($target.hasClass("datalist")){
+				jObj = $target;
+			}else{
+				jObj = $target.parents(".datalist").first();
+			}
+			jObj.find("label[name='selectEd']").children("span:eq(0)").click();
+		},300);
+		return;
+	});
+-------------------
+andSelf():直译过来就是”还有我“,”还有自己”
+
+
+二、Javascript Math ceil()、floor()、round()三个函数的区别
+ceil()：将小数部分一律向整数部分进位。 
+如： 
+
+Math.ceil(12.2)//返回13 
+Math.ceil(12.7)//返回13 
+Math.ceil(12.0)// 返回12 
+
+floor()：一律舍去，仅保留整数。 
+如： 
+
+Math.floor(12.2)// 返回12 
+Math.floor(12.7)//返回12 
+Math.floor(12.0)//返回12 
+
+round()：进行四舍五入 
+如： 
+
+Math.round(12.2)// 返回12 
+Math.round(12.7)//返回13 
+Math.round(12.0)//返回12
+
+三、page分页
+@RequestMapping(value ="/paginationResList.html")
+	@ResponseBody
+	public Object paginationTestHtml(HttpServletRequest request,Pagination page,Model model,Product product) throws Exception{
+		
+		Integer totalCount = productService.getProdResCount(product.getProductCode());
+		Integer totalPage = 0;
+		if (totalCount == 0) {
+			totalPage = 0;
+		} else {
+			if (totalCount%page.getNumPerPage() == 0) {
+				totalPage = (totalCount / page.getNumPerPage());
+			} else {
+				totalPage = (totalCount / page.getNumPerPage()) + 1;
+			}
+		}
+		page.setTotalCount(totalCount);
+		page.setTotalPage(totalPage);
+		List<Map<String,Object>> resIdList = productService.selectProdRes(product.getProductCode(), page.getCurPage(), page.getNumPerPage());
+		List<com.whty.cms.api.resource.entity.Resource> resList = new ArrayList<com.whty.cms.api.resource.entity.Resource>();
+		if(null != resIdList){
+			for(Map<String,Object> map : resIdList){
+				com.whty.cms.api.resource.entity.Resource resMet = resourceService.getResMetaData(map.get("RES_ID").toString());
+				if(null != resMet){
+					resList.add(resMet);
+				}else{
+					com.whty.cms.api.resource.entity.Resource res = (com.whty.cms.api.resource.entity.Resource)resourceService.getResource(map.get("RES_ID").toString());
+					if(null != res){
+						resList.add(res);
+					}
+				}
+			}
+		}
+		
+		//BeanUtils.copyProperties(resDirList.getPage(), page);
+		JSONObject pageJson = JSONObject.fromObject(page);
+		pageJson.remove("pageGroup");
+		pageJson.put("pageGroup", getPageGroup(page));
+		//model.addAttribute("resList", JSONArray.fromObject(resList));
+		model.addAttribute("resList",resList);
+		model.addAttribute("page", pageJson);
+		return model;
+	}
+	
+	public List<Integer> getPageGroup(Pagination page) {
+		int mod = page.getCurPage()%5;
+		int basePage = -1;
+		if (mod != 0) {
+			basePage = (page.getCurPage()/5)*5;
+		} else {
+			basePage = (page.getCurPage()/5 - 1) * 5;
+		}
+		List<Integer> pageGroup = CollectionUtils.newArrayList();
+		int num = page.getTotalPage() - basePage;
+		num = num >=5 ? 5 : num;
+		for (int i = 1; i <= num; i++) {
+			pageGroup.add(basePage + i);
+		}
+		return pageGroup;
+	}
+-------------
+页面js:
+function pageView(curPage,productCode,collectionId){
+	$.ajax({
+		url : "paginationResList.htm",
+		type : "post",
+		sync : true,
+		dataType : "json",
+		data : {"curPage":curPage,"numPerPage":3,"productCode":productCode},
+		success : function(data) {
+			var str = "";
+			 $.each(data.resList, function(entryIndex,entry){
+				 var title = entry["title"];
+				 if(title.length > 50){
+					 title = title.substr(0,50);
+					 title += "...";
+				 }
+				 str += "<p>"
+				 str += "<span class='gs "+entry["fileExt"].toLocaleLowerCase()+"'></span>";
+				 str += "<span class='wdname'><a target='_blank' href='getOrgDetailInfo.htm?contentId="+entry["resId"]+"' title='"+entry["title"]+"'>"+title+"</a></span>";
+				 str += "<span class='lxnr'>"+((null !=entry["metadaName"] && "" != entry["metadaName"] && "undefined" != entry["metadaName"]) ? entry["metadaName"] : "")+"</span>";  
+				 str += "</p>";
+			  });
+			 var page = "";
+			 page += "<div class=\"turnPage t_c diblok\">";
+			 var totalPage = data.page["totalPage"];
+			 var curPage = data.page["curPage"];
+			 var pageGroup = data.page["pageGroup"];
+			 if(curPage > 5){
+				 page +="<a href=\"#\" onclick=preFivePage('"+curPage+"','"+productCode+"','"+collectionId+"')>上五页</a>";
+			 }
+			 $.each(pageGroup, function(i,val){  
+				 if(val == curPage){
+					 page += "<span class=\"on\">"+val+"</span>";
+				 }else{
+					 page +="<a href=\"javascript:void(0)\" onclick=pageView('"+val+"','"+productCode+"','"+collectionId+"')>"+val+"</a>";
+				 }
+			 });
+			 if(totalPage > ((curPage/5)*5 + 5)){
+				 page +="<a href=\"javascript:void(0)\" onclick=nextFivePage('"+curPage+"','"+productCode+"','"+collectionId+"')>下五页</a>";
+			 }
+			 page += "</div>"
+			 $("#resPacket_"+collectionId).html(str);
+			 $("#page_"+collectionId).html(page);
+		}
+	});
+}
+
+function nextFivePage(curPage,productCode,collectionId) {
+	var pageNum = Math.ceil(curPage/5) * 5 + 1;
+	pageView(pageNum,productCode,collectionId);
+}
+
+function preFivePage(curPage,productCode,collectionId) {
+	var pageNum = (Math.ceil(curPage/5) - 1) * 5;
+	pageView(pageNum,productCode,collectionId);
+}
+
+
+</2014-12-4>
+<2014-12-8>
+一、sudo
+可以说sudo命令补偿了它的一个致命缺陷，那就是任何一个想转为root用户的人都得掌握root用户的密码.
+功能：对于root授权的用户，可使用该命令临时切换到root用户环境下。
+          授权文件为 /etc/sudoers 文件，只要里面有你的大名，你就享有sudo特权。
+</2014-12-8>
+<2014-12-10>
+新浪oauth2.0
+OAuth是一种允许你的应用访问到腾讯微博，新浪微博开放平台上的用户数据，而且是在不需要取得用户个人密码的情况下。所以可以说OAuth 2.0是一个互联网标准协议（OAuth 2.0基于https）。
+
+OAuth（即Open Authorization，开放授权），它是为用户资源授权提供了一种安全简单的标准，也就是说用户在访问第三方web或应用的时候，第三方不会知道用户的信息（登录密码等）
+
+</2014-12-10>
+<2014-12-12>
+http://ip38.com/
+代理服务
+
+</2014-12-12>
+<2014-12-18>
+url+&debug=interface
+http://test.wuhaneduyun.cn/index.php?r=test/Statistics/debug
+</2014-12-18>
+<2014-12-23>
+一、session和cookies
+
+二、eval()
+它的功能是把对应的字符串解析成JS代码并运行
+比如说你现在要运行一个可变的方法
+
+function name1(){……}
+function name2(){……}
+var m="name1";
+eval(m+'()');//运行name1();
+m='name2';
+eval(m+'()');//运行name2();
+
+
+</2014-12-23>
+<2014-12-24>
+一、FileOutputStream
+public FileOutputStream(String name,
+                        boolean append)
+                 throws FileNotFoundException创建一个向具有指定 name 的文件中写入数据的输出文件流。如果第二个参数为 true，则将字节写入文件末尾处，而不是写入文件开始处。
+
+如上文档，new 的时候加一个true参数则是追加。默认为false。
+
+</2014-12-24>
+<2014-12-31>
+一、tomcat集群部署，一台消耗单个cpu
+
+二、error:function (XMLHttpRequest, textStatus, errorThrown) 
+error:function (XMLHttpRequest, textStatus, errorThrown) {
+   alert("请求对象XMLHttpRequest: "+XMLHttpRequest);
+alert("错误类型textStatus: "+textStatus);
+alert("异常对象errorThrown: "+errorThrown);
+}
+错误信息（第二个参数）除了得到 null 之外，还可能是 "timeout", "error", "notmodified" 和 "parsererror"。
+
+if(textStatus == null){alert('链接错误')}
+if(textStatus == 'timeout'){alert('链接超时')}
+...
+</2014-12-31>
+<2015-1-6>
+//处理字符串长度
+	jQuery.fn.limit=function(){   
+		    var self = $("dfn[limit]");   
+		    self.each(function(){   
+		        var objString = $(this).text();   
+		        var objLength = $(this).text().length;   
+		        var num = $(this).attr("limit");   
+		        if(objLength > num){   
+					$(this).attr("title",objString);   
+		            objString = $(this).text(objString.substring(0,num) + "...");   
+		        }   
+		    });   
+	};
+	-----------------
+	jQuery.fn.limit=function(){  
+    var self = $("[limit]");  
+    self.each(function(){  
+        var objString = $(this).text();  
+        var objLength = $(this).text().length;  
+        var num = $(this).attr("limit");  
+        if(objLength > num){  
+            $(this).attr("title",objString);  
+            objString = $(this).text(objString.substring(0,num) + "...");  
+        }  
+    })  
+}  
+$(function(){  
+    $("[limit]").limit();  
+})  
+</2015-1-6>
+<2015-1-7>
+一、mybatis 使用foreach时出现"The expression 'list' evaluated to a null value"问题
+错误的写法:
+
+ <update id="deleteCartByMultiGoodsId" parameterType="java.util.HashMap">
+  delete from ecs_cart where  user_id=#{userId}
+  and  goods_id in  
+   <foreach collection="list" item="goodsIdList" index="index" open="(" separator="," close=")">  
+       #{goodsIdList}  
+      </foreach> 
+</update>
+
+正确的写法:
+
+ <update id="deleteCartByMultiGoodsId" parameterType="java.util.HashMap">
+   delete from ecs_cart where  user_id=#{userId}
+    and  goods_id in  
+    <foreach collection="goodsIdList" item="goodsIdList" index="index" open="(" separator="," close=")">  
+         #{goodsIdList}  
+      </foreach> 
+</update>
+错误的原因在于:
+
+"你可以传递一个 List 实例或者数组作为参数对象传给 MyBatis。当你这么做的时 候,MyBatis 会自动将它包装在一个 Map 中,用名称在作为键。List 实例将会以“list” 作为键,而数组实例将会以“array”作为键。"
+
+二、js可以接收后台的输出流吗
+http是短连接正常来说服务器是不能向客户端主动发送数据，要实现类似的功能，需要用到长轮询就是先建立一个ajax请求，服务器不响应请求，等到服务器需要发送数据的时候再返回数据，并重新建立请求，html5有了socket接口可以实现和服务器的实时通讯，建议使用socket.io框架，当浏览器不支持socket时可以自动降级为长轮询或者flash 的socket
+
+
+</2015-1-7>
+<2015-1-13>
+一、window.location.replace("<%=WebApp.PATH%>/resTypeDetail.htm?resTypeId=" + $("#resTypeId").val());
+
+二、connect by prior start with语句
+
+ORACLE数据库的树型结构递归查询，如用在组织架构树型结构中取得某树节点的递归路径：
+
+
+--子取父
+select DID, GNAME  from S_Group    
+CONNECT BY PRIOR PID = DID 
+START WITH DID='5'
+Order By DID
+
+ 
+
+--父取子
+select DID, GNAME 
+from S_Group    
+CONNECT BY PRIOR DID = PID 
+START WITH DID='2' 
+Order By DID
+
+
+--由人员得到所在顶级部门的名字
+Select DID, GNAME From S_Group 
+Connect By Prior PID = DID 
+Start With DID=(Select S_User.PID From S_User Where S_User.DID='16')
+Order By DID 
+
+START WITH 定义数据行查询的初始起点；CONNECT BY prior 定义表中的各个行是如何联系的；connect by 后面的"prior" 如果缺省，则只能查询到符合条件的起始行，并不进行递归查询；条件2：col_1 = col_2，col_1是父键（它标识父），col_2是子键（它标识子）。条件3过滤递归前相应节点及其子节点，如果上级节点不满足则下级节点自动过滤掉；条件4过滤递归后相应的节点或子节点，如果上级节点不满足则下级结点自动提升一级。
+</2015-1-13>
+<2015-1-14>
+一、select into from和insert into select from两种表复制语句区别 
+select * into target_table from source_table;
+insert into target_table(column1,column2) select column1,5 from source_table; 
+ 
+以上两句都是将源表source_table的记录插入到目标表target_table，但两句又有区别。
+第一句（select into from）要求目标表target_table不存在，因为在插入时会自动创建。
+第二句（insert into select from）要求目标表target_table存在，由于目标表已经存在，所以我们除了插入源表source_table的字段外，还可以插入常量，如例中的：5。
+
+二、$(this).prop和attr()
+</2015-1-14>
+<2015-1-21>
+一、异步执行模式
+
+二、$(this).siblings().find("#pathTig_"+resId).text('请选择“版本”').show().delay(5000).hide(0);
+siblings()：同一级
+
+</2015-1-21>
+<2015-1-23>
+一、
+async. 默认是true，即为异步方式，$.Ajax执行后，会继续执行ajax后面的脚本，直到服务器端返回数据后，触发$.Ajax里的success方法，这时候执行的是两个线程。若要将其设置为false，则所有的请求均为同步请求，在没有返回值之前，同步请求将锁住浏览器，用户其它操作必须等待请求完成才可以执行。
+
+dataType:"json" ===>设置的是返回值类型
+</2015-1-23>
+
+<2015-1-29>
+一、No Proxy Ticket found for
+
+二、异步树
+/** 异步加载知识点*/
+function asyncLoadKnowledgePointTree(periodId,subjectId,parentId){
+	var requestParam = {
+		periodId: periodId,
+		subjectId:subjectId,
+		parentId:parentId
+	};
+	$.post("<%=WebApp.PATH%>/getKnowledgePointTree.do", requestParam, function(data) {
+		if (data.success) {
+			/* var textbook = data.textbook;
+			$(".w_column_box").find("#gradeId").val(textbook.gradeId);
+			$(".w_column_box").find("#volumeId").val(textbook.volumeId); */
+
+			var zNodes = new Array();
+			zNodes[0] = {id:'0', pId:'', name:'知识点', open:true, isParent:true }; 
+			if(data.knowledgePointList){
+				var knowledgePointList = data.knowledgePointList;
+	 			for (var i = 0; i < knowledgePointList.length; i++) {
+	 				var knowledgePoint = knowledgePointList[i];
+	 				zNodes[i+1] = {
+	 					id: knowledgePoint.knowledgePointId,
+	 					pId: knowledgePoint.parentId,
+	 					name: knowledgePoint.knowledgePointName,
+	 					sortNum: knowledgePoint.sortNum,
+	 					periodId: knowledgePoint.periodId,
+	 					subjectId: knowledgePoint.subjectId,
+	 					isParent:knowledgePoint.isParent
+	 				};
+	 			}
+			}
+			var setting = {
+					view: {
+						showLine: false,
+						showIcon: showIconForTree
+					},
+					async: {
+						enable: true, 
+						url: "<%=WebApp.PATH%>/getKnowledgePointTree.do", 
+						autoParam: ["id"], 
+						dataType:"json",
+						otherParam: {"periodId":periodId,"subjectId":subjectId}, 
+					    dataFilter: filter
+					},
+						
+					data: {
+						simpleData: {
+							enable: true,
+							idKey: "id",
+							pIdKey: "pId",
+							rootPId: "root"
+						}	
+					},
+					callback: {
+						onAsyncSuccess: onAsyncSuccess,
+						onClick: clickKnowledgePoint
+					}
+				};
+			$.fn.zTree.init($(".w_column_box").find("#treeDemo3"), setting, zNodes);
+		}
+	}, "json");
+}
+
+function filter(treeId, parentNode, childNodes) {
+	var jsonArr = childNodes.knowledgePointList;//获取后台传递的数据
+	var zNodes = new Array();
+	for (var i = 0; i < jsonArr.length; i++) {
+			var knowledgePoint = jsonArr[i];
+			zNodes[i] = {
+				id: knowledgePoint.knowledgePointId,
+				pId: knowledgePoint.parentId,
+				name: knowledgePoint.knowledgePointName,
+				isParent:knowledgePoint.isParent
+			};
+		}
+	return zNodes;
+}
+function onAsyncSuccess(event, treeId, treeNode, msg) {
+  	var zTree = $.fn.zTree.getZTreeObj("treeDemo3");
+	zTree.updateNode(treeNode);   //异步加载成功后刷新树节点
+}
+
+function showIconForTree(treeId, treeNode) {
+	return !treeNode.isParent;
+}
+
+function clickKnowledgePoint(event, treeId, treeNode) {
+	if('0' != treeNode.id){
+		var treeObj = $.fn.zTree.getZTreeObj("treeDemo3");
+		var nodes = treeObj.getSelectedNodes();
+		var ids = "";
+		for(var i =0; i < nodes.length; i++){
+			if('0' != nodes[i].id){
+				ids = ids + nodes[i].id + ",";
+			}
+		}
+		ids = ids.substring(0,ids.lastIndexOf(","));
+		$(".w_column_box").find("input[id='knowledgePointId']").val(ids);
+	}
+}
+</2015-1-29>
+<2015-1-30>
+一、nginx
+
+二、nexus
+
+
+三、数据库连接串jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.200.55)(PORT=1521))(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.200.56)(PORT=1521))(LOAD_BALANCE=yes)(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=edu)))
+
+四、GlusterFS
+
+</2015-1-30>
+<2015-2-3>
+一、网站
+http://jsfiddle.net/4mxsvch3/2/
+
+二、Uncaught InvalidStateError: Failed to read the 'selectionDirection' property from 'HTMLInputElement': The input element's type ('hidden') does not support selection.
+</2015-2-3>
+<2015-2-4>
+一、oracle之报错:ORA-00054: 资源正忙，要求指定 NOWAIT
+
+
+</2015-2-4>
+<2015-2-5>
+一、
+美国人把周日当成一周的开始周六当成周结束，而我们常常需要将周一当成一周的开始，周日当成一周结束。在SQL操作中可能会遇到这类计算，例如，统计上周一到上周日的订单数量。
+  计算方法如下：
+
+
+方法：
+  充分利用trunc函数和next_day函数：
+
+next_day(date,'day') ：给出日期date和星期x（周日 x=1 周一 x=2 周二 x=3 ...周六=7）之后计算下一个星期的日期。
+
+trunc 按照指定的精度进行舍入，注意这个函数是直接截断，和round函数有区别
+
+例子：
+select round(55.5),round(-55.4),trunc(55.5),trunc(-55.5) from dual;
+
+ROUND(55.5) ROUND(-55.4) TRUNC(55.5) TRUNC(-55.5)
+
+----------- ------------ ----------- ------------
+
+56          -55          55          -55
+
+
+
+计算方法：
+
+本周：
+
+周一：trunc(next_day(sysdate - 8, 1) + 1) 
+周二：trunc(next_day(sysdate - 8, 1) + 2) 
+周三：trunc(next_day(sysdate - 8, 1) + 3) 
+周四：trunc(next_day(sysdate - 8, 1) + 4) 
+周五：trunc(next_day(sysdate - 8, 1) + 5) 
+周六：trunc(next_day(sysdate - 8, 1) + 6) 
+周日：trunc(next_day(sysdate - 8, 1) + 7)
+
+可以看出，要计算某周周一的起始日期，那么就直接使用周一到周日中任何一天的日期date替换这里的sysdate即可计算出日期所在周一和周日。
+
+
+应用 ：
+ 统计上周成功订单总数：
+select count(*) from orders o where o.gmt_create>=trunc(next_day(sysdate - 8, 1)-6)
+ and o.gmt_create<trunc(next_day(sysdate - 8, 1)+1)
+ and o.status=5
+
+>
+补充：JAVA中得到本周一，本周日的方法如下：
+ 
+        Calendar c = Calendar.getInstance();
+        c.setFirstDayOfWeek(Calendar.MONDAY);// 指定周一为一周第一天
+        c.setTime(new Date());
+        c.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);// 本周周一的时间
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        Date monday = c.getTime();// 当前周一的日期
+very easy.关键就是要设置c.setFirstDayOfWeek(Calendar.MONDAY);
+
+
+bugfix: 之前求周一是trunc(next_day(sysdate - 7, 1) + 1)  这个方法无法避免周日这一天计算错误(周日临界问题)。因此修改为
+        trunc(next_day(sysdate - 8, 1) + 1) ，这样就可以按照中国人的习惯 周一~周日 都算 本周。
+
+二、Memcache
+Memcache用到了libevent这个库用于Socket的处理，所以还需要安装libevent.
+
+启动Memcache的服务器端：
+# /usr/local/bin/memcached -d -m 10 -u root -l 192.168.141.64 -p 12000 -c 256 -P /tmp/memcached.pid
+
+-d选项是启动一个守护进程，
+-m是分配给Memcache使用的内存数量，单位是MB，我这里是10MB，
+-u是运行Memcache的用户，我这里是root，
+-l是监听的服务器IP地址，如果有多个地址的话，我这里指定了服务器的IP地址192.168.0.200，
+-p是设置Memcache监听的端口，我这里设置了12000，最好是1024以上的端口，
+-c选项是最大运行的并发连接数，默认是1024，我这里设置了256，按照你服务器的负载量来设定，
+-P是设置保存Memcache的pid文件，我这里是保存在 /tmp/memcached.pid，
+
+把Memcached服务加载到Linux的启动项中.万一机器断电系统重启.那么Memcached就会自动启动了.
+
+假如启动Memcache的服务器端的命令为：
+# /usr/local/bin/memcached -d -m 10 -u root -l 192.168.141.64 -p 12000 -c 256 -P /tmp/memcached.pid容来自17jquery
+
+想开机自动启动的话，只需在/etc/rc.d/rc.local中加入一行，下面命令
+/usr/local/memcached/bin/memcached -d -m 10 -p 12000 -u apache -c 256 
+上面有些东西可以参考一下：即，ip不指定时，默认是本机，用户:最好选择是：apache 或 deamon
+这样，也就是属于哪个用户的服务，由哪个用户启动。
+</2015-2-5>
+<2015-2-12>
+一、SQL中 decode()函数简介
+decode(条件,值1,翻译值1,值2,翻译值2,...值n,翻译值n,缺省值)的理解如下：
+
+if （条件==值1）
+
+ then　　　　
+
+return(翻译值1)
+
+elsif （条件==值2）
+
+then　　　　
+
+return(翻译值2)　　　　
+
+......
+
+elsif （条件==值n）
+
+ then　　　　
+
+return(翻译值n)
+
+else　　　　
+
+return(缺省值)
+
+end if
+
+</2015-2-12>
+<2015-2-25>
+一、通过Linux Shell写个脚本来执行jar文件
+
+二、ORM技术
+ORM 是Object-Relation-Mapping，即对象关系影射技术，是对象持久化的核心。ORM是对JDBC的封装，从而解决了JDBC的各种存在问题：
+
+a) 繁琐的代码问题
+
+用JDBC的API编程访问数据库，代码量较大，特别是访问字段较多的表的时候，代码显得繁琐、累赘，容易出错。例如：PreparedStatement pstmt=con.prepareStatment("insert into account value(?,?,?,?,?,?,?,?,?)");
+
+ORM则建立了Java对象与数据库对象之间的影射关系，程序员不需要编写复杂的SQL语句，直接操作Java对象即可，从而大大降低了代码量，也使程序员更加专注于业务逻辑的实现。
+
+b) 数据库对象连接问题
+
+关系数据对象之间，存在各种关系，包括1对1、1对多、多对1、多对多、级联等。在数据库对象更新的时候，采用JDBC编程，必须十分小心处理这些关系，以保证维持这些关系不会出现错误，而这个过程是一个很费时费力的过程。
+
+ORM建立Java对象与数据库对象关系影射的同时，也自动根据数据库对象之间的关系创建Java对象的关系，并且提供了维持这些关系完整、有效的机制。
+
+c) 系统架构问题
+
+JDBC属于数据访问层，但是使用JDBC编程时，必须知道后台是用什么数据库、有哪些表、各个表有有哪些字段、各个字段的类型是什么、表与表之间什么关系、创建了什么索引等等与后台数据库相关的详细信息。
+
+使用ORM技术，可以将数据库层完全隐蔽，呈献给程序员的只有Java的对象，程序员只需要根据业务逻辑的需要调用Java对象的Getter和 Setter方法，即可实现对后台数据库的操作，程序员不必知道后台采用什么数据库、有哪些表、有什么字段、表与表之间有什么关系。
+
+d) 性能问题
+
+采用JDBC编程，在很多时候存在效率低下的问题。
+
+pstmt =conn.prepareStatement("insert into user_info values(?,?)");
+       for (int i=0; i<1000; i++) {
+          pstmt.setInt(1,i);
+          pstmt.setString(2,"User"+i.toString());
+          pstmt.executeUpdate();
+       }
+
+>
+以上程序将向后台数据库发送1000次SQL语句执行请求，运行效率较低。
+
+采用ORM技术，ORM框架将根据具体数据库操作需要，会自动延迟向后台数据库发送SQL请求，ORM也可以根据实际情况，将数据库访问操作合成，尽量减少不必要的数据库操作请求。
+
+JPA是目前比较流行的一种ORM技术之一.
+
+</2015-2-25>
+<2015-2-26>
+一、return
+JAVASCRIPT在事件中调用函数时用return返回值实际上是对window.event.returnvalue进行设置。
+
+而该值决定了当前操作是否继续。
+当返回的是true时，将继续操作。
+当返回是false时，将中断操作。
+
+而直接执行时（不用return）。将不会对window.event.returnvalue进行设置
+所以会默认地继续执行操作
+
+详细说明如下：
+例如：
+当在 <a href="abc.htm" onclick="return add_onclick()">Open</a> 中
+如果函数 add_onclick() 返回 true, 那么 页面就会打开 abc.htm
+否则, (返回 false), 那么页面不会跳转到 abc.htm, 只会执行你的 add_onclick() 函数里的内容. (add_onclick函数中控制页面转到 abc.htm除外
+
+)
+而 <a href="abc.htm" onclick="add_onclick()">Open</a>
+不管 add_onclick() 返回什么值, 都会在执行完 add_onclick 后打开页面 abc.htm
+
+二、很牛的js弹出层-artDialog4.1.2（http://jsczxy2.iteye.com/blog/1265729）
+
+三、Software caused connection abort: recv failed 
+简单记录一下：
+出现这个异常是因为客户端网络连接断了，查了相关资料，简单总结一下，
+在服务端/客户端单方面关闭连接的情况下,另一方依然以为
+tcp连接仍然建立,试图读取对方的响应数据,导致出现
+Software caused connection abort: recv failed的异常.
+
+因此在receive数据之前,要先判断连接状态.
+通过inputstream的available()方法来判断,是否有响应结果.
+如果available()的返回值为0,说明没有响应数据,可能是对方已经断开连接,
+如果available()的返回值大于0,说明有响应数据.
+另外值得注意的是available()返回的值是非堵塞的,可以被多个线程访问
+原代码：
+            URL localurl = new URL(url) ;
+            URLConnection uc = localurl.openConnection() ;
+            uc.setRequestProperty("User-Agent","Mozilla/3.5.7 (compatible; MSIE 5.0; Windows NT; DigExt)");
+            uc.connect() ;
+            InputStream localObject1 = localurl.openStream();
+            System.out.println(localObject1.available()) ;
+            byte[] localObject2 = new byte[131072];
+            StringBuffer localStringBuffer = new StringBuffer() ;
+            int j = 0 ;
+            while ((j = (localObject1).read(localObject2)) > 0){
+                localStringBuffer.append(new String(localObject2, 0, j, encoder));
+            }
+            localObject1.close() ;
+修改后代码：
+            URL localurl = new URL(url) ;
+            URLConnection uc = localurl.openConnection() ;
+            uc.setRequestProperty("User-Agent","Mozilla/3.5.7 (compatible; MSIE 5.0; Windows NT; DigExt)");
+            uc.connect() ;
+            InputStream localObject1 = localurl.openStream();
+            System.out.println(localObject1.available()) ;
+            byte[] localObject2 = new byte[131072];
+            StringBuffer localStringBuffer = new StringBuffer() ;
+            int j = 0 ;
+            while(true){
+                if(localObject1 .available()>0){
+                    if((y=localObject1.read(localObject2))>0){
+                        sb.append(new String(localObject2,0,y,encode)) ;
+                    } else{
+                        break ;
+                    }
+                }else if(in.available()==0){
+                    System.out.println("与服务器的链接已中断") ;
+                    break ;
+                }
+             }
+            localObject1.close() ;
+</2015-2-26>
+<2015-2-28>
+一、Oracle  外连接
+（1）左外连接 (左边的表不加限制)
+       （2）右外连接(右边的表不加限制)
+       （3）全外连接(左右两表都不加限制)
+ 
+     外连接(Outer Join)
+outer join则会返回每个满足第一个（顶端）输入与第二个（底端）输入的联接的行。它还返回任何在第二个输入中没有匹配行的第一个输入中的行。外连接分为三种： 左外连接，右外连接，全外连接。 对应SQL：LEFT/RIGHT/FULL OUTER JOIN。 通常我们省略outer 这个关键字。 写成：LEFT/RIGHT/FULL JOIN。
+ 
+在左外连接和右外连接时都会以一张表为基表，该表的内容会全部显示，然后加上两张表匹配的内容。 如果基表的数据在另一张表没有记录。 那么在相关联的结果集行中列显示为空值（NULL）。
+ 
+对于外连接， 也可以使用“(+) ”来表示。 关于使用（+）的一些注意事项：
+       1.（+）操作符只能出现在where子句中，并且不能与outer join语法同时使用。
+       2. 当使用（+）操作符执行外连接时，如果在where子句中包含有多个条件，则必须在所有条件中都包含（+）操作符
+       3.（+）操作符只适用于列，而不能用在表达式上。
+       4.（+）操作符不能与or和in操作符一起使用。
+       5.（+）操作符只能用于实现左外连接和右外连接，而不能用于实现完全外连接。
+ 
+
+在做实验之前，我们先将dave表和bl里加一些不同的数据。 以方便测试。
+SQL> select * from bl;
+        ID NAME
+---------- ----------
+         1 dave
+         2 bl
+         3 big bird
+         4 exc
+         9 怀宁
+SQL> select * from dave;
+        ID NAME
+---------- ----------
+         8 安庆
+         1 dave
+         2 bl
+         1 bl
+         2 dave
+         3 dba
+         4 sf-express
+         5 dmm
+2.1 左外连接（Left outer join/ left join）
+     left join是以左表的记录为基础的,示例中Dave可以看成左表,BL可以看成右表,它的结果集是Dave表中的数据，在加上Dave表和BL表匹配的数据。换句话说,左表(Dave)的记录将会全部表示出来,而右表(BL)只会显示符合搜索条件的记录。BL表记录不足的地方均为NULL.
+ 
+示例：
+SQL> select * from dave a left join bl b on a.id = b.id;
+ 
+       ID NAME               ID NAME
+--------- ---------- ---------- ----------
+        1 bl                  1 dave
+        1 dave                1 dave
+        2 dave                2 bl
+        2 bl                  2 bl
+        3 dba                 3 big bird
+        4 sf-express          4 exc
+        5 dmm                             -- 此处B表为null，因为没有匹配到
+        8 安庆                             -- 此处B表为null，因为没有匹配到
+SQL> select * from dave a left outer join bl b on a.id = b.id;
+ 
+        ID NAME               ID NAME
+---------- ---------- ---------- ----------
+         1 bl                  1 dave
+         1 dave                1 dave
+         2 dave                2 bl
+         2 bl                  2 bl
+         3 dba                 3 big bird
+         4 sf-express          4 exc
+         5 dmm
+         8 安庆
+ 
+用（+）来实现， 这个+号可以这样来理解： + 表示补充，即哪个表有加号，这个表就是匹配表。所以加号写在右表，左表就是全部显示，故是左连接。
+ 
+SQL> Select * from dave a,bl b where a.id=b.id(+);    -- 注意： 用（+） 就要用关键字where
+ 
+        ID NAME               ID NAME
+---------- ---------- ---------- ----------
+         1 bl                  1 dave
+         1 dave                1 dave
+         2 dave                2 bl
+         2 bl                  2 bl
+         3 dba                 3 big bird
+         4 sf-express          4 exc
+         5 dmm
+         8 安庆
+    
+2.2 右外连接（right outer join/ right join）
+和left join的结果刚好相反,是以右表(BL)为基础的, 显示BL表的所以记录，在加上Dave和BL 匹配的结果。 Dave表不足的地方用NULL填充.
+ 
+示例：
+SQL> select * from dave a right join bl b on a.id = b.id;
+ 
+        ID NAME               ID NAME
+---------- ---------- ---------- ----------
+         1 dave                1 dave
+         2 bl                  2 bl
+         1 bl                  1 dave
+         2 dave                2 bl
+         3 dba                 3 big bird
+         4 sf-express          4 exc
+                               9 怀宁    --此处左表不足用Null 填充
+已选择7行。
+SQL> select * from dave a right outer join bl b on a.id = b.id;
+        ID NAME               ID NAME
+---------- ---------- ---------- ----------
+         1 dave                1 dave
+         2 bl                  2 bl
+         1 bl                  1 dave
+         2 dave                2 bl
+         3 dba                 3 big bird
+         4 sf-express          4 exc
+                               9 怀宁  --此处左表不足用Null 填充
+已选择7行。
+ 
+ 
+用（+）来实现， 这个+号可以这样来理解： + 表示补充，即哪个表有加号，这个表就是匹配表。所以加号写在左表，右表就是全部显示，故是右连接。
+ 
+SQL> Select * from dave a,bl b where a.id(+)=b.id;
+ 
+        ID NAME               ID NAME
+---------- ---------- ---------- ----------
+         1 dave                1 dave
+         2 bl                  2 bl
+         1 bl                  1 dave
+         2 dave                2 bl
+         3 dba                 3 big bird
+         4 sf-express          4 exc
+                               9 怀宁
+ 
+2.3 全外连接（full outer join/ full join）
+     左表和右表都不做限制，所有的记录都显示，两表不足的地方用null 填充。 全外连接不支持（+）这种写法。
+ 
+示例：
+ 
+SQL> select * from dave a full join bl b on a.id = b.id;
+        ID NAME               ID NAME
+---------- ---------- ---------- ----------
+         8 安庆
+         1 dave                1 dave
+         2 bl                  2 bl
+         1 bl                  1 dave
+         2 dave                2 bl
+         3 dba                 3 big bird
+         4 sf-express          4 exc
+         5 dmm
+                               9 怀宁
+ 
+已选择9行。
+ 
+SQL> select * from dave a full outer join bl b on a.id = b.id;
+        ID NAME               ID NAME
+---------- ---------- ---------- ----------
+         8 安庆
+         1 dave                1 dave
+         2 bl                  2 bl
+         1 bl                  1 dave
+         2 dave                2 bl
+         3 dba                 3 big bird
+         4 sf-express          4 exc
+         5 dmm      
+
+
+</2015-2-28>
+<2015-3-2>
+一、update
+public void updateResToptenzJob(String toptenzId, String toptenzStatus)
+			throws Exception {
+		String updateSql = "update T_RES_TOPTENZ_JOB set TOPTENZ_STATUS=?, UPDATE_TIME=? where TOPTENZ_ID=?";
+		int updateResult = jdbcTemplate.update(updateSql, new Object[]{toptenzStatus, new Date(), toptenzId},
+				new int[]{java.sql.Types.CHAR, java.sql.Types.TIMESTAMP, java.sql.Types.VARCHAR});
+		LOGGER.info("更新成功！->updateResult=" + updateResult + ",toptenzId=" + toptenzId + ",toptenzStatus=" + toptenzStatus);
+	}
+
+二、JAVA代码启动浏览器
+WINDOW的 
+Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url); 
+
+
+COPY至CSDN 
+//详细 
+String osName = System.getProperty("os.name"); 
+        try 
+        { 
+            if (osName.startsWith("Mac OS")) 
+            { 
+                //doc 
+                Class fileMgr = Class.forName("com.apple.eio.FileManager"); 
+                Method openURL = fileMgr.getDeclaredMethod("openURL", new Class[] {String.class}); 
+                openURL.invoke(null, new Object[] {url}); 
+            } 
+            else if (osName.startsWith("Windows")) 
+            { 
+                //Windows 
+                Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url); 
+            } 
+            else 
+            { 
+                //assume Unix or Linux 
+                String[] browsers = {"firefox", "opera", "konqueror", "epiphany", "mozilla", "netscape"}; 
+                String browser = null; 
+                for (int count = 0; count < browsers.length && browser == null; count++) 
+                { 
+                    if (Runtime.getRuntime().exec(new String[] {"which", browsers[count]}).waitFor() == 0) 
+                    { 
+                        browser = browsers[count]; 
+                    } 
+                } 
+                if (browser != null) 
+                { 
+                    Runtime.getRuntime().exec(new String[] {browser, url}); 
+                } 
+            } 
+        } 
+        catch (Exception ex) 
+        { 
+            //ExpWork.doExp(ex); 
+        }
+
+三、filter,interceptor, 他们之间有什么区别
+1、拦截器是基于java反射机制的，而过滤器是基于函数回调的。 
+2、过滤器依赖与servlet容器，而拦截器不依赖与servlet容器。 
+3、拦截器只能对Action请求起作用，而过滤器则可以对几乎所有请求起作用。 
+4、拦截器可以访问Action上下文、值栈里的对象，而过滤器不能。 
+5、在Action的生命周期中，拦截器可以多次调用，而过滤器只能在容器初始化时被调用一次。
+
+过滤器是在java web中，你传入的request,response提前过滤掉一些信息，或者提前设置一些参数，然后再传入servlet或者struts的 action进行业务逻辑，
+比如过滤掉非法url（不是login.do的地址请求，如果用户没有登陆都过滤掉）,
+或者在传入servlet或者 struts的action前统一设置字符集，
+或者去除掉一些非法字符（聊天室经常用到的，一些骂人的话）。。。
+
+拦截器 可通过的是符合条件的action。 拦截器本身是一个普通的Java对象，它能动态拦截Action调用，
+Action执行前后执行拦截器本身提供的各种个样的Web项目需求。也可以阻止Action的执行，同时也可以提取
+Action中可以复用的部分。
+前段时间参与一个项目，过滤器用的是Interceptor 觉得比以前用的Filter好用很多，现在拿出来比较一下
+Filter
+    该过滤器的方法是创建一个类XXXFilter实现此接口，并在该类中的doFilter方法中声明过滤规则，然后在配置文件web.xml中声明他所过滤的路径
+    <filter>
+        <filter-name>XXXFilter</filter-name>
+        <filter-class>
+            com.web.util.XXXFilter
+        </filter-class>
+    </filter>
+    
+    <filter-mapping>
+        <filter-name>XXXFilter</filter-name>
+        <url-pattern>*.action</url-pattern>
+    </filter-mapping>
+Interceptor 
+     该过滤器的方法也是创建一个类XXXInterceptor实现此接口,在该类中intercept方法写过滤规则，不过它过滤路径的方法和Filter不同，它与strut.xml结合使用，
+   创建一个strus.xml的子配置文件struts-l99-default.xml，它继承与struts2的struts-default，此配置文件是其他子配置文件的父类，只要是继承与该文件的配置文件所声明的路径都会被它过滤 如下
+ <package name="XXX-default" namespace="/" extends="struts-default">
+        <interceptors>
+            <interceptor name="authentication" class="com.util.XXXInterceptor" />
+            
+            <interceptor-stack name="user">
+                <interceptor-ref name="defaultStack" />
+                <interceptor-ref name="authentication" />
+            </interceptor-stack>
+            <interceptor-stack name="user-submit">
+                <interceptor-ref name="user" />
+                <interceptor-ref name="token" />
+            </interceptor-stack>
+            <interceptor-stack name="guest">
+                <interceptor-ref name="defaultStack" />
+            </interceptor-stack>
+            <interceptor-stack name="guest-submit">
+                <interceptor-ref name="defaultStack" />
+                <interceptor-ref name="token" />
+            </interceptor-stack>
+        </interceptors>
+        <default-interceptor-ref name="user" />
+   </package>
+ 比较一,filter基于回调函数，我们需要实现的filter接口中doFilter方法就是回调函数，而interceptor则基于java本身的反射机制,这是两者最本质的区别。
+ 比较二,filter是依赖于servlet容器的，即只能在servlet容器中执行，很显然没有servlet容器就无法来回调doFilter方法。而interceptor与servlet容器无关。
+ 比较三，Filter的过滤范围比Interceptor大,Filter除了过滤请求外通过通配符可以保护页面，图片，文件等等，而Interceptor只能过滤请求。
+ 比较四，Filter的过滤例外一般是在加载的时候在init方法声明,而Interceptor可以通过在xml声明是guest请求还是user请求来辨别是否过滤。
+        </filter-class>
+    </filter>
+    
+    <filter-mapping>
+        <filter-name>XXXFilter</filter-name>
+        <url-pattern>*.action</url-pattern>
+    </filter-mapping>
+Interceptor 
+     该过滤器的方法也是创建一个类XXXInterceptor实现此接口,在该类中intercept方法写过滤规则，不过它过滤路径的方法和Filter不同，它与strut.xml结合使用，
+   创建一个strus.xml的子配置文件struts-l99-default.xml，它继承与struts2的struts-default，此配置文件是其他子配置文件的父类，只要是继承与该文件的配置文件所声明的路径都会被它过滤 如下
+ <package name="XXX-default" namespace="/" extends="struts-default">
+        <interceptors>
+            <interceptor name="authentication" class="com.util.XXXInterceptor" />
+            
+            <interceptor-stack name="user">
+                <interceptor-ref name="defaultStack" />
+                <interceptor-ref name="authentication" />
+            </interceptor-stack>
+            <interceptor-stack name="user-submit">
+                <interceptor-ref name="user" />
+                <interceptor-ref name="token" />
+            </interceptor-stack>
+            <interceptor-stack name="guest">
+                <interceptor-ref name="defaultStack" />
+            </interceptor-stack>
+            <interceptor-stack name="guest-submit">
+                <interceptor-ref name="defaultStack" />
+                <interceptor-ref name="token" />
+            </interceptor-stack>
+        </interceptors>
+        <default-interceptor-ref name="user" />
+   </package>
+ 比较一,filter基于回调函数，我们需要实现的filter接口中doFilter方法就是回调函数，而interceptor则基于java本身的反射机制,这是两者最本质的区别。
+ 比较二,filter是依赖于servlet容器的，即只能在servlet容器中执行，很显然没有servlet容器就无法来回调doFilter方法。而interceptor与servlet容器无关。
+ 比较三，Filter的过滤范围比Interceptor大,Filter除了过滤请求外通过通配符可以保护页面，图片，文件等等，而Interceptor只能过滤请求。
+ 比较四，Filter的过滤例外一般是在加载的时候在init方法声明,而Interceptor可以通过在xml声明是guest请求还是user请求来辨别是否过滤。
+
+四、1个主库配置多个备库的问题 
+
+</2015-3-2>
+<2015-3-5>
+一、熟悉分布式系统的设计和应用，熟悉分布式、缓存、消息、负载均衡等机制和实现
+
+
+
+</2015-3-5>
+
+<2015-3-6>
+一、web客户端 http error 413
+nginx作为服务器，web客户端做上传的时候报错
+
+Http Error 413
+
+解决办法：
+
+编辑nginx.conf，添加最大上传参数 client_max_body_size.
+
+server {        
+    client_max_body_size 20M; # 添加最大上传参数       
+    listen       80;        
+    server_name  localhost;
+    ******
+ }
+
+
+</2015-3-6>

@@ -1,0 +1,1423 @@
+<2015-8-10>
+一、ContextLoaderListener
+ContextLoaderListener初始化的上下文加载的Bean是对于整个应用程序共享的，不管是使用什么表现层技术，一般如DAO层、Service层Bean；
+DispatcherServlet初始化的上下文加载的Bean是只对Spring Web MVC有效的Bean，如Controller、HandlerMapping、HandlerAdapter等等，该初始化上下文应该只加载Web相关组件。
+</2015-8-10>
+<2015-8-11>
+一、du -sh *
+df -h
+
+</2015-8-11>
+<2015-8-12>
+一、mysql设置远程访问权限 
+1、改表法。可能是你的帐号不允许从远程登陆，只能在localhost。这个时候只要在localhost的那台电脑，登入mysql后，更改 "mysql" 数据库里的 "user" 表里的 "host" 项，从"localhost"改称"%"
+　　mysql -u root -pvmwaremysql>use mysql;
+　　mysql>update user set host = '%' where user = 'root';
+　　mysql>select host, user from user;
+　　2、授权法。例如，你想myuser使用mypassword从任何主机连接到mysql服务器的话。
+　　GRANT ALL PRIVILEGES ON *.* TO 'myuser'@'%'IDENTIFIED BY 'mypassword' WI
+　　TH GRANT OPTION;
+　　如果你想允许用户myuser从ip为192.168.1.6的主机连接到mysql服务器，并使用mypassword作为密码
+　　GRANT ALL PRIVILEGES ON *.* TO 'myuser'@'192.168.1.3'IDENTIFIED BY
+　　'mypassword' WITH GRANT OPTION;
+　　我用的第一个方法,刚开始发现不行,在网上查了一下,少执行一个语句 mysql>FLUSH RIVILEGES
+　　使修改生效，就可以了
+　　另外一种方法：
+　　在安装mysql的机器上运行：
+　　1、d:\mysql\bin\>mysql -h localhost -u root
+　　//这样应该可以进入MySQL服务器
+　　2、mysql>GRANT ALL PRIVILEGES ON *.* TO 'root'@'%'WITH GRANT OPTION
+　　//赋予任何主机访问数据的权限
+　　3、mysql>FLUSH PRIVILEGES
+　　//修改生效
+　　4、mysql>EXIT
+　　//退出MySQL服务器
+　　这样就可以在其它任何的主机上以root身份登录啦。
+
+二、bat脚本删除d盘test下后缀名为.txt的文件
+创建文本 复制以下内容
+del /a /f /q d:\test\*.txt
+这样就行了,不会删除文件夹
+用rd /s /q d:\test 可以删除文件夹及子文件夹
+解释：
+DEL为删除命令
+/a /f 是强制删除所有属性的文件
+/q是无需确认直接删除
+*为通配符
+要是再加上/s开关，就可以删除子文件加中的文件
+
+三、mysql定时任务简单例子
+如果要每30秒执行以下语句：
+update userinfo set endtime = now() WHERE id = '110';  
+可以给mysql建个定时任务，具体方法如下：
+delimiter //   /* 设定语句终结符为 //，因存储过程语句用;结束 */  
+
+1、查看event是否开启
+show variables like '%sche%';  
+开启event_scheduler
+set global event_scheduler =1;  
+
+2、创建存储过程test
+CREATE PROCEDURE test ()  
+BEGIN  
+update userinfo set endtime = now() where id = '110';  
+END;  
+
+3、创建event e_test
+[sql] view plaincopy
+create event if not exists e_test  
+on schedule every 30 second  
+on completion preserve  
+do call test();  
+每隔30秒将执行存储过程test
+关闭事件任务
+alter event e_test ON COMPLETION PRESERVE DISABLE;  
+开户事件任务
+alter event e_test ON COMPLETION PRESERVE ENABL
+
+四、检查Linux服务器
+ping 192.168.50.133
+telnet 192.168.50.133:10020
+
+
+
+
+</2015-8-12>
+<2015-8-13>
+一、windows定时任务
+在win“开始”--“程序”--“附件”--“系统工具”--“计划任务”添任务：
+任务命令：c:/cjy/bat1.bat内容如下：
+
+二、window命令删除子文件
+rd /s /q C:\a&md /s /q C:\a
+不新建法：
+for /r c:\a %%i in (.) do if /i "%%i"=="c:\a\." (del/s/q/a "%%i") else rd/s/q "%%i"
+for 的 /r 参数加 c:\a 就是列举 c:\a 目录下所有目录；
+它会列举目录本身 c:\a\. 和其他子目录；
+接下来用 if 判断，如果列举的是本身就（用 del）删除目录下所有文件，如果不是就（用 rd）删除子目录。
+有只读属性的文件全部“活着”，比如.txt ；dps；等。
+直接给del 加个/f 参数，就行了
+for /r c:\a %%i in (.) do if /i "%%i"=="c:\a\." (del/s/q/a/f "%%i") else rd/s/q "%%i"
+
+
+三、windows定时任务
+在win“开始”--“程序”--“附件”--“系统工具”--“计划任务”添任务：
+任务命令：c:/cjy/bat1.bat内容如下：
+
+
+四、如果你是maven项目，tomcat在发布项目的时候没有同时发布maven依赖所添加的jar包，
+你需要设置一下eclipse：
+项目 —> 属性 -> Deployment Assembly -> Add -> Java Build Path Entries -> 选择Maven Dependencies -> Finish -> OK
+把对应的Maven依赖包也发布到tomcat，调试时会自动把那些jar发布到指定目录下，tomcat也能找到那些jar了。
+
+
+</2015-8-13>
+<2015-8-17>
+一、mount命令
+
+二、html5人脸识别
+
+
+</2015-8-17>
+<2015-8-18>
+一、数据库关键字问题
+错误：select e.comment from T_ANSWER e;
+可行：select e.* from T_ANSWER e;
+
+</2015-8-18>
+<2015-8-25>
+一、Http断点下载实简单讲解 
+Http文件下载的普通模式就不多说了，断点下载与普通模式不一样的是，断点下载的头信息里面增加了一个属性
+RANGE: bytes=100000-
+这里RANGE代表客户端要从那个位置开始下载
+
+而服务器返回时和普通模式不同的是：
+1：多了一个属性
+Content-Range=bytes 100000-19999/20000
+注意还有一些属性要设置，和普通模式一样，例如Content-Length属性
+2：返回码为206
+
+然后我们来看一段实际应用中的断点下载代码，注意这里我使用的是SpringMVC模式开发的：
+
+Java代码  
+@SuppressWarnings({ "unchecked" })
+@RequestMapping(value = "/downOdex.do")
+public ResponseEntity<String> downFile(
+		@RequestParam(value="odexName")String odexName,
+		HttpServletResponse response,
+		HttpServletRequest request){
+	InputStream inputStream = null;
+	ServletOutputStream out = null;
+    try {
+        File file = new File(OdexManage.odexFileBasePath + "\\" + odexName);
+        int fSize = Integer.parseInt(String.valueOf(file.length()));  
+        response.setCharacterEncoding("utf-8");
+        response.setContentType("application/x-download");  
+        response.setHeader("Accept-Ranges", "bytes");  
+        response.setHeader("Content-Length", String.valueOf(fSize));  
+        response.setHeader("Content-Disposition", "attachment;fileName=" + odexName);
+        inputStream=new FileInputStream(OdexManage.odexFileBasePath + "\\" + odexName);
+        long pos = 0;  
+        if (null != request.getHeader("Range")) {
+            // 断点续传
+            response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);  
+            try {  
+                pos = Long.parseLong(request.getHeader("Range").replaceAll("bytes=", "").replaceAll("-", ""));  
+            } catch (NumberFormatException e) {
+                pos = 0;  
+            }  
+        }  
+        out = response.getOutputStream();  
+        String contentRange = new StringBuffer("bytes ").append(pos+"").append("-").append((fSize - 1)+"").append("/").append(fSize+"").toString();
+        response.setHeader("Content-Range", contentRange);  
+        inputStream.skip(pos);  
+        byte[] buffer = new byte[1024*10];
+        int length = 0;  
+        while ((length = inputStream.read(buffer, 0, buffer.length)) != -1) {  
+            out.write(buffer, 0, length);
+	    Thread.sleep(100);
+        }
+    } catch (Exception e) {
+		logger.error("ODEX软件下载异常："+e);
+	}finally{
+         try {
+        	 if(null != out) out.flush();
+        	 if(null != out) out.close();
+        	 if(null != inputStream) inputStream.close(); 
+		} catch (IOException e) {
+		}
+	}
+    return new ResponseEntity(null,HttpStatus.OK);
+} 
+其重点在于HTTP协议里面属性有一些不同的地方，还有就是InputStream跳过不需要读的文件，和注意关闭流。
+通过核心代码也可以看到，其实这和是不是SpringMVC没多大关系，所以你可以很容易的应用到你的项目中。
+
+
+
+</2015-8-25>
+<2015-8-28>
+Spring 配置多数据源实现数据库读写分离
+
+</2015-8-28>
+<2015-8-31>
+一、org.springframework.jdbc.core.JdbcTemplate
+JdbcTemplate将我们使用的JDBC的流程封装起来，包括了异常的捕捉、SQL的执行、查询结果的转换等等。spring大量使用Template Method模式来封装固定流程的动作，XXXTemplate等类别都是基于这种方式的实现。
+
+传统的JDBC API实现比较底层，不管用户执行一个复杂的数据库操作还是一个简单的数据库查询操作，都有一个模板可以使用：捕获或抛出异常—获取连接—创建Statement或PreparedStatement—执行数据库操作—获取结果(ResultSet)—其他操作—处理异常—关闭ResultSet—关闭Statement或PreparedStatement—关闭连接。这样的重复操作会让人比较有结构感的同时也消耗了大量的时间。既然所有的数据库操作都可以引用这一模板。那Spring就对JDBC API进行了一层"薄"封装，让程序员脱离繁琐的结构而只编写各个数据库操作程序中的核心部分：CRUD。通过在配置文件中配置数据源来获取连接。这样就减少了那些在传统JDBC编程中的重复编程，让这部分重复交由Spring JDBC容器来处理。
+
+</2015-8-31>
+<2015-9-2>
+一、Oracle 怎么查看表大小
+每张表都是作为“段”来存储的，可以通过user_segments视图查看其相应信息。
+段（segments）的定义：如果创建一个堆组织表，则该表就是一个段。
+sql：SELECT segment_name AS TABLENAME,BYTES/1024/1024 FROM user_segments WHERE segment_name='表名'。
+解释：
+segment_name 就是要查询的表名（大写），BYTES 为表存储所占用的字节数。本sql的意思就是查询出表名和表所占的存储空间大小。
+-------------------
+Oracle中有两种含义的表大小
+一种是分配给一个表的物理空间数量，而不管空间是否被使用。可以这样查询获得字节数：
+select segment_name, bytes from user_segments where segment_type = 'TABLE';
+或者
+   Select Segment_Name,Sum(bytes)/1024/1024 from User_Extents Group By Segment_Name;
+另一种表实际使用的空间。这样查询：
+analyze table emp compute statistics; 
+select num_rows * avg_row_len from user_tables where table_name = 'EMP';--EMP为表名（表名大写查询）
+附：
+查看每个表空间的大小
+Select Tablespace_Name,Sum(bytes)/1024/1024 from Dba_Segments Group By Tablespace_Name 
+1.查看剩余表空间大小
+ 
+SELECT tablespace_name 表空间,sum(blocks*8192/1000000) 剩余空间M from dba_free_space GROUP BY tablespace_name;
+ 
+2.检查系统中所有表空间总体空间
+select b.name,sum(a.bytes/1000000)总空间 from v$datafile a,v$tablespace b where a.ts#=b.ts# group by b.name;
+ 
+3.查询整个数据库剩余和使用的表空间大小使用情况：
+select df.tablespace_name "表空间名",totalspace "总空间M",freespace "剩余空间M",round((1-freespace/totalspace)*100,2) "使用率%" 
+from 
+(select tablespace_name,round(sum(bytes)/1024/1024) totalspace 
+from dba_data_files 
+group by tablespace_name) df, 
+(select tablespace_name,round(sum(bytes)/1024/1024) freespace 
+from dba_free_space 
+group by tablespace_name) fs 
+where df.tablespace_name=fs.tablespace_name;
+
+二、心得
+日拱一卒，不期速成
+
+三、
+
+
+</2015-9-2>
+<2015-9-3>
+一、关于session和jsessionid的问题
+所谓session你可以这样理解：当你与服务端进行会话时，比如说登陆成功后，服务端会为你开壁一块内存区间，用以存放你这次会话的一些内容，比如说用户名之类的。那么就需要一个东西来标志这个内存区间是你的而不是别人的，这个东西就是session id(jsessionid只是tomcat中对session id的叫法，在其它容器里面，不一定就是叫jsessionid了。),而这个内存区间你可以理解为session。
+然后，服务器会将这个session id发回给你的浏览器，放入你的浏览器的cookies中（这个cookies是内存cookies，跟一般的不一样，它会随着浏览器的关闭而消失）。
+之后，只有你浏览器没有关闭，你每向服务器发请求，服务器就会从你发送过来的cookies中拿出这个session id,然后根据这个session id到相应的内存中取你之前存放的数据。
+但是，如果你退出登陆了，服务器会清掉属于你的内存区域，所以你再登的话，会产生一个新的session了。
+
+二、LRU算法
+LRU是Least Recently Used 近期最少使用算法。
+内存管理的一种页面置换算法，对于在内存中但又不用的数据块（内存块）叫做LRU，操作系统会根据哪些数据属于LRU而将其移出内存而腾出空间来加载另外的数据。
+什么是LRU算法？ LRU是Least Recently Used的缩写，即最少使用页面置换算法，是为虚拟页式存储管理服务的。
+关于操作系统的内存管理，如何节省利用容量不大的内存为最多的进程提供资源，一直是研究的重要方向。而内存的虚拟存储管理，是现在最通用，最成功的方式—— 在内存有限的情况下，扩展一部分外存作为虚拟内存，真正的内存只存储当前运行时所用得到信息。这无疑极大地扩充了内存的功能，极大地提高了计算机的并发度。虚拟页式存储管理，则是将进程所需空间划分为多个页面，内存中只存放当前所需页面，其余页面放入外存的管理方式。
+然而，有利就有弊，虚拟页式存储管理减少了进程所需的内存空间，却也带来了运行时间变长这一缺点：进程运行过程中，不可避免地要把在外存中存放的一些信息和内存中已有的进行交换，由于外存的低速，这一步骤所花费的时间不可忽略。因而，采取尽量好的算法以减少读取外存的次数，也是相当有意义的事情。
+
+
+</2015-9-3>
+<2015-9-7>
+一、nginx(http://kb.cnblogs.com/page/98352/)
+
+二、源数据在第一帧才可以边播放边下载
+
+</2015-9-7>
+<2015-9-8>
+一、OSGI
+
+
+</2015-9-8>
+<2015-9-10>
+一、java.lang.LinkageError
+JAR包冲突
+
+二、slf4j 与 common-logging 比较
+common-logging通过动态查找的机制，在程序运行时自动找出真正使用的日志库。由于它使用了ClassLoader寻找和载入底层的日志库， 导致了象OSGI这样的框架无法正常工作，因为OSGI的不同的插件使用自己的ClassLoader。 OSGI的这种机制保证了插件互相独立，然而却使Apache Common-Logging无法工作。
+
+slf4j在编译时静态绑定真正的Log库,因此可以再OSGI中使用。另外，SLF4J 支持参数化的log字符串，避免了之前为了减少字符串拼接的性能损耗而不得不写的if(logger.isDebugEnable())，现在你可以直接写：logger.debug(“current user is: {}”, user)。拼装消息被推迟到了它能够确定是不是要显示这条消息的时候，但是获取参数的代价并没有幸免。
+
+三、java中static final与final的不同
+如果只是使用final  那你如果想使用这个属性 需要实例化对象 才能使用
+如果加上static 那他就属于类属性  不用实例化 直接使用
+static表示修饰的属性和方法是静态的，可以直接通过类名调用。
+final表示修饰的属性和方法是不能被修改的，用于定义常量。
+</2015-9-10>
+<2015-9-11>
+一、WebApplicationContext
+ApplicationContext是Spring的核心，Context我们通常解释为上下文环境，我想用“容器”来表述它更容易理解一些，ApplicationContext则是“应用的容器”了；在Web应用中，我们会用到WebApplicationContext，WebApplicationContext继承自ApplicationContext；WebApplicationContext的初始化方式和BeanFactory.ApplicationContext有所区别,因为WebApplicationContext需要ServletContext实例,也就是说它必须拥有Web容器的前提下才能完成启动的工作.有过Web开发经验的读者都知道可以在web.xml中配置自启动的Servlet或定义Web容器监听器(ServletContextListener),借助着两者中的任何一个,我们就可以启动Spring Web应用上下文的工作.
+
+二、AnnotationMethodHandlerAdapter
+在利用spring的mvc开发过程中，需要将User对象从session中取出来使用。参照网上的做法，我利用 了AnnotationMethodHandlerAdapter来解决这个问题
+</2015-9-11>
+<2015-9-14>
+一、str.replaceAll("[\n\r]", "<br>");
+这里是把str里的“\n\r”一起替换成“<br>”，还是分别把“\n”和“\r”换成“<br>”(也就是换成“<br><br>”)。
+str.replaceAll("[\n\r]", "<br>"); 
+分别把\n\r都替换成<br>
+str.replaceAll(String regx, String string); 
+该方法第一个参数是一个正则表达式[\n\r]这是一个正则表达式，匹配[]里的任意一个字符
+
+三、commons-codec包简介
+包含一些通用的编码解码算法。包括一些语音编码器，Hex,Base64
+
+commons-codec包可以从apache下载，最新版是1.3
+不可逆算法
+1.MD5
+<!---->String str = "abc";
+DigestUtils.md5Hex(str);
+附.net生成MD5的方法，生成内容跟java一致：
+<!---->String str = "abc";
+FormsAuthentication.HashPasswordForStoringInConfigFile(str, "MD5");
+ 
+2.SHA1
+<!---->String str = "abc";
+DigestUtils.shaHex(str);
+附.net生成SHA1的方式，生成内容跟java一致：
+<!---->String str = "abc";
+FormsAuthentication.HashPasswordForStoringInConfigFile(str, "SHA1");
+ 
+可逆算法
+常规加密解密算法：BASE64
+加密
+<!---->String str= "abc"; // abc为要加密的字符串
+byte[] b = Base64.encodeBase64(str.getBytes(), true);
+System.out.println(new String(b));
+解密
+<!---->String str = "YWJj"; // YWJj为要解密的字符串
+byte[] b = Base64.decodeBase64(str.getBytes());
+System.out.println(new String(b));
+
+四、JVM原理
+JAVA和JVM运行的原理，Java语言写的源程序通过Java编译器，编译成与平台无关的‘字节码程序’(.class文件，也就是0，1二进制程序)，然后在OS之上的Java解释器中解释执行，而JVM是java的核心和基础，在java编译器和os平台之间的虚拟处理器.
+注：JVM（java虚拟机）包括解释器，不同的JDK虚拟机是相同的，解释器不同。
+JVM是java的核心和基础，在java编译器和os平台之间的虚拟处理器。它是一种利用软件方法实现的抽象的计算机基于下层的操作系统和硬件平台，可以在上面执行java的字节码程序。
+java编译器只要面向JVM，生成JVM能理解的代码或字节码文件。Java源文件经编译成字节码程序，通过JVM将每一条指令翻译成不同平台机器码，通过特定平台运行。
+JVM执行程序的过程 ：
+I.加载。class文件
+II.管理并分配内存
+III.执行垃圾收集
+JRE（java运行时环境）由JVM构造的java程序的运行环境 
+操作系统装入JVM是通过jdk中Java.exe来完成
+
+五、swap空间
+Swap分区，即交换区，系统在物理内存不够时，与Swap进行交换。 其实，Swap的调整对Linux服务器，特别是Web服务器的性能至关重要。通过调整Swap，有时可以越过系统性能瓶颈，节省系统升级费用。
+众所周知，现代操作系统都实现了“虚拟内存”这一技术，不但在功能上突破了物理内存的限制，使程序可以操纵大于实际物理内存的空间，更重要的是，“虚拟内存”是隔离每个进程的安全保护网，使每个进程都不受其它程序的干扰。
+计算机用户会经常遇这种现象。例如，在使用Windows系统时，可以同时运行多个程序，当你切换到一个很长时间没有理会的程序时，会听到硬盘“哗哗”直响。这是因为这个程序的内存被那些频繁运行的程序给“偷走”了，放到了Swap区中。因此，一旦此程序被放置到前端，它就会从Swap区取回自己的数据，将其放进内存，然后接着运行。
+需要说明一点，并不是所有从物理内存中交换出来的数据都会被放到Swap中（如果这样的话，Swap就会不堪重负），有相当一部分数据被直接交换到文件系统。例如，有的程序会打开一些文件，对文件进行读写（其实每个程序都至少要打开一个文件，那就是运行程序本身），当需要将这些程序的内存空间交换出去时，就没有必要将文件部分的数据放到Swap空间中了，而可以直接将其放到文件里去。如果是读文件操作，那么内存数据被直接释放，不需要交换出来，因为下次需要时，可直接从文件系统恢复；如果是写文件，只需要将变化的数据保存到文件中，以便恢复。但是那些用malloc和new函数生成的对象的数据则不同，它们需要Swap空间，因为它们在文件系统中没有相应的“储备”文件，因此被称作“匿名”(Anonymous)内存数据。这类数据还包括堆栈中的一些状态和变量数据等。所以说，Swap空间是“匿名”数据的交换空间。
+查看SWAP
+[root@rac1 /]# cat /proc/swaps
+六、xms,xmx,xss,xmn
+-Xmx3550m：设置JVM最大可用内存为3550M。
+-Xms3550m：设置JVM初始内存为3550m。此值可以设置与-Xmx相同，以避免每次垃圾回收完成后JVM重新分配内存。
+-Xmn2g：设置年轻代大小为2G。整个JVM内存大小=年轻代大小 + 年老代大小 + 持久代大小。持久代一般固定大小为64m，所以增大年轻代后，将会减小年老代大小。此值对系统性能影响较大，Sun官方推荐配置为整个堆的3/8。
+-Xss128k：设置每个线程的堆栈大小。JDK5.0以后每个线程堆栈大小为1M，以前每个线程堆栈大小为256K。更具应用的线程所需内存大小进行调整。在相同物理内存下，减小这个值能生成更多的线程。但是操作系统对一个进程内的线程数还是有限制的，不能无限生成，经验值在3000~5000左右。
+
+七、transient对象
+java语言的关键字，变量修饰符，如果用transient声明一个实例变量，当对象存储时，它的值不需要维持.
+Java的serialization提供了一种持久化对象实例的机制。当持久化对象时，可能有一个特殊的对象数据成员，我们不想用serialization机制来保存它。为了在一个特定对象的一个域上关闭serialization，可以在这个域前加上关键字transient。当一个对象被序列化的时候，transient型变量的值不包括在序列化的表示中，然而非transient型的变量是被包括进去的。
+
+</2015-9-14>
+<2015-9-15>
+一、访问WEB-INF目录中的JSP文件
+方法1：
+本来WEB-INF中的jsp就是无法通过地址栏访问的.所以安全.如果说你要访问这个文件夹中的jsp文件需要在项目的web.xml文件中去配置servlet格式差不多的配置就ok了。如下:
+<servlet>  
+<servlet-name>runtain</servlet-name>  
+<jsp-file>/WEB-INF/INF.jsp</jsp-file>  
+</servlet>  
+<servlet-mapping>  
+<servlet-name>runtain</servlet-name>  
+<url-pattern>/XXX</url-pattern>  
+
+访问地址:http://localhost:8080/runtain/xxx
+就可以看见内容了!
+方法2：<jsp:forward page ="/WEB-INF/jsp/test/test.jsp" />
+方法3：request.getRequestDispatcher("/WEB-INF/a.jsp").forward(request,response);
+怎么样让servlet访问web-inf下的网页或jsp文件呢.因为web-inf下,应用服务器把它指为禁访目录,即直接在浏览器里是不能访问到的.
+因些,可以让servlet进行访问,如web-inf下有a.jsp则可以用request.getRequestDispatcher("/WEB-INF/a.jsp").forward(request,response);进行派遣访问.但如果web-inf下有a.htm,则用request.getRequestDispatcher("/WEB-INF/a.htm").forward(request,response);就不能访问.
+一开始想不通,觉得怪.后来想想,jsp其实也是servlet,会自动编译的,于是work目录下会有/web-inf/a$jsp.class类型,于是有头绪了,让应用服务器能够编译.htm,如a$htm.class.抱有这个想法,开始动手
+在tomcat下的conf/web,找到jsp的访问方式,
+<servlet-mapping>  
+<servlet-name>jsp</servlet-name>  
+<url-pattern>*.jsp</url-pattern>  
+</servlet-mapping>  
+于是在下面添加
+<servlet-mapping>  
+<servlet-name>jsp</servlet-name>  
+<url-pattern>*.htm</url-pattern>  
+</servlet-mapping>  
+<servlet-mapping>  
+<servlet-name>jsp</servlet-name>  
+<url-pattern>*.html</url-pattern>  
+</servlet-mapping>  
+结果:一切OK,访问a.htm,和a.html在work/web-inf/下者有a$htm.class,a$html.class生成
+
+二、Spring注解@ResponseBody，@RequestBody和HttpMessageConverter 
+Spring 3.X系列增加了新注解@ResponseBody，@RequestBody 
+
+@RequestBody 将HTTP请求正文转换为适合的HttpMessageConverter对象。
+@ResponseBody 将内容或对象作为 HTTP 响应正文返回，并调用适合HttpMessageConverter的Adapter转换对象，写入输出流。
+HttpMessageConverter接口，需要开启<mvc:annotation-driven  />。 
+AnnotationMethodHandlerAdapter将会初始化7个转换器，可以通过调用AnnotationMethodHandlerAdapter的getMessageConverts()方法来获取转换器的一个集合 List<HttpMessageConverter> 
+引用
+ByteArrayHttpMessageConverter 
+StringHttpMessageConverter 
+ResourceHttpMessageConverter 
+SourceHttpMessageConverter 
+XmlAwareFormHttpMessageConverter 
+Jaxb2RootElementHttpMessageConverter 
+MappingJacksonHttpMessageConverter
+可以理解为，只要有对应协议的解析器，你就可以通过几行配置，几个注解完成协议——对象的转换工作！ 
+PS:Spring默认的json协议解析由Jackson完成。
+
+<mvc:annotation-driven />会自动注册DefaultAnnotationHandlerMapping和AnnotationMethodHandlerAdapter两个bean
+AnnotationMethodHandlerAdapter将会初始化7个转换器，可以通过调用AnnotationMethodHandlerAdapter的getMessageConverts()方法来获取转换器的一个集合 List<HttpMessageConverter>
+对于json的解析就是通过MappingJacksonHttpMessageConverter转换器完成的。
+
+-------------------------------------
+GET模式下，这里使用了@PathVariable绑定输入参数，非常适合Restful风格。因为隐藏了参数与路径的关系，可以提升网站的安全性，静态化页面，降低恶意攻击风险。
+POST模式下，使用@RequestBody绑定请求对象，Spring会帮你进行协议转换，将Json、Xml协议转换成你需要的对象。
+@ResponseBody可以标注任何对象，由Srping完成对象——协议的转换。
+
+
+</2015-9-15>
+<2015-9-18>
+一、ArtifactDescriptorException: Failed to read artifact descriptor for org.mybatis:mybatis:jar:3.2.8: ArtifactResolutionException: Failure to transfer org.mybatis:mybatis:pom:3.2.8 from http://116.211.105.54:20002/nexus/content/groups/public/ was cached in the local repository, resolution will not be reattempted until the update interval of tianyu-nexus has elapsed or updates are forced. Original error: Could not transfer artifact org.mybatis:mybatis:pom:3.2.8 from/to tianyu-nexus (http://116.211.105.54:20002/nexus/content/groups/public/): connect timed out
+
+发现proxool-0.9.1.jar下载到本地时失败，从提示可知是本地仓库的缓存（cached）造成，于是我删除目录C:\Documents and Settings\lenovo\.m2\repository\org\mybatis\mybatis\3.2.8后重新下载（即执行mvn compile命令）即可成功！ 
+
+二、Linux日志查找
+view test.log --- ?关键字（Ctrl+G：定位到最下面）
+
+三、Cygwin(http://my.oschina.net/u/570654/blog/112757)
+Cygwin是一个在windows平台上运行的类UNIX模拟环境.
+
+
+</2015-9-18>
+<2015-9-21>
+一、Hadoop
+Hadoop,以 Hadoop 分布式文件系统（ HDFS ，Hadoop Distributed Filesystem ）和 MapReduce （ Google MapReduce 的开源实现）为核心的 Hadoop 为用户提供了系统底层细节透明的分布式基础架构。
+　　 对于 Hadoop 的集群来讲，可以分成两大类角色： Master 和 Salve 。一个 HDFS 集群是由一个 NameNode 和若干个 DataNode 组成的。其中 NameNode 作为主服务器，管理文件系统的命名空间和客户端对文件系统的访问操作；集群中的 DataNode 管理存 储的数据。 MapReduce 框架是由一个 单独运行在主节点上的 JobTracker 和 运行在每个集群从节点的 TaskTracker 共同 组成的。主节点负责调度构成一个作业的所有任务，这些任务分布在不同的从节点上。主节点监控它们的执行情况，并且重新执行之前的失败任务；从节点仅负责由主节点指派的任务。当一个 Job 被提交 时， JobTracker 接收到提交作 业和配置信息之后，就会将配置信息等分发给从节点，同时调度任务并监控 TaskTracker 的 执行。
+　　从上面的介 绍可以看出， HDFS 和 MapReduce 共同 组成了 Hadoop 分布式系 统体系结构的核心。 HDFS 在集群上 实现分布式文件系统， MapReduce 在集群上 实现了分布式计算和任务处理。 HDFS 在 MapReduce 任 务处理过程中提供了文件操作和存储等支持， MapReduce 在 HDFS 的基 础上实现了任务的分发、跟踪、执行等工作，并收集结果，二者相互作用，完成了 Hadoop 分布式集群的主要任 务。
+
+二、使用Ambari快速部署Hadoop大数据环境(http://www.uml.org.cn/sjjm/201305244.asp)
+
+三、CnetOS
+
+四、Ubuntu（http://weixiaolu.iteye.com/blog/1401931）
+
+五、hive java.io.IOException: Cannot initialize Cluster
+问题:启动hive,报 java.io.IOException: Cannot initialize Cluster，Please check your configuration for mapreduce.framework.name and the correspond server addresses.
+解决：修改$HIVE_HOME/conf/hive-env.sh文件，加入
+export HADOOP_HOME=mr1的安装目录
+
+六、清理Memcache
+echo "flush_all" | nc 192.168.50.72 21212
+echo "flush_all" | nc 192.168.50.73 21212
+echo "flush_all" | nc 192.168.50.76 21212
+
+</2015-9-21>
+<2015-9-24>
+一、java.lang.LinkageError: loader constraint violation: 
+
+
+二、Java BIO、NIO、AIO 学习
+1	同步	指的是用户进程触发IO操作并等待或者轮询的去查看IO操作是否就绪	自己上街买衣服，自己亲自干这件事，别的事干不了。 
+2	异步	异步是指用户进程触发IO操作以后便开始做自己的事情，而当IO操作已经完成的时候会得到IO完成的通知（异步的特点就是通知）	告诉朋友自己合适衣服的尺寸，大小，颜色，让朋友委托去卖，然后自己可以去干别的事。（使用异步IO时，Java将IO读写委托给OS处理，需要将数据缓冲区地址和大小传给OS） 
+3	阻塞	所谓阻塞方式的意思是指, 当试图对该文件描述符进行读写时, 如果当时没有东西可读,或者暂时不可写, 程序就进入等待 状态, 直到有东西可读或者可写为止	去公交站充值，发现这个时候，充值员不在（可能上厕所去了），然后我们就在这里等待，一直等到充值员回来为止。（当然现实社会，可不是这样，但是在计算机里确实如此。） 
+4	非阻塞	非阻塞状态下, 如果没有东西可读, 或者不可写, 读写函数马上返回, 而不会等待，	银行里取款办业务时，领取一张小票，领取完后我们自己可以玩玩手机，或者与别人聊聊天，当轮我们时，银行的喇叭会通知，这时候我们就可以去了。 
+
+同步阻塞IO（JAVA BIO）：同步并阻塞，服务器实现模式为一个连接一个线程，即客户端有连接请求时服务器端就需要启动一个线程进行处理，如果这个连接不做任何事情会造成不必要的线程开销，当然可以通过线程池机制改善。 
+
+同步非阻塞IO(Java NIO) ： 同步非阻塞，服务器实现模式为一个请求一个线程，即客户端发送的连接请求都会注册到多路复用器上，多路复用器轮询到连接有I/O请求时才启动一个线程进行处理。用户进程也需要时不时的询问IO操作是否就绪，这就要求用户进程不停的去询问。 
+
+异步阻塞IO（Java NIO）：此种方式下是指应用发起一个IO操作以后，不等待内核IO操作的完成，等内核完成IO操作以后会通知应用程序，这其实就是同步和异步最关键的区别，同步必须等待或者主动的去询问IO是否完成，那么为什么说是阻塞的呢？因为此时是通过select系统调用来完成的，而select函数本身的实现方式是阻塞的，而采用select函数有个好处就是它可以同时监听多个文件句柄（如果从UNP的角度看，select属于同步操作。因为select之后，进程还需要读写数据），从而提高系统的并发性！  
+
+BIO、NIO、AIO适用场景分析:
+BIO方式适用于连接数目比较小且固定的架构，这种方式对服务器资源要求比较高，并发局限于应用中，JDK1.4以前的唯一选择，但程序直观简单易理解。
+NIO方式适用于连接数目多且连接比较短（轻操作）的架构，比如聊天服务器，并发局限于应用中，编程比较复杂，JDK1.4开始支持。
+AIO方式使用于连接数目多且连接比较长（重操作）的架构，比如相册服务器，充分调用OS参与并发操作，编程比较复杂，JDK7开始支持。
+
+
+</2015-9-24>
+<2015-9-25>
+一、Java RMI
+Java RMI 指的是远程方法调用 (Remote Method Invocation)。它是一种机制，能够让在某个 Java 虚拟机上的对象调用另一个 Java 虚拟机中的对象上的方法。可以用此方法调用的任何对象必须实现该远程接口。
+Java RMI不是什么新技术（在Java1.1的时代都有了），但却是是非常重要的底层技术。
+大名鼎鼎的EJB都是建立在rmi基础之上的，现在还有一些开源的远程调用组件，其底层技术也是rmi。
+在大力鼓吹Web Service、SOA的时代，是不是每个应用都应该选用笨拙的Web Service组件来实现，通过对比测试后，RMI是最简单的，在一些小的应用中是最合适的。
+
+RMI对服务器的IP地址和端口依赖很紧密，但是在开发的时候不知道将来的服务器IP和端口如何，但是客户端程序依赖这个IP和端口。
+这也是RMI的局限性之一。这个问题有两种解决途径：一是通过DNS来解决，二是通过封装将IP暴露到程序代码之外。
+RMI的局限性之二是RMI是Java语言的远程调用，两端的程序语言必须是Java实现，对于不同语言间的通讯可以考虑用Web Service或者公用对象请求代理体系（CORBA）来实现。
+
+
+</2015-9-25>
+<2015-9-28>
+一、Tomcat Server处理一个http请求的过程
+假设来自客户的请求为：
+http://localhost:8080/wsota/wsota_index.jsp
+1) 请求被发送到本机端口8080，被在那里侦听的Coyote HTTP/1.1 Connector获得
+2) Connector把该请求交给它所在的Service的Engine来处理，并等待来自Engine的回应
+3) Engine获得请求localhost/wsota/wsota_index.jsp，匹配它所拥有的所有虚拟主机Host
+4) Engine匹配到名为localhost的Host（即使匹配不到也把请求交给该Host处理，因为该Host被定义为该Engine的默认主机）
+5) localhost Host获得请求/wsota/wsota_index.jsp，匹配它所拥有的所有Context
+6) Host匹配到路径为/wsota的Context（如果匹配不到就把该请求交给路径名为""的Context去处理）
+7) path="/wsota"的Context获得请求/wsota_index.jsp，在它的mapping table中寻找对应的servlet
+8) Context匹配到URL PATTERN为*.jsp的servlet，对应于JspServlet类
+9) 构造HttpServletRequest对象和HttpServletResponse对象，作为参数调用JspServlet的doGet或doPost方法
+10)Context把执行完了之后的HttpServletResponse对象返回给Host
+11)Host把HttpServletResponse对象返回给Engine
+12)Engine把HttpServletResponse对象返回给Connector
+13)Connector把HttpServletResponse对象返回给客户browser
+
+二、修改redhat linux下的机器名，下面的方法只适合修改redhat的，别的版本改机器名不是这样的
+
+      1）、执行 cd /etc/sysconfig,进入/etc/sysconfig 目录下
+
+      2）、执行 vi network,修改network文件，
+
+            NETWORKING=yes
+
+            HOSTNAME=hadoopName
+
+            把HOSTNAME改成你想要的机器名，我改成了hadoopName，然后保存  
+      3）、执行 cd  /etc,进入/etc 目录下
+      4）、执行vi hosts，修改hosts文件
+       # Do not remove the following line, or various programs
+       # that require network functionality will fail.
+192.168.133.128     hadoopName hadoopName
+127.0.0.1           localhost.localdomain localhost
+        默认是只有黑色字体内容，然后加上红色字体内容，第一个是自身ip，第二个network里的hostname名字，第三个一样。网上很多资料说hadoop安装要在 hosts里面加入 所有的集群机器的 ip  hostname 对，嗯，没错，因为笔者这是单机，所以就只加自己就行了。
+        5）、修改完后，执行hostname 就能看到自己新改的机器名了
+
+
+</2015-9-28>
+<2015-9-29>
+一、ORACLE字符类型详解----char、nchar、varchar、varchar2、nvarchar2
+char：使用数据库字符集来存储数据，长度固定，如果存储的数据没有达到指定长度，自动补足空格。指定长度时，默认长度的计量单位由NLS_LENGTH_SEMANTICS（默认为字节byte）参数决定，但是我们可以手动指定为char或者byte。oracle建议使用NLS_LENGTH_SEMANTICS来指定计量单位，这样可以提高效率。char类型的最大存储长度为2000个字节，在plsql中，最大存储长度可以达到32767个字节。使用char时，可以不指定最大长度，此时最大长度为1.
+---------
+nchar：使用国家字符集来存储数据，长度固定，如果存储的数据没有达到指定长度，数据库自动补足空格。指定长度时，采用char为计量单位，不可以手动指定其他单位。最大存储长度为2000个字节，在plsql中，其最大存储长度可以达到32767个字节。使用nchar时，可以不指定最大长度，此时最大长度为1.
+---------
+varchar2: 使用数据库字符集存储数据，长度可变，如果存储数据没有达到指定长度，不自动补足空格。可使用char，byte为计量单位，默认受参数NLS_LENGTH_SEMANTICS的影响。最大存储长度为4000个字节，在plsql中，存储长度可达32767个字节。必须指定最大长度，长度最小值为1.
+---------
+nvarchar2:使用国家字符集来存储数据，长度可变，如果存储的数据没有达到指定长度，不自动补足空格。指定长度时，采用char为计量单位，不可以手动指定其他单位。最大存储长度为4000个字节，在plsql中，其最大存储长度可以达到32767个字节。必须指定最大长度，长度最小值为1.
+---------
+varchar：oracle目前并没有实现该数据类型，当前版本下，varchar与varchar2完全一致，但不保证将来不会单独设计varchar。
+ 
+下面我们只讨论char和varchar2的区别，至于nchar   nvarchar2  varchar，我相信聪明的同仁们肯定可以触类旁通。
+     1：char 与varchar2在存储上的区别，仅仅在于char会使用空格来填充空间，由于varchar2采用变长的方式存储数据，因此可以节省空间，这是毋庸置疑的。
+     2：在效率方面，varchar2和char在某些情况下，各有优劣，并没有实质上的差别。
+     3：在字符比较上的差别，是char和varchar2的主要差别。当两个字符串进行比较时，如果其中任何一个字符串为varchar2类型（文本串作为char类型来处理），那么两个字符串直接进行比较；如果不存在varchar2类型的字符串，在比较之前，会将其中较短的字符串末尾补充空格至与较长字符串长度一致，然后进行字符的比对。
+
+由于char的自动补足，以及char和char类型比较时的自动长度对齐，使得字符串数据的处理显得难以捉摸。当然，我们可以使用trim或者rpad函数来进行字符串的处理，但是这往往会导致索引的失效。
+        4：char类型数据可能造成数据信息的丢失，例如，我们赋值”aaa    " 给变量B char(10),当B接收的变量时，其存储内容为"aaa       ",此时，我们无处指定赋值给B的原始值是否包含空格以及包含多少空格。
+        5：在plsql程序中，在编译时刻，oracle会为char类型分配指定最大长度的内存；对于varchar2类型，如果最大长度没有超过4000，则在编译时，分配指定最大长度的内存；如果长度超过或者等于4000，oracle会在运行时刻分配符合实际值大小的内存。
+        
+   结论：使用varchar2数据类型作为字符串的首选类型，即便是在处理”男“，”女“这样的性别数据时，使用char类型也不比varchar2类型显得有优势。
+
+二、eclipse安装hadoop插件及配置
+在$HADOOP_HOME/contrib/eclipse-plugin/文件夹中有个hadoop-eclipse-plugin-0.20.203.0.jar，把这个文件复制到eclipse/plugins（这是eclipse的插件目录）下面即可。
+
+注意在直接复制时会出错，主要是缺少jar包。
+
+解决方法：（1）将commons-httpclient-3.0.1.jar,jackson-core-asl-1.0.1.jar,jackson-mapper-asl-1.0.1.jar,commons-configuration-1.6.jar,lcommons-lang-2.4.jar（这几个jar包在$HADOOP_HOME/lib/下找到）放入hadoop-0.20.203.0-eclipse-plugin的lib下
+（2）修改hadoop-0.20.203.0-eclipse-plugin/META-INF/MANIFEST.MF 中的Bundle-ClassPath项
+
+Bundle-ClassPath: classes/,lib/hadoop-core.jar,lib/commons-cli-1.2.jar,lib/commons-httpclient-3.0.1.jar,lib/jackson-core-asl-1.0.1.jar,lib/jackson-mapper-asl-1.0.1.jar,lib/commons-configuration-1.6.jar,lib/commons-lang-2.4.jar
+</2015-9-29>
+<2015-10-8>
+一、流媒体碎片化
+
+
+</2015-10-8>
+<2015-10-9>
+一、SAX与DOM解析XML的区别
+解析xml有四种方法：DOM，SAX，DOM4j，JDOM.
+     我们主要学了两种：DOM和SAX.
+     DOM适于解析比较简单的XML而SAX则适于解析较复杂的XML文件。各有各的好。
+
+     DOM和SAX的不同：
+     1. DOM是基于内存的，不管文件有多大，都会将所有的内容预先装载到内存中。从而消耗很大的内存空间。而SAX是基于事件的。当某个事件被触发时，才获取相应的XML的部分数据，从而不管XML文件有多大，都只占用了少量的内存空间。
+     2. DOM可以读取XML也可以向XML文件中插入数据，而SAX却只能对XML进行读取，而不能在文件中插入数据。这也是SAX的一个缺点。
+     3.SAX的另一个缺点：DOM我们可以指定要访问的元素进行随机访问，而SAX则不行。SAX是从文档开始执行遍历的。并且只能遍历一次。也就是说我们不能随机的访问XML文件，只能从头到尾的将XML文件遍历一次（当然也可以中间截断遍历）。
+
+
+二、AJP
+AJP（Apache JServ Protocol）是定向包协议。因为性能原因，使用二进制格式来传输可读性文本。WEB服务器通过TCP连接和SERVLET容器连接。
+
+三、成员变量
+例如定义一个类：
+class Text
+{
+	public static int number;
+	public int temp;
+}
+如果你想访问temp属性，你就必须先创建一个Text的对象，才能访问：Text  b = new Text（）；
+b.temp;这就是实例成员变量。
+而你想 访问number的话，不用创建Text的实例就可以访问，就像这样：Text.number.这就是类成员变量。
+主要区别就是访问是需不需要创建对象，而对于类成员变量，所有对象是共享一个变量的。
+
+</2015-10-9>
+<2015-10-10>
+一、services.msc
+cmd --> services.msc
+
+</2015-10-10>
+<2015-10-12>
+一、js
+hover([over,]out) 
+一个模仿悬停事件（鼠标移动到一个对象上面及移出这个对象）的方法 
+当鼠标移动到一个匹配的元素上面时，会触发指定的第一个函数。 
+当鼠标移出这个元素时，会触发指定的第二个函数。 
+$('.myDiv').hover(function() { 
+doSomething... 
+}, function() { 
+doSomething... 
+}); 
+
+而问题是有些元素比如菜单是通过AJAX动态加载的，hover方法执行的时候 
+菜单还没加载出来呢，所以就要用到jquery的另一个方法live() 
+.live() 方法能对一个还没有添加进DOM的元素有效，是由于使用了事件委托： 
+绑定在祖先元素上的事件处理函数可以对在后代上触发的事件作出回应。 
+传递给 .live() 的事件处理函数不会绑定在元素上， 
+而是把他作为一个特殊的事件处理函数，绑定在 DOM 树的根节点上。
+$('.myDiv').live('hover',function(event){ 
+if(event.type=='mouseenter'){ 
+doSomething... 
+}else{ 
+doSomething... 
+} 
+}) 
+
+二、tomcat理解
+先大致说一下Tomcat的整体架构，Tomcat主要有两个组件，连接器和容器，所谓连接器就是一个http请求过来了，连接器负责接收这个请求，然后转发给容器。容器即servlet容器，容器有很多层，分别是Engine，Host，Context，Wrapper。最大的容器Engine，代表一个servlet引擎，接下来是Host，代表一个虚拟机，然后是Context，代表一个应用，Wrapper对应一个servlet。从连接器传过来连接后，容器便会顺序经过上面的容器，最后到达特定的servlet。要说明的是Engine，Host两种容器不是必须的。实际上一个简单的tomcat只要连接器和容器就可以了，但tomcat的实现为了统一管理连接器和容器等组件，额外添加了服务器组件（server）和服务组件（service），添加这两个东西的原因我个人觉得就是为了方便统一管理连接器和容器等各种组件。一个server可以有多个service，一个service包含多个连接器和一个容器，当然还有一些其他的东西.
+一个父组件又可以包含多个子组件，这些被统一管理的组件都实现了Lifecycle接口。只要一个组件启动了，那么他的所有子组件也会跟着启动，比如一个server启动了，它的所有子service都会跟着启动，service启动了，它的所有连接器和容器等子组件也跟着启动了，这样，tomcat要启动，只要启动server就行了，其他的组件都会跟随着启动.
+
+
+三、Extjs
+ExtJS 主要用来开发RIA富客户端的AJAX应用，主要用于创建前端用户界面，与后台技术无关的前端ajax框架。因此，可以把ExtJS用在.Net、 Java、Php等各种开发语言开发的应用中。
+ExtJs最开始基于YUI技术，由开发人员 JackSlocum开发，通过参考JavaSwing等机制来组织可视化组件，无论从UI界面上CSS样式的应用，到数据解析上的异常处理，都可算是一 款不可多得的JavaScript客户端技术的精品。
+要好看的用ext ,extjs漂亮是漂亮，就是太消耗內存，IE下不能用
+要效率的用 jquery 
+
+四、
+
+
+</2015-10-12>
+<2015-10-13>
+一、eclipse中解除jdk的访问限制
+java Build Path --> libraries --> JRE SystemLibrary -->Access rules -->Edit -->Resolution:Accessible  Rule Pattern:**/*
+
+二、
+
+
+</2015-10-13>
+<2015-10-14>
+一、Redis与Memcached的比较
+这两年Redis火得可以，Redis也常常被当作Memcached的挑战者被提到桌面上来。关于Redis与Memcached的比较更是比比皆是。然而，Redis真的在功能、性能以及内存使用效率上都超越了Memcached吗？下面内容来自Redis作者在stackoverflow上的一个回答，对应的问题是《Is memcached a dinosaur in comparison to Redis?》（相比Redis，Memcached真的过时了吗？）You should not care too much about performances. Redis is faster per core with small values, but memcached is able to use multiple cores with a single executable and TCP port without help from the client. Also memcached is faster with big values in the order of 100k. Redis recently improved a lot about big values (unstable branch) but still memcached is faster in this use case. The point here is: nor one or the other will likely going to be your bottleneck for the query-per-second they can deliver.没有必要过多的关心性能，因为二者的性能都已经足够高了。由于Redis只使用单核，而Memcached可以使用多核，所以在比较上，平均每一个核上Redis在存储小数据时比Memcached性能更高。而在100k以上的数据中，Memcached性能要高于Redis，虽然Redis最近也在存储大数据的性能上进行优化，但是比起Memcached，还是稍有逊色。说了这么多，结论是，无论你使用哪一个，每秒处理请求的次数都不会成为瓶颈。（比如瓶颈可能会在网卡）You should care about memory usage. For simple key-value pairs memcached is more memory efficient. If you use Redis hashes, Redis is more memory efficient. Depends on the use case.如果要说内存使用效率，使用简单的key-value存储的话，Memcached的内存利用率更高，而如果Redis采用hash结构来做key-value存储，由于其组合式的压缩，其内存利用率会高于Memcached。当然，这和你的应用场景和数据特性有关。You should care about persistence and replication, two features only available in Redis. Even if your goal is to build a cache it helps that after an upgrade or a reboot your data are still there.如果你对数据持久化和数据同步有所要求，那么推荐你选择Redis，因为这两个特性Memcached都不具备。即使你只是希望在升级或者重启系统后缓存数据不会丢失，选择Redis也是明智的。You should care about the kind of operations you need. In Redis there are a lot of complex operations, even just considering the caching use case, you often can do a lot more in a single operation, without requiring data to be processed client side (a lot of I/O is sometimes needed). This operations are often as fast as plain GET and SET. So if you don’t need just GEt/SET but more complex things Redis can help a lot (think at timeline caching).当然，最后还得说到你的具体应用需求。Redis相比Memcached来说，拥有更多的数据结构和并支持更丰富的数据操作，通常在Memcached里，你需要将数据拿到客户端来进行类似的修改再set回去。这大大增加了网络IO的次数和数据体积。在Redis中，这些复杂的操作通常和一般的GET/SET一样高效。所以，如果你需要缓存能够支持更复杂的结构和操作，那么Redis会是不错的选择。
+
+二、商务智能工具（包括Obiee、Cognos、BO、Brio）
+
+三、Netty，Mina等常用NIO通信架构
+
+四、熟练使用kafka，jms等常用消息队列
+
+</2015-10-14>
+<2015-10-15>
+一、OLTP  OLAP
+OLTP：On_line Transaction Processing  联机事务处理 
+OLAP：On_line Analytical Processing   联机分析处理
+　事务处理型：这种类型的应用程序，你的最终用户更关注数据的增查改删（CRUD，Creating/Reading/Updating/Deleting）。这种类型更加官方的叫法是 “OLTP” 。
+　　分析型：这种类型的应用程序，你的最终用户更关注数据分析、报表、趋势预测等等功能。这一类的数据库的 “插入” 和 “更新” 操作相对来说是比较少的。它们主要的目的是更加快速地查询、分析数据。这种类型更加官方的叫法是 “OLAP” 。
+
+二、nagios
+Nagios是一款开源的免费网络监视工具
+
+</2015-10-15>
+<2015-10-16>
+一、数据库连接池
+关于数据库连接池的使用，首先我们要明白我们为什么要用它，对应普通的数据库连接操作，通常会涉及到以下一些操作是比较耗时的：
+
+网络通讯，涉及到网络延时及协议通讯
+身份验证，涉及安全性检查
+连接合法性检查，主要是检查所连接的数据库是否存在
+并发控制机制
+构造并初始化输出缓冲区
+连接成功后的信息保存，日志存储
+服务器性能
+数据库配置优化
+系统分配内存资源
+等等~~~状况，导致数据库连接操作比较耗时，~~~而且每次都得花费0.05s～1s的时间
+但是使用连接池技术，本质上就是在一个请求对应的连接，都由一个线程池来维护着，也就是说“上下文切换”的代价是线程级别（所谓的纳秒级），对于大规模的并发访问，就算以每秒几亿级别的访问量都是不成问题的。
+
+二、linux终端下载： 
+wget -q http://apache.fayea.com/apache-mirror/kafka/0.8.1/kafka_2.8.0-0.8.1.tgz  
+
+三、mysql innodb ,MyISAM
+InnoDB和MyISAM是许多人在使用MySQL时最常用的两个表类型，这两个表类型各有优劣，视具体应用而定。基本的差别为：MyISAM类型不支持事务处理等高级处理，而InnoDB类型支持。MyISAM类型的表强调的是性能，其执行数度比InnoDB类型更快，但是不提供事务支持，而InnoDB提供事务支持以及外部键等高级数据库功能。
+　　以下是一些细节和具体实现的差别：
+　　◆1.InnoDB不支持FULLTEXT类型的索引。
+　　◆2.InnoDB 中不保存表的具体行数，也就是说，执行select count(*) from table时，InnoDB要扫描一遍整个表来计算有多少行，但是MyISAM只要简单的读出保存好的行数即可。注意的是，当count(*)语句包含 where条件时，两种表的操作是一样的。
+　　◆3.对于AUTO_INCREMENT类型的字段，InnoDB中必须包含只有该字段的索引，但是在MyISAM表中，可以和其他字段一起建立联合索引。
+　　◆4.DELETE FROM table时，InnoDB不会重新建立表，而是一行一行的删除。
+　　◆5.LOAD TABLE FROM MASTER操作对InnoDB是不起作用的，解决方法是首先把InnoDB表改成MyISAM表，导入数据后再改成InnoDB表，但是对于使用的额外的InnoDB特性(例如外键)的表不适用。
+　　另外，InnoDB表的行锁也不是绝对的，假如在执行一个SQL语句时MySQL不能确定要扫描的范围，InnoDB表同样会锁全表，例如update table set num=1 where name like “%aaa%”
+　　两种类型最主要的差别就是Innodb 支持事务处理与外键和行级锁。而MyISAM不支持.所以MyISAM往往就容易被人认为只适合在小项目中使用。
+　　作为使用MySQL的用户角度出发，Innodb和MyISAM都是比较喜欢的，如果数据库平台要达到需求：99.9%的稳定性，方便的扩展性和高可用性来说的话，MyISAM绝对是首选。
+　　原因如下：
+　　1、平台上承载的大部分项目是读多写少的项目，而MyISAM的读性能是比Innodb强不少的。
+　　2、MyISAM的索引和数据是分开的，并且索引是有压缩的，内存使用率就对应提高了不少。能加载更多索引，而Innodb是索引和数据是紧密捆绑的，没有使用压缩从而会造成Innodb比MyISAM体积庞大不小。
+　　3、经常隔1，2个月就会发生应用开发人员不小心update一个表where写的范围不对，导致这个表没法正常用了，这个时候MyISAM的优越性就体现出来了，随便从当天拷贝的压缩包取出对应表的文件，随便放到一个数据库目录下，然后dump成sql再导回到主库，并把对应的binlog补上。如果是Innodb，恐怕不可能有这么快速度，别和我说让Innodb定期用导出xxx.sql机制备份，因为最小的一个数据库实例的数据量基本都是几十G大小。
+　　4、从接触的应用逻辑来说，select count(*) 和order by 是最频繁的，大概能占了整个sql总语句的60%以上的操作，而这种操作Innodb其实也是会锁表的，很多人以为Innodb是行级锁，那个只是where对它主键是有效，非主键的都会锁全表的。
+　　5、还有就是经常有很多应用部门需要我给他们定期某些表的数据，MyISAM的话很方便，只要发给他们对应那表的frm.MYD,MYI的文件，让他们自己在对应版本的数据库启动就行，而Innodb就需要导出xxx.sql了，因为光给别人文件，受字典数据文件的影响，对方是无法使用的。
+　　6、如果和MyISAM比insert写操作的话，Innodb还达不到MyISAM的写性能，如果是针对基于索引的update操作，虽然MyISAM可能会逊色Innodb,但是那么高并发的写，从库能否追的上也是一个问题，还不如通过多实例分库分表架构来解决。
+　　7、如果是用MyISAM的话，merge引擎可以大大加快应用部门的开发速度，他们只要对这个merge表做一些select count(*)操作，非常适合大项目总量约几亿的rows某一类型(如日志，调查统计)的业务表。
+　　当然Innodb也不是绝对不用，用事务的项目就用Innodb的。另外，可能有人会说你MyISAM无法抗太多写操作，但是可以通过架构来弥补。
+
+
+当然Innodb也不是绝对不用，用事务的项目如模拟炒股项目，我就是用Innodb的，活跃用户20多万时候，也是很轻松应付了，因此我个人也是很喜欢Innodb的，只是如果从数据库平台应用出发，我还是会首选MyISAM。
+另外，可能有人会说你MyISAM无法抗太多写操作，但是我可以通过架构来弥补，说个我现有用的数据库平台容量：主从数据总量在几百T以上，每天十多亿 pv的动态页面，还有几个大项目是通过数据接口方式调用未算进pv总数，(其中包括一个大项目因为初期memcached没部署,导致单台数据库每天处理 9千万的查询)。而我的整体数据库服务器平均负载都在0.5-1左右。
+
+四、MySQL主从复制
+mysql服务器的主从配置，这样可以实现读写分离，也可以在主库挂掉后从备用库中恢复。
+需要两台机器，安装mysql，两台机器要在相通的局域网内，可以分布在不同的服务器上，也可以在一台服务器上启动多个服务。
+主机A: 192.168.1.100
+从机B:192.168.1.101
+可以有多台从机
+1、先登录主机 A，在主服务器上，设置一个从数据库的账户，使用REPLICATION SLAVE（从复制）赋予权限，如：
+mysql>GRANT REPLICATION SLAVE ON *.* TO ‘backup’@’192.168.1.101‘ IDENTIFIED BY ‘123456’;
+赋予从机权限，有多台从机，就执行多次。
+2、 打开主机A的my.cnf，输入如下：（修改主数据库的配置文件my.cnf，开启BINLOG，并设置server-id的值，修改之后必须重启Mysql服务）
+server-id               = 1    #主机标示，整数
+log_bin                 = /var/log/mysql/mysql-bin.log   #确保此文件可写，开启bin-log
+read-only              =0  #主机，读写都可以
+binlog-do-db         =test   #需要备份数据，多个写多行
+binlog-ignore-db    =mysql #不需要备份的数据库，多个写多行
+可以通过mysql>show variables like 'log_%'; 验证二进制日志是否已经启动。
+3、现在可以停止主数据的的更新操作，并生成主数据库的备份，我们可以通过mysqldump到处数据到从数据库，当然了，你也可以直接用cp命令将数据文件复制到从数据库去，注意在导出数据之前先对主数据库进行READ LOCK，以保证数据的一致性
+mysql> flush tables with read lock;
+Query OK, 0 rows affected (0.19 sec)
+然后mysqldump导出数据：
+mysqldump -h127.0.0.1 -p3306 -uroot -p test > /home/chenyz/test.sql
+4、得到主服务器当前二进制日志名和偏移量，这个操作的目的是为了在从数据库启动后，从这个点开始进行数据的恢复。
+mysql> show master status\G;
+*************************** 1. row ***************************
+File: mysql-bin.000003
+Position: 243
+Binlog_Do_DB:
+Binlog_Ignore_DB:
+1 row in set (0.00 sec)
+最好在主数据库备份完毕，恢复写操作。
+mysql> unlock tables;
+Query OK, 0 rows affected (0.28 sec)
+5、将刚才主数据备份的test.sql复制到从数据库，进行导入。
+6、修改从数据库的my.cnf，增加server-id参数，指定复制使用的用户，主数据库服务器的ip，端口以及开始执行复制日志的文件和位置。打开从机B的my.cnf，输入
+server-id               = 2
+log_bin                 = /var/log/mysql/mysql-bin.log
+master-host     =192.168.1.100
+master-user     =backup
+master-pass     =123456
+master-port     =3306
+master-connect-retry=60 #如果从服务器发现主服务器断掉，重新连接的时间差(秒)
+replicate-do-db =test #只复制某个库
+replicate-ignore-db=mysql #不复制某个库
+7、在从服务器上,启动slave进程
+mysql> start slave;
+8、在从服务器进行show salve status验证
+mysql> SHOW SLAVE STATUS\G
+*************************** 1. row ***************************
+Slave_IO_State: Waiting for master to send event
+Master_Host: localhost
+Master_User: root
+Master_Port: 3306
+Connect_Retry: 3
+Master_Log_File: mysql-bin.003
+Read_Master_Log_Pos: 79
+Relay_Log_File: gbichot-relay-bin.003
+Relay_Log_Pos: 548
+Relay_Master_Log_File: mysql-bin .003
+Slave_IO_Running: Yes
+Slave_SQL_Running: Yes
+9、验证
+在主机A中，mysql>show master status\G;
+在从机B中，mysql>show slave status\G;
+能看到大致这些内容
+File: mysql-bin.000001
+Position: 1374
+Binlog_Do_DB: test
+Binlog_Ignore_DB: mysql
+可以在主机A中，做一些INSERT, UPDATE, DELETE 操作，看看主机B中，是否已经被修改。
+
+五、JMS
+Java Message Service是由Sun开发的，它为 Java程序提供一种访问企业消息系统的方法。在讨论JMS之前，我们分来析一下企业消息系统。 
+企业消息系统，即面向消息的中间件（MOM），提供了以松散耦合的灵活方式集成应用程序的一种机制。它们提供了基于存储和转发的应用程序之间的异步数据发送，即应用程序彼此不直接通信，而是与作为中介的MOM 通信。MOM提供了有保证的消息发送，应用程序开发人员无需了解远程过程调用（PRC）和网络/通信协议的细节。ActiveMQ正是MOM中优秀的一员。
+
+
+</2015-10-16>
+<2015-10-19>
+一、Hibernate缓存机制
+这是面试中经常问到的一个问题，楼主可以按照我的思路回答，准你回答得很完美，首先说下Hibernate缓存的作用（即为什么要用缓存机制），然后再具体说说Hibernate中缓存的分类情况，
+最后可以举个具体的例子。
+Hibernate缓存的作用：
+    Hibernate是一个持久层框架，经常访问物理数据库，为了降低应用程序对物理数据源访问的频次，从而提高应用程序的运行性能。缓存内的数据是对物理数据源中的数据的复制，应用程序在运行时从缓存读写数据，在特定的时刻或事件会同步缓存和物理数据源的数据
+Hibernate缓存分类：
+  Hibernate缓存包括两大类：Hibernate一级缓存和Hibernate二级缓存
+Hibernate一级缓存又称为“Session的缓存”，它是内置的，不能被卸载（不能被卸载的意思就是这种缓存不具有可选性，必须有的功能，不可以取消session缓存）。由于Session对象的生命周期通常对应一个数据库事务或者一个应用事务，因此它的缓存是事务范围的缓存。第一级缓存是必需的，不允许而且事实上也无法卸除。在第一级缓存中，持久化类的每个实例都具有唯一的OID。 
+Hibernate二级缓存又称为“SessionFactory的缓存”，由于SessionFactory对象的生命周期和应用程序的整个过程对应，因此Hibernate二级缓存是进程范围或者集群范围的缓存，有可能出现并发问题，因此需要采用适当的并发访问策略，该策略为被缓存的数据提供了事务隔离级别。第二级缓存是可选的，是一个可配置的插件，在默认情况下，SessionFactory不会启用这个插件。
+
+什么样的数据适合存放到第二级缓存中？ 　　
+1 很少被修改的数据 　　
+2 不是很重要的数据，允许出现偶尔并发的数据 　　
+3 不会被并发访问的数据 　　
+4 常量数据 　　
+不适合存放到第二级缓存的数据？ 　　
+1经常被修改的数据 　　
+2 .绝对不允许出现并发访问的数据，如财务数据，绝对不允许出现并发 　　
+3 与其他应用共享的数据。 
+
+Hibernate查找对象如何应用缓存？
+当Hibernate根据ID访问数据对象的时候，首先从Session一级缓存中查；查不到，如果配置了二级缓存，那么从二级缓存中查；如果都查不到，再查询数据库，把结果按照ID放入到缓存
+删除、更新、增加数据的时候，同时更新缓存
+
+Hibernate管理缓存实例
+无论何时，我们在管理Hibernate缓存（Managing the caches）时，当你给save()、update()或saveOrUpdate()方法传递一个对象时，或使用load()、 get()、list()、iterate() 或scroll()方法获得一个对象时, 该对象都将被加入到Session的内部缓存中。 
+当随后flush()方法被调用时，对象的状态会和数据库取得同步。 如果你不希望此同步操作发生，或者你正处理大量对象、需要对有效管理内存时，你可以调用evict() 方法，从一级缓存中去掉这些对象及其集合。 
+
+
+
+</2015-10-19>
+<2015-10-20>
+一、NVL
+NVL是Oracle PL/SQL中的一个函数。它的格式是NVL( string1, replace_with)。它的功能是如果string1为NULL，则NVL函数返回replace_with的值，否则返回string1的值，如果两个参数都为NULL ，则返回NULL。
+
+二、sql
+String insertSql = "insert into T_PROD_REPORT_LOG(pk_id,PRODUCT_CODE,PROVIDE_ID,PROVIDE_NAME,PROVIDE_ORG_ID,PROVIDE_ORG_NAME,AUDITOR_ID,AUDITOR_NAME,AUDITOR_ORG_ID,AUDITOR_ORG_NAME,AUDIT_STATUS,AUDIT_DESC,AUDIT_TIME,CREATE_TIME) " +
+							"(select sys_guid(),PRODUCT_CODE,PROVIDE_ID,PROVIDE_NAME,PROVIDE_ORG_ID,PROVIDE_ORG_NAME,AUDITOR_ID,AUDITOR_NAME,AUDITOR_ORG_ID,AUDITOR_ORG_NAME,AUDIT_STATUS,AUDIT_DESC,AUDIT_TIME,CREATE_TIME from T_PROD_REPORT where PRODUCT_CODE=?)";
+
+三、
+
+</2015-10-20>
+<2015-10-21>
+一、Volatile
+Volatile修饰的成员变量在每次被线程访问时，都强迫从共享内存中重读该成员变量的值。而且，当成员变量发生变化时，强迫线程将变化值回写到共享内存。这样在任何时刻，两个不同的线程总是看到某个成员变量的同一个值。
+Java语言规范中指出：为了获得最佳速度，允许线程保存共享成员变量的私有拷贝，而且只当线程进入或者离开同步代码块时才与共享成员变量的原始值对比。
+这样当多个线程同时与某个对象交互时，就必须要注意到要让线程及时的得到共享成员变量的变化。
+而volatile关键字就是提示VM：对于这个成员变量不能保存它的私有拷贝，而应直接与共享成员变量交互。
+使用建议：在两个或者更多的线程访问的成员变量上使用volatile。当要访问的变量已在synchronized代码块中，或者为常量时，不必使用。
+由于使用volatile屏蔽掉了VM中必要的代码优化，所以在效率上比较低，因此一定在必要时才使用此关键字。 
+就跟C中的一样 禁止编译器进行优化~~~~
+
+</2015-10-21>
+<2015-10-22>
+一、spring mvc 异常处理
+Spring3.0对异常的处理通过HandlerExceptionResolver来实现。HandlerExceptionResolver有4个实现类DefaultHandlerExceptionResolver、AnnotationMethodExceptionResolver、ResponseStatusExceptionResolver、SimpleMappingExceptionResolver。 
+      Spring3.0对异常的处理主要可通过这两种方式：一种是使用HandlerExceptionResolver接口；一种是在@Controller处理器内部使用@ExceptionHandler注解。使用第一种方式可以实现全局异常控制，并且Spring已经提供了一个默认的实现类SimpleMappingExceptionResolver；使用第二种方式可以在Controller内部实现更个性化异常处理方式。
+
+---方式一：HandlerExceptionResolver接口，复写resolveException()方法 
+      springmvc通过HandlerExceptionResolver处理程序的异常，该接口仅有一个方法ModelAndView  resolveException(HttpServletRequest request,              HttpServletResponse response, Object handler, Exception ex)。我们可复写该方法实现全局异常的处理。 
+      当发生异常时，springmvc会调用resolveException()方法，并返回一个ModelAndView对象。如果该方法返回了null，Spring会搜索所有注册在其环境中的实现了HandlerExceptionResolver接口的Bean，逐个执行，直到返回一个ModelAndView对象，最后转到ModelAndView对应的视图作为一个异常报告页面！
+/** 
+ * 基于HandlerExceptionResolver接口的异常处理类 
+ * 这个类必须声明到Spring中去，让Spring管理它，你可以使用@Component标签： 
+ *   <context:component-scan base-package="test.*" /> 
+ * 或者使用在配置文件通过<bean/>节点配置： 
+ *   <bean id="exceptionResolver" class="test.CustomExceptionHandler "/> 
+ */  
+@Component  
+public class CustomExceptionHandler implements HandlerExceptionResolver {  
+    @Override  
+    public ModelAndView resolveException(HttpServletRequest request,  
+            HttpServletResponse response, Object object, Exception exception) {  
+        if(exception instanceof IOException){  
+            return new ModelAndView("ioexp");  
+        }else if(exception instanceof SQLException){  
+            return new ModelAndView("sqlexp");  
+        }  
+        return null;  
+    }  
+}  
+
+---区分ajax请求和普通http请求进行异常处理返回：
+
+/** 
+ * 代码2： 
+ * 说明：当在系统应用中出现普通异常时，根据是系统异常还是应用异常，跳到相应的界面， 
+ * 当ajax异常时，在ajax的error中可直接获得异常。普通的异常我们都配置好了界面，系统会自动跳转。 
+ */  
+public class CustomSimpleMappingExceptionResolver extends SimpleMappingExceptionResolver {  
+    @Override  
+    protected ModelAndView doResolveException(HttpServletRequest request,  
+            HttpServletResponse response, Object handler, Exception ex) {  
+        // Expose ModelAndView for chosen error view.  
+        String viewName = determineViewName(ex, request);  
+        if (viewName != null) {// JSP格式返回  
+            if (!(request.getHeader("accept").indexOf("application/json") > -1 || (request  
+                    .getHeader("X-Requested-With")!= null && request  
+                    .getHeader("X-Requested-With").indexOf("XMLHttpRequest") > -1))) {  
+                // 如果不是异步请求  
+                // Apply HTTP status code for error views, if specified.  
+                // Only apply it if we're processing a top-level request.  
+                Integer statusCode = determineStatusCode(request, viewName);  
+                if (statusCode != null) {  
+                    applyStatusCodeIfPossible(request, response, statusCode);  
+                }  
+                return getModelAndView(viewName, ex, request);  
+            } else {// JSON格式返回  
+                try {  
+                    PrintWriter writer = response.getWriter();  
+                    writer.write(ex.getMessage());  
+                    writer.flush();  
+                } catch (IOException e) {  
+                    e.printStackTrace();  
+                }  
+                return null;  
+            }  
+        } else {  
+            return null;  
+        }  
+    }  
+}  
+
+---方式二：@ExceptionHandler
+
+AnnotationMethodExceptionResolver：springmvc也默认配置了AnnotationMethodExceptionResolver，它允许通过@ExceptionHandler指定处理特定异常的方法。@ExceptionHandler：处理同一个类内触发的局部异常（如果要让其处理多个需拦截异常的处理器，则可另其他类继承此类！）
+
+@Controller  
+//可以被其他处理器继承  
+public class MyExceptionFilter {  
+    ...  
+    //该处理器类中的所有方法抛出的异常都可由此方法捕获并处理  
+    //该注解也可制定多个异常类，如@ExceptionHandler(value={IOException.class,SQLException.class})    
+    @ExceptionHandler(Exception.class)  
+    public String handleException(Exception e, HttpServletRequest req) {          
+  
+        System.out.println("exception name: " + e.getClass().toString());//异常名  
+        System.out.println("exception cause: " + e.getCause());  
+        System.out.println("exception msg: " + e.getLocalizedMessage());  
+        //e.printStackTrace();   
+        StackTraceElement[] ste = e.getStackTrace();  
+        StringBuffer sb_e = new StringBuffer();  
+        for(int j=0;j<ste.length;j++){  
+            if(ste[j].toString().contains("xxxx")) {  
+                sb_e.append(ste[j].toString()+",  ");  
+            }  
+        }     
+        System.out.println("Exception detail: ");//异常详细信息  
+        System.out.println(sb_e.toString());  
+          
+        StringBuffer sbUrl = new StringBuffer();//拼url  
+        System.out.println("request method: "+req.getMethod());//get,post  
+        System.out.println("request encode: " + req.getCharacterEncoding());//编码  
+        System.out.println("request mapping: "+req.getRequestURL().toString());//请求url方法  
+        sbUrl.append(req.getRequestURL().toString());  
+        Enumeration en = req.getParameterNames();//请求参数-值  
+        for(int i=0; en.hasMoreElements(); i++){  
+            String arg = en.nextElement().toString();  
+            if(i==0){  
+                sbUrl.append("?");  
+            }else{  
+                sbUrl.append("&");  
+            }  
+            sbUrl.append(arg + "=" + req.getParameterValues(arg)[0]);  
+        }  
+        System.out.println("request url: " + sbUrl.toString());       
+          
+//      if(ex instanceof BusinessException) {    
+//          return "error-business";    
+//      }else if(ex instanceof ParameterException) {    
+//          return "error-parameter";    
+//      } else {    
+//          return "error";    
+//      }    
+        return "forward:error.jsp";  
+    }  
+}  
+
+---方式三：SimpleMappingExceptionResolver
+
+SimpleMappingExceptionResolver：可对全局异常进行统一处理。
+
+<bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">  
+    <!--设置日志输出级别，不定义则默认不输出警告等错误日志信息。链接：http://elf8848.iteye.com/blog/875830 -->      
+    <property name="warnLogCategory" value="WARN" />    
+    <!-- 默认错误页面，就是不在exceptionMappings指定范围内 -->  
+    <property name="defaultErrorView" value="error"></property>  
+    <!-- 定义需要特殊处理的异常，如当发生IOException异常时跳转到error/ioexp视图-->  
+    <property name="exceptionMappings"><span style="font-family: Arial, Helvetica, sans-serif;"><!—key为异常类，可以是全路径，错误页面或Controller路径！会自动跳转到对应url --></span>        
+        <props>  
+            <prop key="IOException">redirect:/login</prop>  
+            <prop key="java.sql.SQLException">error/sqlexp</prop>  
+        </props>  
+    </property>  
+</bean>  
+
+---方式四：<error-page> 
+DefaultHandlerExceptionResolver：Springmvc默认装配了DefaultHandlerExceptionResolver，它会将springmvc的异常转换成对应的响应状态码（500，404等）。对于Unchecked Exception而言，由于代码不强制捕获，往往被忽略，如果运行期产生了Unchecked Exception，而代码中又没有进行相应的捕获和处理，则我们可能不得不面对尴尬的404、500……等服务器内部错误提示页面。  
+      我们需要一个全面而有效的异常处理机制。目前大多数服务器也都支持在web.xml中通过<error-page>(Websphere/Weblogic)或者<error-code>(Tomcat)节点配置特定异常情况的显示页面。（springmvc）操作如下： 
+1.在web.xml中配置响应状态码对应的页面，如：
+<error-page>    
+    <error-code>500</error-code>    
+    <location>/WEB-INF/pages/error/500.jsp</location>    
+</error-page>   
+<!-- 未捕获的错误，同样可指定其它异常类，或自定义异常类 -->  
+<error-page>  
+    <exception-type>java.lang.Exception</exception-type>  
+    <location>/uncaughtException</location>  
+</error-page>  
+2. applicationContext.xml中配置
+
+<!-- 错误路径和错误页面，注意指定viewResolver -->  
+<mvc:view-controller path="/404" view-name="404"/>  
+<mvc:view-controller path="/500" view-name="500"/>  
+<mvc:view-controller path="/uncaughtException" view-name="uncaughtException"/>  
+附：https://www.google.com.hk/search?newwindow=1&safe=strict&espv=210&es_sm=93&q=error+page%E4%B8%8D%E8%B5%B7%E4%BD%9C%E7%94%A8&revid=601630396&sa=X&ei=ORwOU7K_INKbiQeTjIG4BA&ved=0CIcBENUCKAE&biw=1440&bih=737  
+---方式五：Spring3.2新注解@ControllerAdvice 
+链接：http://jinnianshilongnian.iteye.com/blog/1866350   
+        @ControllerAdvice，是spring3.2提供的新注解。会把@ControllerAdvice注解内部使用@ExceptionHandler、@InitBinder、@ModelAttribute注解的方法应用到所有的 @RequestMapping注解的方法（全局的）
+
+      有一次发现springmvc3.2.x的@ControllerAdvice注解不起作用，参考链接http://www.07net01.com/linux/spring3_2_mvc__ControllerAdvice_buqizuoyong_554229_1375786240.html加上@EnableWebMvc后就可以了。但是，后来又发现会导致这个原因是因为项目的springmvc配置文件中没有配置<mvc:annotation-driven />，于是将其配置上。但是配置上<mvc:annotation-driven />后问题就来了，启动的时候就报异常，看了下原因，感觉是@EnableWebMvc注解导致的，于是将该注解删除掉，果然就正常启动了。不过，至于其中的原理还是理解不深刻，不知道内部是怎么调用的，只是发现当配置上<mvc:annotation-driven />的时候不应该用@EnableWebMvc修饰@ControllerAdvice。（待研究）附链接：http://hahalq.iteye.com/blog/1738599。http://www.yulezhandian.com/?p=196。
+
+      测试后发现，当全局异常和局部异常都存在时，全局异常处理会被局部异常处理覆盖。
+
+/** 
+ * 全局异常 
+ */  
+//@EnableWebMvc  
+@ControllerAdvice  
+public class MyExceptionHandler {  
+      
+    @ExceptionHandler(Exception.class)  
+    public String handleException(Exception re, HttpServletRequest request) {  
+        System.out.println("error.......");  
+        return "forward:error.jsp";  
+    }  
+}  
+
+二、JVM调优、深入JAVA虚拟机、研磨设计模式、Dubbo、Shiro、Netty、ActiveMQ、ESB、分布式数据库、大数据处理
+
+
+三、Oracle 数据库日志文件清除的方法 
+Oracle数据库日志文件不可以超过2G，当该文件超过2G时，Oracle数据库的监听将停止工作。故数据库管理员需定期清除该日志文件。
+步骤1：  用Oracle用户名登录数据库服务器
+步骤2：  先cd /usr/local/ora8i/bin 进入脚本执行目录
+步骤3：  执行 ./lsnrctl 命令，进入Oracle监听模式
+步骤4：  执行 set log_status off 命令，关闭Oracle日志
+步骤5：  执行 exit 命令，退出Oracle监听
+步骤6：  执行 cd /usr/local/ora8i/network/log 命令,进入Oracle数据库的日志存放目录
+步骤7：  执行 cp listener.log 20060323.log 命令，将listener.log文件备份到20060323.log文件中。
+步骤8：  执行 rm listener.log 命令，删除日志文件
+步骤9：  cd /usr/local/ora8i/bin 进入脚本执行目录
+步骤10：  执行 ./lsnrctl 命令，进入Oracle监听模式
+步骤11：  执行 set log_status on 命令，打开Oracle日志
+步骤12：  执行show log_status,查看是否监听服务已经启动成功
+步骤13： 执行 exit 命令，退出Oracle监听
+步骤14： 执行 exit 命令，退出数据库服务器
+
+四、spring---http://stamen.iteye.com/blog/1497981
+Spring框架的7个模块
+    1、核心容器 2、Spring 上下文 3、Spring AOP 4、Spring DAO 5、Spring ORM 6、Spring Web 模块 7、Spring MVC 框架
+组成Spring框架的每个模块（或组件）都可以单独存在，或者与其他一个或多个模块联合实现。每个模块的功能如下：
+　　核心容器：核心容器提供 Spring 框架的基本功能。核心容器的主要组件是 BeanFactory，它是工厂模式的实现。BeanFactory 使用控制反转 （IOC） 模式将应用程序的配置和依赖性规范与实际的应用程序代码分开。
+　　Spring 上下文：Spring 上下文是一个配置文件，向 Spring 框架提供上下文信息。Spring 上下文包括企业服务，例如 JNDI、EJB、电子邮件、国际化、校验和调度功能。
+　　Spring AOP：通过配置管理特性，Spring AOP 模块直接将面向方面的编程功能集成到了 Spring 框架中。所以，可以很容易地使 Spring 框架管理的任何对象支持 AOP。Spring AOP 模块为基于 Spring 的应用程序中的对象提供了事务管理服务。通过使用 Spring AOP，不用依赖 EJB 组件，就可以将声明性事务管理集成到应用程序中。
+　　Spring DAO：JDBC DAO 抽象层提供了有意义的异常层次结构，可用该结构来管理异常处理和不同数据库供应商抛出的错误消息。异常层次结构简化了错误处理，并且极大地降低了需要编写的异常代码数量（例如打开和关闭连接）。Spring DAO 的面向 JDBC 的异常遵从通用的 DAO 异常层次结构。
+　　Spring ORM：Spring 框架插入了若干个 ORM 框架，从而提供了 ORM 的对象关系工具，其中包括 JDO、Hibernate 和 iBatis SQL Map。所有这些都遵从 Spring 的通用事务和 DAO 异常层次结构。
+　　Spring Web 模块：Web 上下文模块建立在应用程序上下文模块之上，为基于 Web 的应用程序提供了上下文。所以，Spring 框架支持与 Jakarta Struts 的集成。Web 模块还简化了处理多部分请求以及将请求参数绑定到域对象的工作。
+　　Spring MVC 框架：MVC 框架是一个全功能的构建 Web 应用程序的 MVC 实现。通过策略接口，MVC 框架变成为高度可配置的，MVC 容纳了大量视图技术，其中包括 JSP、Velocity、Tiles、iText 和 POI。
+Spring 框架的功能可以用在任何 J2EE 服务器中，大多数功能也适用于不受管理的环境。Spring 的核心要点是：支持不绑定到特定 J2EE 服务的可重用业务和数据访问对象。毫无疑问，这样的对象可以在不同 J2EE 环境 （Web 或 EJB）、独立应用程序、测试环境之间重用。
+为何要使用Spring?
+    在项目中引入spring立即可以带来下面的好处:1.降低组件之间的耦合度,实现软件各层之间的解耦。2.可以使用容器提供的众多服务，如：事务管理服务、消息服务等等。当我们使用容器管理事务时，开发人员就不再需要手工控制事务.也不需处理复杂的事务传播。3.容器提供单例模式支持，开发人员不再需要自己编写实现代码。4.容器提供了AOP技术，利用它很容易实现如权限拦截、运行期监控等功能。5.容器提供的众多辅作类，使用这些类能够加快应用的开发，如： JdbcTemplate、 HibernateTemplate。6.Spring对于主流的应用框架提供了集成支持，如：集成Hibernate、JPA、Struts等，这样更便于应用的开发。
+
+五、ACID(数据库事务正确执行的四个基本要素的缩写)
+ACID，指数据库事务正确执行的四个基本要素的缩写。包含：原子性（Atomicity）、一致性（Consistency）、隔离性（Isolation）、持久性（Durability）。一个支持事务（Transaction）的数据库，必需要具有这四种特性，否则在事务过程（Transaction processing）当中无法保证数据的正确性，交易过程极可能达不到交易方的要求。
+
+六、关系型数据库与非关系型数据库
+关系型数据库的最大特点就是事务的一致性：传统的关系型数据库读写操作都是事务的，具有ACID的特点，这个特性使得关系型数据库可以用于几乎所有对一致性有要求的系统中，如典型的银行系统。
+关系型数据库为了维护一致性所付出的巨大代价就是其读写性能比较差，而像微博、facebook这类SNS的应用，对并发读写能力要求极高，关系型数据库已经无法应付(在读方面，传统上为了克服关系型数据库缺陷，提高性能，都是增加一级memcache来静态化网页，而在SNS中，变化太快，memchache已经无能为力了)，因此，必须用新的一种数据结构存储来代替关系数据库。
+关系数据库的另一个特点就是其具有固定的表结构，因此，其扩展性极差，而在SNS中，系统的升级，功能的增加，往往意味着数据结构巨大变动，这一点关系型数据库也难以应付，需要新的结构化数据存储。
+于是，非关系型数据库应运而生，由于不可能用一种数据结构化存储应付所有的新的需求，因此，非关系型数据库严格上不是一种数据库，应该是一种数据结构化存储方法的集合。
+必须强调的是，数据的持久存储，尤其是海量数据的持久存储，还是需要一种关系数据库这员老将。
+
+NoSQL依据结构化方法以及应用场合的不同，主要分为以下几类：
+面向高性能并发读写的key-value数据库：
+key-value数据库的主要特点即使具有极高的并发读写性能，Redis,Tokyo Cabinet,Flare就是这类的代表
+面向海量数据访问的面向文档数据库：
+这类数据库的特点是，可以在海量的数据中快速的查询数据，典型代表为MongoDB以及CouchDB
+面向可扩展性的分布式数据库：
+这类数据库想解决的问题就是传统数据库存在可扩展性上的缺陷，这类数据库可以适应数据量的增加以及数据结构的变化
+
+七、RandomAccessFile
+
+</2015-10-22>
+<2015-10-23>
+一、thrift
+thrift是一个软件框架，用来进行可扩展且跨语言的服务的开发。它结合了功能强大的软件堆栈和代码生成引擎，以构建在 C++, Java, Python, PHP, Ruby, Erlang, Perl, Haskell, C#, Cocoa, JavaScript, Node.js, Smalltalk, and OCaml 这些编程语言间无缝结合的、高效的服务。
+
+二、solr空查询
+-periodId:[* TO *]
+
+
+</2015-10-23>
+<2015-10-27>
+一、literal does not match format string
+</2015-10-27>
+<2015-10-30>
+一、JFS
+二、LAMP
+三、ERR_CONTENT_LENGTH_MISMATCH
+四、多级映射
+
+五、
+<Connector port="20002"
+    protocol="org.apache.coyote.http11.Http11NioProtocol"
+    maxThreads="800"
+    acceptCount="80"
+    minSpareThreads="25"
+    maxPostSize="1073741824"
+    connectionTimeout="60000"
+    keepAliveTimeout="15000"
+    maxKeepAliveRequests="150"
+    redirectPort="8443"
+    URIEncoding="UTF-8"
+    enableLookups="false"
+    compression="on"
+    compressionMinSize="2048"
+    noCompressionUserAgents="gozilla, traviata"
+    compressableMimeType="text/html,text/xml,text/javascript,text/css,text/plain,image/jpeg,image/gif" />
+
+
+六、
+JAVA_OPTS="-server -Xms4096M -Xmx4096M -XX:PermSize=512M -XX:MaxPermSize=512M"
+
+七、超过系统限制
+Oct 30, 2015 5:14:40 PM org.apache.tomcat.util.net.NioEndpoint$Acceptor run
+SEVERE: Socket accept failed
+java.io.IOException: Too many open files
+        at sun.nio.ch.ServerSocketChannelImpl.accept0(Native Method)
+        at sun.nio.ch.ServerSocketChannelImpl.accept(ServerSocketChannelImpl.java:241)
+        at org.apache.tomcat.util.net.NioEndpoint$Acceptor.run(NioEndpoint.java:811)
+        at java.lang.Thread.run(Thread.java:745)
+
+八、其实linux没有线程，都是用进程模仿的
+
+九、ulimit -n 修改
+通过ulimit -n命令可以查看linux系统里打开文件描述符的最大值，一般缺省值是1024，对一台繁忙的服务器来说，这个值偏小，所以有必要重新设置linux系统里打开文件描述符的最大值。那么应该在哪里设置呢？
+
+最正确的做法是在/etc/security/limits.conf里设置：
+
+十、linux查看打开文件数
+lsof
+lsof |wc -l
+
+</2015-10-30>
+<2015-11-3>
+一、 java.net.URLEncoder.encode(title,"UTF-8");
+
+二、javashop
+
+三、shop++
+</2015-11-3>
+<2015-11-5>
+一、http://thx.github.io/RAP/index_zh.html
+
+
+</2015-11-5>
+<2015-11-6>
+一、javax.servlet.http.Part
+
+二、http://www.javamall.com.cn/
+
+</2015-11-6>
+<2015-11-13>
+一、流
+BufferedInputStream input = new BufferedInputStream(request.getInputStream());
+FileOutputStream out = new FileOutputStream(new File(""));
+byte[] buffer = new byte[10240];
+int len = -1;
+while ((len = input.read(buffer)) != -1) {
+	out.write(buffer, 0, len);
+}
+
+二、html协议
+
+
+</2015-11-13>
+<2015-11-14>
+一、nginx配置流媒体
+
+
+
+</2015-11-14>
+<2015-11-17>
+一、freemarker
+
+</2015-11-17>
+<2015-11-30>
+一、sql
+SELECT SUM(DECODE(TO_Char(to_date('1970-01-01 00:00:00','yyyy-mm-dd hh24:mi:ss') + B.Create_Time/24/60/60, 'MM'), '01', B.Order_Amount, 0)) M1,
+       SUM(DECODE(TO_CHAR(to_date('1970-01-01 00:00:00','yyyy-mm-dd hh24:mi:ss') + B.Create_Time/24/60/60, 'MM'), '02', B.Order_Amount, 0)) M2,  
+       SUM(DECODE(TO_CHAR(to_date('1970-01-01 00:00:00','yyyy-mm-dd hh24:mi:ss') + B.Create_Time/24/60/60, 'MM'), '03', B.Order_Amount, 0)) M3,  
+       SUM(DECODE(TO_CHAR(to_date('1970-01-01 00:00:00','yyyy-mm-dd hh24:mi:ss') + B.Create_Time/24/60/60, 'MM'), '04', B.Order_Amount, 0)) M4,  
+       SUM(DECODE(TO_CHAR(to_date('1970-01-01 00:00:00','yyyy-mm-dd hh24:mi:ss') + B.Create_Time/24/60/60, 'MM'), '05', B.Order_Amount, 0)) M5,  
+       SUM(DECODE(TO_CHAR(to_date('1970-01-01 00:00:00','yyyy-mm-dd hh24:mi:ss') + B.Create_Time/24/60/60, 'MM'), '06', B.Order_Amount, 0)) M6,  
+       SUM(DECODE(TO_CHAR(to_date('1970-01-01 00:00:00','yyyy-mm-dd hh24:mi:ss') + B.Create_Time/24/60/60, 'MM'), '07', B.Order_Amount, 0)) M7,  
+       SUM(DECODE(TO_CHAR(to_date('1970-01-01 00:00:00','yyyy-mm-dd hh24:mi:ss') + B.Create_Time/24/60/60, 'MM'), '08', B.Order_Amount, 0)) M8,  
+       SUM(DECODE(TO_CHAR(to_date('1970-01-01 00:00:00','yyyy-mm-dd hh24:mi:ss') + B.Create_Time/24/60/60, 'MM'), '09', B.Order_Amount, 0)) M9,  
+       SUM(DECODE(TO_CHAR(to_date('1970-01-01 00:00:00','yyyy-mm-dd hh24:mi:ss') + B.Create_Time/24/60/60, 'MM'), '10', B.Order_Amount, 0)) M10,  
+       SUM(DECODE(TO_CHAR(to_date('1970-01-01 00:00:00','yyyy-mm-dd hh24:mi:ss') + B.Create_Time/24/60/60, 'MM'), '11', B.Order_Amount, 0)) M11,  
+       SUM(DECODE(TO_CHAR(to_date('1970-01-01 00:00:00','yyyy-mm-dd hh24:mi:ss') + B.Create_Time/24/60/60, 'MM'), '12', B.Order_Amount, 0)) M12  
+  FROM es_order B  
+ WHERE store_id=1001  
+   AND TO_CHAR(to_date('1970-01-01 00:00:00','yyyy-mm-dd hh24:mi:ss') + B.Create_Time/24/60/60, 'yyyy') = '2015';  
+   
+
+
+
+===================================
+select (SELECT count(1) FROM es_order B  WHERE store_id=1001 AND TO_CHAR(to_date('1970-01-01 00:00:00','yyyy-mm-dd hh24:mi:ss') + B.Create_Time/24/60/60, 'yyyy') = '2015' AND TO_CHAR(to_date('1970-01-01 00:00:00','yyyy-mm-dd hh24:mi:ss') + B.Create_Time/24/60/60, 'MM') = '01') as N1,
+       (SELECT count(1) FROM es_order B  WHERE store_id=1001 AND TO_CHAR(to_date('1970-01-01 00:00:00','yyyy-mm-dd hh24:mi:ss') + B.Create_Time/24/60/60, 'yyyy') = '2015' AND TO_CHAR(to_date('1970-01-01 00:00:00','yyyy-mm-dd hh24:mi:ss') + B.Create_Time/24/60/60, 'MM') = '02') as N2,
+       (SELECT count(1) FROM es_order B  WHERE store_id=1001 AND TO_CHAR(to_date('1970-01-01 00:00:00','yyyy-mm-dd hh24:mi:ss') + B.Create_Time/24/60/60, 'yyyy') = '2015' AND TO_CHAR(to_date('1970-01-01 00:00:00','yyyy-mm-dd hh24:mi:ss') + B.Create_Time/24/60/60, 'MM') = '03') as N3,
+       (SELECT count(1) FROM es_order B  WHERE store_id=1001 AND TO_CHAR(to_date('1970-01-01 00:00:00','yyyy-mm-dd hh24:mi:ss') + B.Create_Time/24/60/60, 'yyyy') = '2015' AND TO_CHAR(to_date('1970-01-01 00:00:00','yyyy-mm-dd hh24:mi:ss') + B.Create_Time/24/60/60, 'MM') = '04') as N4,
+       (SELECT count(1) FROM es_order B  WHERE store_id=1001 AND TO_CHAR(to_date('1970-01-01 00:00:00','yyyy-mm-dd hh24:mi:ss') + B.Create_Time/24/60/60, 'yyyy') = '2015' AND TO_CHAR(to_date('1970-01-01 00:00:00','yyyy-mm-dd hh24:mi:ss') + B.Create_Time/24/60/60, 'MM') = '05') as N5,
+       (SELECT count(1) FROM es_order B  WHERE store_id=1001 AND TO_CHAR(to_date('1970-01-01 00:00:00','yyyy-mm-dd hh24:mi:ss') + B.Create_Time/24/60/60, 'yyyy') = '2015' AND TO_CHAR(to_date('1970-01-01 00:00:00','yyyy-mm-dd hh24:mi:ss') + B.Create_Time/24/60/60, 'MM') = '06') as N6,
+       (SELECT count(1) FROM es_order B  WHERE store_id=1001 AND TO_CHAR(to_date('1970-01-01 00:00:00','yyyy-mm-dd hh24:mi:ss') + B.Create_Time/24/60/60, 'yyyy') = '2015' AND TO_CHAR(to_date('1970-01-01 00:00:00','yyyy-mm-dd hh24:mi:ss') + B.Create_Time/24/60/60, 'MM') = '07') as N7,
+       (SELECT count(1) FROM es_order B  WHERE store_id=1001 AND TO_CHAR(to_date('1970-01-01 00:00:00','yyyy-mm-dd hh24:mi:ss') + B.Create_Time/24/60/60, 'yyyy') = '2015' AND TO_CHAR(to_date('1970-01-01 00:00:00','yyyy-mm-dd hh24:mi:ss') + B.Create_Time/24/60/60, 'MM') = '08') as N8,
+       (SELECT count(1) FROM es_order B  WHERE store_id=1001 AND TO_CHAR(to_date('1970-01-01 00:00:00','yyyy-mm-dd hh24:mi:ss') + B.Create_Time/24/60/60, 'yyyy') = '2015' AND TO_CHAR(to_date('1970-01-01 00:00:00','yyyy-mm-dd hh24:mi:ss') + B.Create_Time/24/60/60, 'MM') = '09') as N9,
+       (SELECT count(1) FROM es_order B  WHERE store_id=1001 AND TO_CHAR(to_date('1970-01-01 00:00:00','yyyy-mm-dd hh24:mi:ss') + B.Create_Time/24/60/60, 'yyyy') = '2015' AND TO_CHAR(to_date('1970-01-01 00:00:00','yyyy-mm-dd hh24:mi:ss') + B.Create_Time/24/60/60, 'MM') = '10') as N10,
+       (SELECT count(1) FROM es_order B  WHERE store_id=1001 AND TO_CHAR(to_date('1970-01-01 00:00:00','yyyy-mm-dd hh24:mi:ss') + B.Create_Time/24/60/60, 'yyyy') = '2015' AND TO_CHAR(to_date('1970-01-01 00:00:00','yyyy-mm-dd hh24:mi:ss') + B.Create_Time/24/60/60, 'MM') = '11') as N11,
+       (SELECT count(1) FROM es_order B  WHERE store_id=1001 AND TO_CHAR(to_date('1970-01-01 00:00:00','yyyy-mm-dd hh24:mi:ss') + B.Create_Time/24/60/60, 'yyyy') = '2015' AND TO_CHAR(to_date('1970-01-01 00:00:00','yyyy-mm-dd hh24:mi:ss') + B.Create_Time/24/60/60, 'MM') = '12') as N12
+
+      from dual;  
+
+二、
+
+</2015-11-30>
+<2015-12-14>
+一、ThreadLocal
+概括起来说，对于多线程资源共享的问题，同步机制采用了“以时间换空间”的方式，比如定义一个static变量，同步访问，而ThreadLocal采用了“以空间换时间”的方式。前者仅提供一份变量，让不同的线程排队访问，而后者为每一个线程都提供了一份变量，因此可以同时访问而互不影响。
+
+ThreadLocal很容易让人望文生义，想当然地认为是一个“本地线程”。其实，ThreadLocal并不是一个Thread，而是Thread的局部变量，也许把它命名为ThreadLocalVariable更容易让人理解一些。
+当使用ThreadLocal维护变量时，ThreadLocal为每个使用该变量的线程提供独立的变量副本，所以每一个线程都可以独立地改变自己的副本，而不会影响其它线程所对应的副本。
+从线程的角度看，目标变量就象是线程的本地变量，这也是类名中“Local”所要表达的意思。
+
+二、部署转码
+一、安装ffmpeg.
+安装编译环境
+# yum install -y automake autoconf libtool gcc gcc-c++
+ 安装所需程序库的RPM包
+# rpm -Uhv http://apt.sw.be/redhat/el5/en/i386/rpmforge/RPMS/rpmforge-release-0.3.6-1.el5.rf.i386.rpm
+安装 Install ffmpeg 模块 
+# yum install ffmpeg
+二、安装swftools.
+安装swftools依赖包
+# yum install gcc* automake zlib-devel libjpeg-devel giflib-devel freetype-devel
+安装swftools
+# wget http://www.swftools.org/swftools-0.9.2.tar.gz
+# tar -zxvf swftools-0.9.2.tar.gz
+# cd swftools-0.9.2
+# cd lib/pdf/
+# wget ftp://ftp.foolabs.com/pub/xpdf/xpdf-3.04.tar.gz
+# ./configure --prefix=/usr/local/swftools
+# make
+        编辑Makefile和Makefile.in，如果存在包含rm –o –L的行，则将其删掉.
+
+# make install
+# cp swfs/rfxview.swf /usr/local/swftools/bin
+# chmod 644 /usr/local/swftools/bin/rfxview.swf
+        配置环境变量
+
+# vi + /etc/profile
+  export PATH=/usr/local/swftools/bin:$PATH
+# source /etc/profile
+安装xpdf-chinese.tar.gz
+
+# tar -zxvf xpdf-chinese.tar.gz -C /usr/local/share
+安装windows下常见中文字体
+
+# unzip fonts-win.zip -d /usr/share/fonts
+# chmod -R a+r /usr/share/fonts/fonts-win
+# cd /usr/share/fonts/fonts-win
+# mkfontscale
+# mkfontdir
+# fc-cache -f -v
+安装OpenOffice
+
+# cd en-US/RPMS
+# rpm -Uvih *rpm
+# soffice "-accept=socket,host=localhost,port=8100;urp;StarOffice.ServiceManager" -nologo -headless -nofirststartwizard &
+
+
+linux监控网络流量
+
+</2015-12-14>
+<2015-12-16>
+一、
+[cmsuer@whty-124 conf]$ netstat -na | grep ESTAB | grep 20002 | wc -l 3189
+
+二、Spring的scope="prototype"属性
+可以利用容器的scope="prototype"来保证每一个请求有一个单独的Action来处理，		避免struts中Action的线程安全问题。这句话怎么理解呢如果用单例方式会有什么样的结果呢
+spring 默认scope 是单例模式
+这样只会创建一个Action对象
+每次访问都是同一个Action对象，数据不安全
+struts2 是要求 每次次访问 都对应不同的Action
+ scope="prototype" 可以保证 当有请求的时候 都创建一个Action对象
+
+
+</2015-12-16>
+<2015-12-17>
+一、带宽，下载速度
+
+</2015-12-17>
+<2015-12-24>
+一、关于 tomcat 集群中 session 共享的三种方法
+
+二、百度富文本UEditor
+</2015-12-24>
+<2015-12-25>
+一、mysql区分大小写吗
+字段名不分，表名在windows下不分，linux下分
+
+</2015-12-25>
+<2015-12-28>
+一、Cannot find a free socket for the debugger
+找不到调试器的空闲套接字
+
+windows有个服务叫“Internet Connection Sharing”，也就是常说的ICS服务，这个服务在平常的情况下可以被禁用，或者被卸载，从而提高电脑的运行速度。但是如果你想把自己的电脑当作无线wifi热点来使用的话，那么没有这个服务是不行的，因为这个服务为这个组件的网络提供DNS域名解析、DHCP ip地址分配，以及NAT网关的作用，如果这个时候禁用这个服务，那么导致这个组件的网络中的手机或者电脑，不能被分配ip地址，不能进行域名解析等等。也就是说，ics服务是创建热点所必须的服务。
+</2015-12-28>
+<2015-12-29>
+一、http://tool.chinaz.com/站长工具网站。
+
+二、Connection
+在connection类中提供了3个控制事务的方法： 
+
+（1） setAutoCommit(Boolean autoCommit):设置是否自动提交事务； 
+
+（2） commit();提交事务； 
+
+（3） rollback();撤消事务； 
+
+在jdbc api中，默认的情况为自动提交事务，也就是说，每一条对数据库的更新的sql语句代表一项事务，操作成功后，系统自动调用commit（）来提交，否则将调用rollback（）来撤消事务。 
+
+
+</2015-12-29>
+<2015-12-30>
+一、http://16333.com.cn/
+二、youtube
+三、谷粉搜搜
+
+</2015-12-30>
+<2016-1-4>
+一、过滤器为什么基于方法回调,拦截器基于反射
+拦截器与过滤器的区别 ： 
+1. 拦截器是基于java的反射机制的，而过滤器是基于函数回调。
+2. 拦截器不依赖与servlet容器，过滤器依赖与servlet容器。 
+3. 拦截器只能对action请求起作用，而过滤器则可以对几乎所有的请求起作用。
+4. 拦截器可以访问action上下文、值栈里的对象，而过滤器不能访问。 
+5. 在action的生命周期中，拦截器可以多次被调用，而过滤器只能在容器初始化时被调用一次
+
+执行顺序 ：过滤前 - 拦截前 - Action处理 - 拦截后 - 过滤后。个人认为过滤是一个横向的过程，首先把客户端提交的内容进行过滤(例如未登录用户不能访问内部页面的处理)；过滤通过后，拦截器将检查用户提交数据的验证，做一些前期的数据处理，接着把处理后的数据发给对应的Action；Action处理完成返回后，拦截器还可以做其他过程(还没想到要做啥)，再向上返回到过滤器的后续操作。
+
+
+二、监听器类型
+按监听的对象划分：servlet2.4规范定义的事件有三种：
+1.用于监听应用程序环境对象（ServletContext）的事件监听器
+2.用于监听用户会话对象（HttpSession）的事件监听器
+3.用于监听请求消息对象（ServletRequest）的事件监听器
+ 
+按监听的事件类项划分
+1.用于监听域对象自身的创建和销毁的事件监听器
+2.用于监听域对象中的属性的增加和删除的事件监听器
+3.用于监听绑定到HttpSession域中的某个对象的状态的事件监听器
+ 
+在一个web应用程序的整个运行周期内，web容器会创建和销毁三个重要的对象，ServletContext，HttpSession,ServletRequest。
+</2016-1-4>
+<2016-1-5>
+一、Lucene教程详解
+
+</2016-1-5>
+<2016-1-6>
+一、net::ERR_CONTENT_LENGTH_MISMATCH
+
+二、Resource interpreted as Document but transferred with MIME type application/x-ppt
+
+
+</2016-1-6>
+<2016-1-8>
+一、wget http://192.168.6.1:8080/task/file/download?fileId=5345cc8e071456f7f48a2561_1
+
+
+
+</2016-1-8>
+<2016-1-11>
+一、ActiveMQ、Kafka(高吞吐量的分布式发布订阅消息系统)、Redis、Netty(nio框架)
+
+二、
+String pathLocal = request.getParameter("resumableRelativePath");
+		
+/*
+ * 在tomcat的server.xml文件中配置URIEncoding="UTF-8"即可
+pathLocal = new String(pathLocal.getBytes("ISO-8859-1"), "UTF-8");
+*/
+
+三、持有CISCO认定证书（CCNA、CCNP）Microsoft认定证书（MCP、MCSE）的优先。
+了解网络应用层协议（HTTP，HTTPS，SQL协议等）者优先
+
+四、互联网思维
+
+
+</2016-1-11>
+<2016-1-18>
+一、livereload.js
+
+</2016-1-18>

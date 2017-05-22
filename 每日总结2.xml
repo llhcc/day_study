@@ -1,0 +1,2164 @@
+<2015-3-10>
+一、Request的getParameter和getAttribute方法的区别 
+从更深的层次考虑，request.getParameter()方法传递的数据，会从Web客户端传到Web服务器端，代表HTTP请求数据。request.getParameter()方法返回String类型的数据。
+
+request.setAttribute()和getAttribute()方法传递的数据只会存在于Web容器内部，在具有转发关系的Web组件之间共享。这两个方法能够设置Object类型的共享数据。
+
+request.getParameter()取得是通过容器的实现来取得通过类似post，get等方式传入的数据。
+request.setAttribute()和getAttribute()只是在web容器内部流转，仅仅是请求处理阶段。
+getAttribute是返回对象,getParameter返回字符串
+
+总的来说：request.getAttribute()方法返回request范围内存在的对象，而request.getParameter()方法是获取http提交过来的数据。
+
+二、org.springframework.dao.EmptyResultDataAccessException: Incorrect result size: expected 1, actual 0
+
+try{
+    return getJdbcTemplate().queryForMap("select s.fb,s.pb,s.tu,s.qt,s.fbc,s.pbc,s.tt,s.ft,s.lt from gbc$view_user s where s.ud = ? and ad= ?", new Object[]{ud,ad});
+    }catch (EmptyResultDataAccessException e) {
+    return null;
+    }
+
+
+</2015-3-10>
+<2015-3-11>
+一、分布式系统设计-实际应用的系统是如何通过使用集中式日志来简化设计的
+
+
+二、J2EE的十三个规范(组件标准规范)
+J2EE平台由一整套服务（Services）、应用程序接口（APIs）和协议构成，它对开发基于Web的多层应用提供了功能支持，下面对J2EE中的13种技术规范进行简单的描述（限于篇幅，这里只能进行简单的描述）：
+1:JDBC(Java Database Connectivity)
+JDBC API为访问不同数据库提供了统一的路径,像ODBC一样,JDBC开发者屏蔽了一些细节问题,另外,JDBC对数据库的访问也具有平台无关性.
+2:JNDI(Java Name and Directory Interface)
+JNDI API 被用于执行名字和目录服务.它提供了一致的模型来存取和操作企业级的资源DNS和LDAP,本地文件系统,或应用服务器中的对象.
+3:EJB(Enterprise JavaBean)
+J2EE技术之所以赢得广泛重视的原因之一就是EJB.它提供了一个框架来开发和实施分布式商务逻辑,由此很显著的简化了具有可伸缩性和高度复杂的企业级应用程序的开发.EJB规范定义了EJB组件在何时如何与它们的容器进行交互作用.容器负责提供公用的服务,例如目录服务,事务管理,安全性,资源缓冲池以及容错性.但这里值得注意的是,EJB并不是实现J2EE的唯一路径.正式由于J2EE的开放性,使得所有的厂商能够以一种和EJB平行的方式来达到同样的目地.
+4:RMI(Remote Method Invoke)
+远程方法请求,RMI协议调用远程对象上的方法.它使用了序列化的方式在客户端和服务器之间传递数据.RMI是一种被EJB使用的更底层的协议.
+5:Java IDL/CORBA(通用对象请求代理架构是软件构建的一个标准 )
+在Java IDL的支持下,开发人员可以将Java和CORBA集成在一起.他们可以创建Java对象并使之可在CORBA ORB中展开,或者他们还可以创建Java类并和其它ORB一起展开的CORBA对象客户.后一种方法提供了另外一种途径,通过它Java可以被用于将你的新的应用程序和旧的系统集合在一起.
+6:JSP
+JSP页面由HTML（标准通用标记语言下的一个应用）代码和嵌入其中的Java代码组成.服务器在
+页面被客户端所请求以后对这些Java代码进行处理,然后将生成的HTML页面返回给客户端浏览器.
+7:Java Servlet
+Servlet 是一种小型的Java程序,它扩展了web服务器的功能.作为一种服务器的应用,当被请求时开始执行,这和CGI Perl脚本很相似.Servlet提供的功能大多和JSP类似,不过实现的方式不同.JSP通常是大多数的HTML代码中嵌入少量的Java代码,而servlet全部由java写成并且生成HTML.
+8:XML
+XML（标准通用标记语言的子集）是一种可以用来定其它标记语言的语言.它被用来在不同的商务过程中共享数据.XML的发展和java是相互独立的,但是,它和java具有的相同目标是平台独立性.
+9:JMS
+MS是用于和面向对象消息的中间件相互通信的应用程序接口.它既支持点对点的域,有支持发布/订阅类型的域,并且提供了下列类型的支持:消息传递,事务型消息的传递,一致性消息和具有持久性的订阅者支持.JMS还提供了另一种方式来对新系统和旧后台系统相互集成.
+10:JTA
+JTA定义了一种标准API,应用程序由此可以访问各种事务监控.
+11:JTS
+JTS是CORBA OTS事务监控的基本实现.JTS规定了事务管理的实现方法.该事务管理器是在高层支持java Transaction API规范,并且在较低层次实现OMG OTS specification 和Java印象.JTS事务管理器为应用程序服务器,资源管理器,独立的应用以及同学资源管理器提供了事务服务.
+12:JavaMail
+JavaMail是用于存取邮件服务器的API,它提供了一套邮件服务器的抽象类.不仅支持SMTP服务器,也支持IMAP服务器.
+13:JAF(JavaBeans Activation Framework)
+JavaMail利用JAF来处理MIME编码的邮件附件.MIME的字节流可以被转换成java对象,大多数应用都可以不需要直接使用JAF。
+-----------------------
+名词解释:
+容器：充当中间件的角色。
+WEB容器：给处于其中的应用程序组件（JSP，SERVLET）提供一个环境，使JSP,SERVLET直接与容器中的环境变量接口交互，不必关注其它系统问题。主要由WEB服务器来实现。例如：TOMCAT,WEBLOGIC,WEBSPHERE等。该容器提供的接口严格遵守J2EE规范中的WEB APPLICATION 标准。我们把遵守以上标准的WEB服务器就叫做J2EE中的WEB容器。
+EJB容器：Enterprise java bean 容器。更具有行业领域特色。他提供给运行在其中的组件EJB各种管理功能。只要满足J2EE规范的EJB放入该容器，马上就会被容器进行高效率的管理。并且可以通过现成的接口来获得系统级别的服务。例如邮件服务、事务管理。
+WEB容器和EJB容器在原理上是大体相同的，更多的区别是被隔离的外界环境。WEB容器更多的是跟基于HTTP的请求打交道。而EJB容器不是。它是更多的跟数据库、其它服务打交道。但他们都是把与外界的交互实现从而减轻应用程序的负担。例如SERVLET不用关心HTTP的细节，直接引用环境变量session,request,response就行、EJB不用关心数据库连接速度、各种事务控制，直接由容器来完成。
+RMI/IIOP：远程方法调用internet对象请求中介协议，他们主要用于通过远程调用服务。例如，远程有一台计算机上运行一个程序，它提供股票分析服务，我们可以在本地计算机上实现对其直接调用。当然这是要通过一定的规范才能在异构的系统之间进行通信。RMI是JAVA特有的。
+JNDI:JAVA命名目录服务。主要提供的功能是：提供一个目录系统，让其它各地的应用程序在其上面留下自己的索引，从而满足快速查找和定位分布式应用程序的功能。
+JMS:JAVA消息服务。主要实现各个应用程序之间的通讯。包括点对点和广播。
+JAVAMAIL:JAVA邮件服务。提供邮件的存储、传输功能。他是编程中实现邮件功能的核心。相当MS中的EXCHANGE开发包。
+JTA：JAVA事务服务。提供各种分布式事务服务。应用程序只需调用其提供的接口即可。
+JAF:JAVA安全认证框架。提供一些安全控制方面的框架。让开发者通过各种部署和自定义实现自己的个性安全控制策略。
+EAI:企业应用集成。是一种概念，从而牵涉到好多技术。J2EE技术是一种很好的集成实现。
+
+三、ms exchange
+Microsoft Exchange Server是一款流行的邮件服务器.它提供可靠的邮件系统，该系统具备反垃圾邮件和防病毒的内置保护。
+
+四、Linux定时任务
+
+</2015-3-11>
+<2015-3-16>
+一、windows进程查看命令cmd
+wmic process get
+
+
+二、Linux变量
+$# 是传给脚本的参数个数
+$0 是脚本本身的名字
+$1 是传递给该shell脚本的第一个参数
+$2 是传递给该shell脚本的第二个参数
+$@ 是传给脚本的所有参数的列表
+$* 是以一个单字符串显示所有向脚本传递的参数，与位置变量不同，参数可超过9个
+$$ 是脚本运行的当前进程ID号
+$? 是显示最后命令的退出状态，0表示没有错误，其他表示有错误
+
+三、vsftpd
+
+
+四、awk命令
+
+
+五、PropertyPlaceholderConfigurer
+
+</2015-3-16>
+<2015-3-17>
+一、
+
+--------------------
+CREATE OR REPLACE TRIGGER tr_attach
+before INSERT OR UPDATE  ON t_attach_file
+FOR EACH ROW
+BEGIN
+  :NEW.log_time := sysdate;
+END;
+--------------------
+CREATE OR REPLACE TRIGGER tr_t_resource
+before INSERT OR UPDATE  ON t_resource
+FOR EACH ROW
+DECLARE
+
+BEGIN
+   if( :NEW.textbook_id is not null ) then
+        select PERIOD_ID,GRADE_ID,SUBJECT_ID,VOLUME_ID,EDITION_ID into 
+            :new.PERIOD_ID,:new.GRADE_ID,:new.SUBJECT_ID, :new.VOLUME_ID, :new.EDITION_ID 
+        from T_TEXTBOOK where rownum<2 and textbook_id=:new.textbook_id;
+   end if;
+   EXCEPTION
+   WHEN OTHERS THEN
+      DBMS_OUTPUT.PUT_LINE(SQLCODE||'---'||SQLERRM);
+END;                  >
+
+
+二、jQuery
+<script type="text/javascript">
+$(document).ready(function(){
+  $("input").select(function(){
+    $("input").after("文本被选中！");
+  });
+  $("button").click(function(){
+    $("input").trigger("select");
+  });
+});
+</script>
+<body>
+<input type="text" name="FirstName" value="Hello World" />
+<br />
+<button>激活 input 域的 select 事件</button>
+</body>
+
+三、
+<!-- 以下配置为专题资源专用 -->
+	<!-- 专题资源数据源 -->
+	<bean id="topicDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<property name="driverClass" value="${/jdbc_topic/driverClass}"></property>
+		<property name="jdbcUrl" value="${/jdbc_topic/jdbcUrl}"></property>
+		<property name="user" value="${/jdbc_topic/user}"></property>
+		<property name="password" value="${/jdbc_topic/password}"></property>
+		<property name="acquireIncrement" value="${/jdbc_topic/acquireIncrement}"></property>
+		<property name="initialPoolSize" value="${/jdbc_topic/initialPoolSize}"></property>
+		<property name="maxIdleTime" value="${/jdbc_topic/maxIdleTime}"></property>
+		<property name="maxPoolSize" value="${/jdbc_topic/maxPoolSize}"></property>
+		<property name="minPoolSize" value="${/jdbc_topic/minPoolSize}"></property>
+		<property name="acquireRetryDelay" value="1000"></property>
+		<property name="acquireRetryAttempts" value="60"></property>
+		<property name="breakAfterAcquireFailure" value="false"></property>
+	</bean>  
+
+	<!-- topic JdbcTemplate -->
+	<bean id="topicJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="topicDataSource"/>
+	</bean>
+	
+	<!-- topic transaction manager -->
+	<bean id="topicTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="topicDataSource" />
+	</bean>
+
+	<!-- topic tx advice -->
+	<tx:advice id="topicTxAdvice" transaction-manager="topicTransactionManager">
+		<tx:attributes>
+			<tx:method name="add*" propagation="REQUIRED" />
+			<tx:method name="insert*" propagation="REQUIRED" />
+			<tx:method name="del*" propagation="REQUIRED" />
+			<tx:method name="remove*" propagation="REQUIRED" />
+			<tx:method name="update*" propagation="REQUIRED" />
+			<tx:method name="mod*" propagation="REQUIRED" />
+			<tx:method name="*" read-only="true" />
+		</tx:attributes>
+	</tx:advice>
+
+	<!-- topic aop config -->
+	<aop:config>
+		<aop:advisor advice-ref="topicTxAdvice" pointcut="execution(* com.whty.cms.manage.topic.*.*Service.*(..))" />
+	</aop:config>
+
+	<!-- topic mybatis -->
+	<bean id="topicSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="configLocation" value="classpath:mybatis-config-topic.xml" />
+		<property name="dataSource" ref="topicDataSource" />
+	</bean>
+
+四、
+</2015-3-17>
+<2015-3-18>
+一、SDP
+SDP 完全是一种会话描述格式 ― 它不属于传输协议 ― 它只使用不同的适当的传输协议，包括会话通知协议（SAP）、会话初始协议（SIP）、实时流协议（RTSP）、MIME 扩展协议的电子邮件以及超文本传输协议（HTTP）。SDP协议是也是基于文本的协议，这样就能保证协议的可扩展性比较强，这样就使其具有广泛的应用范围。SDP 不支持会话内容或媒体编码的协商，所以在流媒体中只用来描述媒体信息。媒体协商这一块要用RTSP来实现．
+
+二、消息总线
+
+三、
+int i = 1;
+Integer i = new Integer(1);
+private static String str1 = "sss";
+private final static String str2 = "sss2";
+编译时：
+System.out.println(str1);
+System.out.println("sss2");
+
+四、oauth 2.0
+
+五、logging servicer
+
+六、tablespace cmsuser pctfree 10 initrans 2 maxtrans 255 storage ( initial 41m next 1m minextents 1 maxextents unlimited )
+
+- Create table  
+create table X_SMALL_AREA  
+(  
+SMALL_AREA_ID NUMBER(10) not null  
+)  
+tablespace TBSL_SDDQ --表段X_SMALL_AREA放在表空间TBSL_SDDQ中
+pctfree 10 --块保留10%的空间留给更新该块数据使用
+initrans 1 --初始化事务槽的个数
+maxtrans 255 --最大事务槽的个数
+storage --存储参数
+(  
+initial 64k --区段(extent)一次扩展64k
+minextents 1 --最小区段数
+maxextents unlimited --最大区段无限制  
+); 
+
+表空间包含段
+段里包含区段
+区段包含数据块
+
+块上的事务槽是对影响该块的事务进行登记使用的
+
+
+</2015-3-18>
+<2015-3-19>
+一、Oracle大数据常见优化查询  
+1.对查询进行优化，应尽量避免全表扫描，首先应考虑在 where 及 order by 涉及的列上建立索引。
+ 
+2.应尽量避免在 where 子句中对字段进行 null 值判断，否则将导致引擎放弃使用索引而进行全表扫描，如：
+ 
+select id from t where num is null
+可以在num上设置默认值0，确保表中num列没有null值，然后这样查询：
+select id from t where num=0
+3.应尽量避免在 where 子句中使用!=或<>操作符，否则将引擎放弃使用索引而进行全表扫描。
+4.应尽量避免在 where 子句中使用 or 来连接条件，否则将导致引擎放弃使用索引而进行全表扫描，如：
+select id from t where num=10 or num=20
+可以这样查询：
+select id from t where num=10
+union all
+select id from t where num=20
+5.in 和 not in 也要慎用，否则会导致全表扫描，如：
+select id from t where num in(1,2,3)
+对于连续的数值，能用 between 就不要用 in 了：
+select id from t where num between 1 and 3
+6.下面的查询也将导致全表扫描：
+select id from t where name like '%abc%'
+若要提高效率，可以考虑全文检索。
+7.如果在 where 子句中使用参数，也会导致全表扫描。因为SQL只有在运行时才会解析局部变量，但优化程序不能将访问计划的选择推迟到运行时；它必须在编译时进行选择。然而，如果在编译时建立访问计划，变量的值还是未知的，因而无法作为索引选择的输入项。如下面语句将进行全表扫描：
+select id from t where num=@num
+可以改为强制查询使用索引：
+select id from t with(index(索引名)) where num=@num
+8.应尽量避免在 where 子句中对字段进行表达式操作，这将导致引擎放弃使用索引而进行全表扫描。如：
+select id from t where num/2=100
+应改为:
+select id from t where num=100*2
+9.应尽量避免在where子句中对字段进行函数操作，这将导致引擎放弃使用索引而进行全表扫描。如：
+select id from t where substring(name,1,3)='abc' // oracle总有的是substr函数。
+select id from t where datediff(day,createdate,'2005-11-30')=0 //查过了确实没有datediff函数。
+应改为:
+select id from t where name like 'abc%'
+select id from t where createdate>='2005-11-30' and createdate<'2005-12-1' //
+oracle 中时间应该把char 转换成 date 如： createdate >= to_date('2005-11-30','yyyy-mm-dd')
+10.不要在 where 子句中的“=”左边进行函数、算术运算或其他表达式运算，否则系统将可能无法正确使用索引。
+ 
+11.在使用索引字段作为条件时，如果该索引是复合索引，那么必须使用到该索引中的第一个字段作为条件时才能保证系统使用该索引，否则该索引将不会被使用，并且应尽可能的让字段顺序与索引顺序相一致。
+12.不要写一些没有意义的查询，如需要生成一个空表结构：
+select col1,col2 into #t from t where 1=0
+这类代码不会返回任何结果集，但是会消耗系统资源的，应改成这样：
+create table #t(...)
+13.很多时候用 exists 代替 in 是一个好的选择：
+select num from a where num in(select num from b)
+用下面的语句替换：
+select num from a where exists(select 1 from b where num=a.num)
+14.并不是所有索引对查询都有效，SQL是根据表中数据来进行查询优化的，当索引列有大量数据重复时，SQL查询可能不会去利用索引，如一表中有字段sex，male、female几乎各一半，那么即使在sex上建了索引也对查询效率起不了作用。
+15.索引并不是越多越好，索引固然可以提高相应的 select 的效率，但同时也降低了 insert 及 update 的效率，因为 insert 或 update 时有可能会重建索引，所以怎样建索引需要慎重考虑，视具体情况而定。一个表的索引数最好不要超过6个，若太多则应考虑一些不常使用到的列上建的索引是否有必要。
+16.应尽可能的避免更新 clustered 索引数据列，因为 clustered 索引数据列的顺序就是表记录的物理存储顺序，一旦该列值改变将导致整个表记录的顺序的调整，会耗费相当大的资源。若应用系统需要频繁更新 clustered 索引数据列，那么需要考虑是否应将该索引建为 clustered 索引。
+17.尽量使用数字型字段，若只含数值信息的字段尽量不要设计为字符型，这会降低查询和连接的性能，并会增加存储开销。这是因为引擎在处理查询和连接时会逐个比较字符串中每一个字符，而对于数字型而言只需要比较一次就够了。
+18.尽可能的使用 varchar/nvarchar 代替 char/nchar ，因为首先变长字段存储空间小，可以节省存储空间，其次对于查询来说，在一个相对较小的字段内搜索效率显然要高些。
+19.任何地方都不要使用 select * from t ，用具体的字段列表代替“*”，不要返回用不到的任何字段。
+20.尽量使用表变量来代替临时表。如果表变量包含大量数据，请注意索引非常有限（只有主键索引）。
+21.避免频繁创建和删除临时表，以减少系统表资源的消耗。
+22.临时表并不是不可使用，适当地使用它们可以使某些例程更有效，例如，当需要重复引用大型表或常用表中的某个数据集时。但是，对于一次性事件，最好使用导出表。
+23.在新建临时表时，如果一次性插入数据量很大，那么可以使用 select into 代替 create table，避免造成大量 log ，以提高速度；如果数据量不大，为了缓和系统表的资源，应先create table，然后insert。
+24.如果使用到了临时表，在存储过程的最后务必将所有的临时表显式删除，先 truncate table ，然后 drop table ，这样可以避免系统表的较长时间锁定。
+25.尽量避免使用游标，因为游标的效率较差，如果游标操作的数据超过1万行，那么就应该考虑改写。
+26.使用基于游标的方法或临时表方法之前，应先寻找基于集的解决方案来解决问题，基于集的方法通常更有效。
+27.与临时表一样，游标并不是不可使用。对小型数据集使用 FAST_FORWARD 游标通常要优于其他逐行处理方法，尤其是在必须引用几个表才能获得所需的数据时。在结果集中包括“合计”的例程通常要比使用游标执行的速度快。如果开发时间允许，基于游标的方法和基于集的方法都可以尝试一下，看哪一种方法的效果更好。
+28.在所有的存储过程和触发器的开始处设置 SET NOCOUNT ON ，在结束时设置 SET NOCOUNT OFF 。无需在执行存储过程和触发器的每个语句后向客户端发送 DONE_IN_PROC 消息。
+29.尽量避免大事务操作，提高系统并发能力。
+30.尽量避免向客户端返回大数据量，若数据量过大，应该考虑相应需求是否合理。
+
+二、倒序索引
+
+</2015-3-19>
+<2015-3-20>
+一、base64
+Base64编码要求把3个8位字节（3*8=24）转化为4个6位的字节（4*6=24），之后在6位的前面补两个0，形成8位一个字节的形式。 如果剩下的字符不足3个字节，则用0填充，输出字符使用'='，因此编码后输出的文本末尾可能会出现1或2个'='。
+--------------
+转码过程例子：
+3*8=4*6
+内存1个字符占8位
+转前： s 1 3
+先转成ascii：对应 115 49 51
+2进制： 01110011 00110001 00110011
+6个一组（4组） 011100110011000100110011
+然后才有后面的 011100 110011 000100 110011
+然后计算机是8位8位的存数 6不够，自动就补两个高位0了
+所有有了 高位补0
+科学计算器输入 00011100 00110011 00000100 00110011
+得到 28 51 4 51
+查对下照表 c z E z
+
+</2015-3-20>
+<2015-3-23>
+一、
+notify是推模式的消息中间件。
+metaq是拉模式的消息中间件。
+dubbo是远程服务调用中间件。
+
+二、数据迁移工具Migrate-Data
+
+
+三、CORS介绍
+
+   它在维基百科上的定义是：跨域资源共享（CORS ）是一种网络浏览器的技术规范，它为Web服务器定义了一种方式，允许网页从不同的域访问其资源。而这种访问是被同源策略所禁止的。CORS系统定义了一种浏览器和服务器交互的方式来确定是否允许跨域请求。 它是一个妥协，有更大的灵活性，但比起简单地允许所有这些的要求来说更加安全。
+
+   而W3C的官方文档目前还是工作草案，但是正在朝着W3C推荐的方向前进。
+
+   简言之，CORS就是为了让AJAX可以实现可控的跨域访问而生的。
+
+
+
+Tomcat下的配置
+
+   下载cors-filter-1.7.jar，java-property-utils-1.9.jar这两个库文件，放到lib目录下。（可在
+
+http://search.maven.org上查询并下载。）工程项目中web.xml中的配置如下：  
+</2015-3-23>
+<2015-3-26>
+一、JAF
+
+二、JMX
+
+
+</2015-3-26>
+<2015-3-27>
+一、oracle
+SELECT   NAME   FROM   v$database;
+
+jdbc:oracle:thin:@(DESCRIPTION=
+(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.200.33)(PORT=1521))
+(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.200.34)(PORT=1521))
+(LOAD_BALANCE=yes)(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=edu)))
+
+
+</2015-3-27>
+<2015-3-30>
+一、MYSQL的主从和主主复制模式
+
+
+</2015-3-30>
+<2015-4-9>
+一、css
+.plupload_button:hover {
+	color: #000;
+	text-decoration: none;
+}
+</2015-4-9>
+<2015-4-13>
+一、Caused by: java.net.SocketException: No buffer space available (maximum connecti ons reached?): listen
+windows命令：
+根据端口查找进程、杀死进程: netstat -ano | find "8080"
+C:\Documents and Settings\keju.wangkj>netstat -ano | find "8080" 
+  TCP    0.0.0.0:8080           0.0.0.0:0              LISTENING       5796 
+ 
+C:\Documents and Settings\keju.wangkj>tskill 5796 
+
+</2015-4-13>
+<2015-4-15>
+一、变量延迟
+举个简单的例子来说明一下
+@echo off
+set num=0&&echo %num%
+pause
+本意是想对变量num赋值之后，再把这个值显示出来，结果，显示出来的并不是0，而是显示：ECHO 处于关闭状态。
+ 
+之所以会出错，是因为“变量延迟”这个家伙在作怪。然后，我们开启变量延迟看一看
+@echo off
+setlocal enabledelayedexpansion
+set num=0&&echo !num!
+pause
+这样就可以显示出结果“0”了。
+----------------
+set是设置的意思，local是本地的意思，enable是能够的意思，delayed是延迟的意思，expansion是扩展的意思，合起来，就是：让变量成为局部变量，并延迟它的扩展行为
+
+
+二、体验生物生命过程(游戏)
+
+三、指甲涂油（机器）
+
+</2015-4-15>
+<2015-4-17>
+一、免安装版tomcat双击startup.bat闪退问题解决
+编辑startup.bat文件：（右键-编辑就可）        
+         在最前面加入如下两行：        
+         SET JAVA_HOME=java jdk目录        
+         SET TOMCAT_HOME=tomcat6.0 zip文件解压后的目录   
+      例如：
+         SET JAVA_HOME=F:\Java\jdk1.6.0_05
+         SET TOMCAT_HOME=F:\apache-tomcat-6.0.32\apache-tomcat-6.0.32    
+
+
+二、org.springframework.web.filter.CharacterEncodingFilter
+CharacterEncodingFilter类具有encoding和forceEncoding两个属性，其中encoding是表示设置request的编码，forceEncoding表示是否同时设置response的编码。
+
+三、Java#PKIX path building failed
+jvm没有授权证书。
+
+
+</2015-4-17>
+<2015-4-22>
+一、sun.misc.BASE64Decoder找不到jar包的解决方法
+右键项目-》属性-》java bulid path-》jre System Library-》access rules-》resolution选择accessible，下面填上** 点击确定即可
+
+
+二、给 Nginx 增加 OAuth 支持（nginx-lua）(http://www.oschina.net/translate/oauth-support-for-nginx-with-lua)
+
+
+</2015-4-22>
+<2015-4-23>
+一、java -Xms256M -Xmx512M Hello
+-Xmx<size>
+设置虚拟机内存堆的最大可用大小，缺省单位为字节。该值必须为1024整数倍，并且要大于2MB。可用k(K)或m(M)为单位来设置较大的内存数。缺省堆最大值为64MB。
+例如：-Xmx81920K，-Xmx80M
+当应用程序申请了大内存运行时虚拟机抛出java.lang.OutOfMemoryError: Java heap space错误，就需要使用-Xmx设媒洗蟮目捎媚诖娑选?BR>
+-Xms<size>
+设置线程栈的大小，缺省单位为字节。与-Xmx类似，也可用K或M来设置较大的值。通常操作系统分配给线程栈的缺省大小为1MB。 
+另外也可在java中创建线程对象时设置栈的大小，构造函数原型为Thread(ThreadGroup group, Runnable target, String name, long stackSize)。
+
+二、
+
+</2015-4-23>
+<2015-4-24>
+一、标准的 js event 对象
+var evt = evt || window.event; // firefox下window.event为null, IE下event为null 
+
+二、heartbeat web
+
+
+</2015-4-24>
+<2015-4-27>
+一、Maven管理的jar没有发布到WEB-INF/lib下的解决方案  
+工程 -> 右键 -> preferences ->Deployment Assembly中添加maven dependencies
+
+二、The method getJspApplicationContext(ServletContext) is undefined for the type JspFactory
+
+因为项目中有像jsp-api.jar servlet-api.jar跟tomcat6的lib中同样的包，但版本比tomcat6的版本要低，在运行的时候，因为会优先加载项目中的包，所以 产生了错误，把项目中和tomcat相同的包删除(必须删除，如果替换还会产生其他的错误)，问题就可以解决了。
+
+三、JAVA多线程实现的三种方式
+JAVA多线程实现方式主要有三种：继承Thread类、实现Runnable接口、使用ExecutorService、Callable、Future实现有返回结果的多线程。其中前两种方式线程执行完后都没有返回值，只有最后一种是带返回值的。
+
+1、继承Thread类实现多线程
+继承Thread类的方法尽管被我列为一种多线程实现方式，但Thread本质上也是实现了Runnable接口的一个实例，它代表一个线程的实例，并且，启动线程的唯一方法就是通过Thread类的start()实例方法。start()方法是一个native方法，它将启动一个新线程，并执行run()方法。这种方式实现多线程很简单，通过自己的类直接extend Thread，并复写run()方法，就可以启动新线程并执行自己定义的run()方法。例如：
+[java] view plaincopy
+public class MyThread extends Thread {  
+　　public void run() {  
+　　 System.out.println("MyThread.run()");  
+　　}  
+}  
+在合适的地方启动线程如下：
+[java] view plaincopy
+MyThread myThread1 = new MyThread();  
+MyThread myThread2 = new MyThread();  
+myThread1.start();  
+myThread2.start();  
+
+2、实现Runnable接口方式实现多线程
+如果自己的类已经extends另一个类，就无法直接extends Thread，此时，必须实现一个Runnable接口，如下：
+[java] view plaincopy
+public class MyThread extends OtherClass implements Runnable {  
+　　public void run() {  
+　　 System.out.println("MyThread.run()");  
+　　}  
+}  
+为了启动MyThread，需要首先实例化一个Thread，并传入自己的MyThread实例：
+[java] view plaincopy
+MyThread myThread = new MyThread();  
+Thread thread = new Thread(myThread);  
+thread.start();  
+事实上，当传入一个Runnable target参数给Thread后，Thread的run()方法就会调用target.run()，参考JDK源代码：
+[java] view plaincopy
+public void run() {  
+　　if (target != null) {  
+　　 target.run();  
+　　}  
+}  
+
+3、使用ExecutorService、Callable、Future实现有返回结果的多线程
+ExecutorService、Callable、Future这个对象实际上都是属于Executor框架中的功能类。想要详细了解Executor框架的可以访问http://www.javaeye.com/topic/366591 ，这里面对该框架做了很详细的解释。返回结果的线程是在JDK1.5中引入的新特征，确实很实用，有了这种特征我就不需要再为了得到返回值而大费周折了，而且即便实现了也可能漏洞百出。
+可返回值的任务必须实现Callable接口，类似的，无返回值的任务必须Runnable接口。执行Callable任务后，可以获取一个Future的对象，在该对象上调用get就可以获取到Callable任务返回的Object了，再结合线程池接口ExecutorService就可以实现传说中有返回结果的多线程了。下面提供了一个完整的有返回结果的多线程测试例子，在JDK1.5下验证过没问题可以直接使用。代码如下：
+[java] view plaincopy
+import java.util.concurrent.*;  
+import java.util.Date;  
+import java.util.List;  
+import java.util.ArrayList;  
+  
+/** 
+* 有返回值的线程 
+*/  
+@SuppressWarnings("unchecked")  
+public class Test {  
+public static void main(String[] args) throws ExecutionException,  
+    InterruptedException {  
+   System.out.println("----程序开始运行----");  
+   Date date1 = new Date();  
+  
+   int taskSize = 5;  
+   // 创建一个线程池  
+   ExecutorService pool = Executors.newFixedThreadPool(taskSize);  
+   // 创建多个有返回值的任务  
+   List<Future> list = new ArrayList<Future>();  
+   for (int i = 0; i < taskSize; i++) {  
+    Callable c = new MyCallable(i + " ");  
+    // 执行任务并获取Future对象  
+    Future f = pool.submit(c);  
+    // System.out.println(">>>" + f.get().toString());  
+    list.add(f);  
+   }  
+   // 关闭线程池  
+   pool.shutdown();  
+  
+   // 获取所有并发任务的运行结果  
+   for (Future f : list) {  
+    // 从Future对象上获取任务的返回值，并输出到控制台  
+    System.out.println(">>>" + f.get().toString());  
+   }  
+  
+   Date date2 = new Date();  
+   System.out.println("----程序结束运行----，程序运行时间【"  
+     + (date2.getTime() - date1.getTime()) + "毫秒】");  
+}  
+}  
+  
+class MyCallable implements Callable<Object> {  
+private String taskNum;  
+  
+MyCallable(String taskNum) {  
+   this.taskNum = taskNum;  
+}  
+  
+public Object call() throws Exception {  
+   System.out.println(">>>" + taskNum + "任务启动");  
+   Date dateTmp1 = new Date();  
+   Thread.sleep(1000);  
+   Date dateTmp2 = new Date();  
+   long time = dateTmp2.getTime() - dateTmp1.getTime();  
+   System.out.println(">>>" + taskNum + "任务终止");  
+   return taskNum + "任务返回运行结果,当前任务时间【" + time + "毫秒】";  
+}  
+}  
+代码说明：
+上述代码中Executors类，提供了一系列工厂方法用于创先线程池，返回的线程池都实现了ExecutorService接口。
+public static ExecutorService newFixedThreadPool(int nThreads) 
+创建固定数目线程的线程池。
+public static ExecutorService newCachedThreadPool() 
+创建一个可缓存的线程池，调用execute 将重用以前构造的线程（如果线程可用）。如果现有线程没有可用的，则创建一个新线程并添加到池中。终止并从缓存中移除那些已有 60 秒钟未被使用的线程。
+public static ExecutorService newSingleThreadExecutor() 
+创建一个单线程化的Executor。
+public static ScheduledExecutorService newScheduledThreadPool(int corePoolSize) 
+创建一个支持定时及周期性的任务执行的线程池，多数情况下可用来替代Timer类。
+
+ExecutoreService提供了submit()方法，传递一个Callable，或Runnable，返回Future。如果Executor后台线程池还没有完成Callable的计算，这调用返回Future对象的get()方法，会阻塞直到计算完成。
+
+</2015-4-27>
+<2015-4-29>
+一、JMM
+Java的内存模型JMM（Java Memory Model）JMM主要是为了规定了线程和内存之间的一些关系。根据JMM的设计，系统存在一个主内存(Main Memory)，Java中所有实例变量都储存在主存中，对于所有线程都是共享的。每条线程都有自己的工作内存(Working Memory)，工作内存由缓存和堆栈两部分组成，缓存中保存的是主存中变量的拷贝，缓存可能并不总和主存同步，也就是缓存中变量的修改可能没有立刻写到主存中；堆栈中保存的是线程的局部变量，线程之间无法相互直接访问堆栈中的变量。
+
+二、solrcloud
+SolrCloud是基于Solr和Zookeeper的分布式搜索方案，是正在开发中的Solr4.0的核心组件之一，它的主要思想是使用Zookeeper作为集群的配置信息中心。它有几个特色功能：1）集中式的配置信息 2）自动容错 3）近实时搜索 4）查询时自动负载均衡 
+
+
+三、jetty
+
+
+四、solr分词
+
+安装中文分词IKanalyzer
+
+
+</2015-4-29>
+<2015-5-5>
+一、spring mvc对异步请求的处理
+<async-supported>true</async-supported>
+
+
+</2015-5-5>
+<2015-5-8>
+一、Spring+Hibernate的实质
+就是把Hibernate用到的数据源Datasource，Hibernate的SessionFactory实例，事务管理器HibernateTransactionManager，都交给Spring管理。
+
+那么再没整合之前Hibernate是如何实现事务管理的呢？
+通过ServletFilter实现数据库事务的管理，这样就避免了在数据库操作中每次都要进行数据库事务处理。
+
+1.事务的4个特性：
+   原子性：一个事务中所有对数据库的操作是一个不可分割的操作序列，要么全做，要么全部不做。
+   一致性：数据不会因为事务的执行而遭到破坏。
+   隔离性：一个事务的执行，不受其他事务（进程）的干扰。既并发执行的个事务之间互不干扰。
+   持久性：一个事务一旦提交，它对数据库的改变将是永久的。
+
+2.事务的实现方式：
+实现方式共有两种：编码方式；声明式事务管理方式。
+
+基于AOP技术实现的声明式事务管理，实质就是：在方法执行前后进行拦截，然后在目标方法开始之前创建并加入事务，执行完目标方法后根据执行情况提交或回滚事务。
+
+声明式事务管理又有两种方式：基于XML配置文件的方式；另一个是在业务方法上进行@Transactional注解，将事务规则应用到业务逻辑中。
+
+3.创建事务的时机：
+
+是否需要创建事务，是由事务传播行为控制的。读数据不需要或只为其指定只读事务，而数据的插入，修改，删除就需要事务管理了。
+
+一种常见的事务管理配置：事务拦截器TransactionInterceptor和事务自动代理BeanNameAutoProxyCreator相结合的方式
+
+<!--定义Hibernate的事务管理器HibernateTransactionManager -->
+    <bean id="transactionManager" 
+     class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+        <!-- 依赖注入上面定义的sessionFactory -->
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+<!--定义Spring的事务拦截器TransactionInterceptor -->
+    <bean id="transactionInterceptor"      class="org.springframework.transaction.interceptor.TransactionInterceptor">
+	    <!--  依赖注入上面定义的事务管理器transactionManager -->
+        <property name="transactionManager" ref="transactionManager"/>
+      	<!-- 定义需要进行事务拦截的方法及所采用的事务控制类型 -->    	
+    	<property name="transactionAttributes">		    
+		    <props>
+			    <!-- 以browse、list、load、get及is开头的所有方法采用只读型事务控制类型 -->
+			    <prop key="browse*">PROPAGATION_REQUIRED,readOnly</prop>
+			    <prop key="list*">PROPAGATION_REQUIRED,readOnly</prop>
+			    <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+			    <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+			    <prop key="is*">PROPAGATION_REQUIRED,readOnly</prop>
+			    <!-- 所有方法均进行事务控制，如果当前没有事务，则新建一个事务 -->
+		    	<prop key="*">PROPAGATION_REQUIRED</prop>
+		    </props>
+	    </property>
+	</bean>
+
+<!-- 定义BeanNameAutoProxyCreatorf进行Spring的事务处理-->
+    <bean class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+	    <!--  针对指定的bean自动生成业务代理 -->
+	    <property name="beanNames"> 
+            <list>
+                <value>adminService</value>
+                <value>columnsService</value>
+                <value>newsService</value>
+                <value>crawlService</value>
+                <value>memberLevelService</value>
+                <value>memberService</value>
+                <value>categoryService</value>
+                <value>merService</value>
+                <value>cartService</value>
+                <value>ordersService</value>
+                <value>trafficService</value>
+            </list>
+	    </property>
+	    <!--  这个属性为true时，表示被代理的是目标类本身而不是目标类的接口 -->
+	    <property name="proxyTargetClass">
+	    	<value>true</value>
+	    </property>
+       <!--  依赖注入上面定义的事务拦截器transactionInterceptor -->
+        <property name="interceptorNames">
+            <list>
+                <value>transactionInterceptor</value> 
+            </list>
+        </property>
+    </bean>	
+
+尤其注意：如下
+***********************************************************************************************************
+【以上的事务拦截器和事务自动代理方式实现原理：像Struts2一样，都是凭借强大的拦截器功能对业务逻辑方法的调用进行拦截，然后又BeanNameAutoProxyCreator自动生成事务代理，最后送事务管理器，统一管理】
+***********************************************************************************************************
+
+二、JTA(java transaction api)
+
+
+三、乐观锁和悲观锁
+悲观锁(Pessimistic Lock), 顾名思义，就是很悲观，每次去拿数据的时候都认为别人会修改，所以每次在拿数据的时候都会上锁，这样别人想拿这个数据就会block直到它拿到锁。传统的关系型数据库里边就用到了很多这种锁机制，比如行锁，表锁等，读锁，写锁等，都是在做操作之前先上锁。
+
+
+乐观锁(Optimistic Lock), 顾名思义，就是很乐观，每次去拿数据的时候都认为别人不会修改，所以不会上锁，但是在更新的时候会判断一下在此期间别人有没有去更新这个数据，可以使用版本号等机制。乐观锁适用于多读的应用类型，这样可以提高吞吐量，像数据库如果提供类似于write_condition机制的其实都是提供的乐观锁。
+
+
+两种锁各有优缺点，不可认为一种好于另一种，像乐观锁适用于写比较少的情况下，即冲突真的很少发生的时候，这样可以省去了锁的开销，加大了系统的整个吞吐量。但如果经常产生冲突，上层应用会不断的进行retry，这样反倒是降低了性能，所以这种情况下用悲观锁就比较合适。
+
+四、为什么需要锁（并发控制）？
+
+在多用户环境中，在同一时间可能会有多个用户更新相同的记录，这会产生冲突。这就是著名的并发性问题。
+
+典型的冲突有：
+
+l 丢失更新：一个事务的更新覆盖了其它事务的更新结果，就是所谓的更新丢失。例如：用户A把值从6改为2，用户B把值从2改为6，则用户A丢失了他的更新。
+
+l 脏读：当一个事务读取其它完成一半事务的记录时，就会发生脏读取。例如：用户A,B看到的值都是6，用户B把值改为2，用户A读到的值仍为6。
+
+为了解决这些并发带来的问题。 我们需要引入并发控制机制。
+
+并发控制机制
+悲观锁：假定会发生并发冲突，屏蔽一切可能违反数据完整性的操作。[1]
+
+乐观锁：假设不会发生并发冲突，只在提交操作时检查是否违反数据完整性。[1] 乐观锁不能解决脏读的问题。
+
+乐观锁应用
+1.      使用自增长的整数表示数据版本号。更新时检查版本号是否一致，比如数据库中数据版本为6，更新提交时version=6+1,使用该version值(=7)与数据库version+1(=7)作比较，如果相等，则可以更新，如果不等则有可能其他程序已更新该记录，所以返回错误。
+
+2.      使用时间戳来实现.
+
+注：对于以上两种方式,Hibernate自带实现方式：在使用乐观锁的字段前加annotation: @Version, Hibernate在更新时自动校验该字段。
+
+悲观锁应用
+需要使用数据库的锁机制，比如SQL SERVER 的TABLOCKX（排它表锁） 此选项被选中时，SQL  Server  将在整个表上置排它锁直至该命令或事务结束。这将防止其他进程读取或修改表中的数据。
+
+SqlServer中使用
+
+Begin Tran
+select top 1 @TrainNo=T_NO
+         from Train_ticket   with (UPDLOCK)   where S_Flag=0
+
+      update Train_ticket
+         set T_Name=user,
+             T_Time=getdate(),
+             S_Flag=1
+         where T_NO=@TrainNo
+commit
+
+我们在查询的时候使用了with (UPDLOCK)选项,在查询记录的时候我们就对记录加上了更新锁,表示我们即将对此记录进行更新. 注意更新锁和共享锁是不冲突的,也就是其他用户还可以查询此表的内容,但是和更新锁和排它锁是冲突的.所以其他的更新用户就会阻塞.
+
+结论
+在实际生产环境里边,如果并发量不大且不允许脏读，可以使用悲观锁解决并发问题；但如果系统的并发非常大的话,悲观锁定会带来非常大的性能问题,所以我们就要选择乐观锁定的方法.
+
+
+五、乐观锁和悲观锁
+这里我们利用了Oracle的Sample的scott用户的表，把数据copy到我们的test表中。首先我们看一下for update锁定方式。首先我们执行如下的select for update语句。
+
+select * from test where id = 10 for update
+
+通过这条检索语句锁定以后，再开另外一个sql*plus窗口进行操作，再把上面这条sql语句执行一便，你会发现sqlplus好像死在那里了，好像检索不到数据的样子，但是也不返回任何结果，就属于卡在那里的感觉。这个时候是什么原因呢，就是一开始的第一个Session中的select for update语句把数据锁定住了。由于这里锁定的机制是wait的状态(只要不表示nowait那就是wait)，所以第二个Session(也就是卡住的那个sql*plus)中当前这个检索就处于等待状态。当第一个session最后commit或者rollback之后，第二个session中的检索结果就是自动跳出来，并且也把数据锁定住。不过如果你第二个session中你的检索语句如下所示。
+
+select * from test where id = 10
+
+
+也就是没有for update这种锁定数据的语句的话，就不会造成阻塞了。另外一种情况，就是当数据库数据被锁定的时候，也就是执行刚才for update那条sql以后，我们在另外一个session中执行for update nowait后又是什么样呢。比如如下的sql语句。 由于这条语句中是制定采用nowait方式来进行检索，所以当发现数据被别的session锁定中的时候，就会迅速返回ORA-00054错误，内容是资源正忙, 但指定以 NOWAIT 方式获取资源。所以在程序中我们可以采用nowait方式迅速判断当前数据是否被锁定中，如果锁定中的话，就要采取相应的业务措施进行处理。
+
+select * from test where id = 10 for update nowait
+
+
+那这里另外一个问题，就是当我们锁定住数据的时候，我们对数据进行更新和删除的话会是什么样呢。比如同样，我们让第一个Session锁定住id=10的那条数据，我们在第二个session中执行如下语句。
+
+update test set value=2 where id = 10
+
+
+这个时候我们发现update语句就好像select for update语句一样也停住卡在这里，当你第一个session放开锁定以后update才能正常运行。当你update运行后，数据又被你update语句锁定住了，这个时候只要你update后还没有commit，别的session照样不能对数据进行锁定更新等等。
+
+总之，Oracle中的悲观锁就是利用Oracle的Connection对数据进行锁定。在Oracle中，用这种行级锁带来的性能损失是很小的，只是要注意程序逻辑，不要给你一不小心搞成死锁了就好。而且由于数据的及时锁定，在数据提交时候就不呼出现冲突，可以省去很多恼人的数据冲突处理。缺点就是你必须要始终有一条数据库连接，就是说在整个锁定到最后放开锁的过程中，你的数据库联接要始终保持住。与悲观锁相对的，我们有了乐观锁。乐观锁一开始也说了，就是一开始假设不会造成数据冲突，在最后提交的时候再进行数据冲突检测。在乐观锁中，我们有3种
+
+常用的做法来实现。
+
+[1]第一种就是在数据取得的时候把整个数据都copy到应用中，在进行提交的时候比对当前数据库中的数据和开始的时候更新前取得的数据。当发现两个数据一模一样以后，就表示没有冲突可以提交，否则则是并发冲突，需要去用业务逻辑进行解决。
+
+[2]第二种乐观锁的做法就是采用版本戳，这个在Hibernate中得到了使用。采用版本戳的话，首先需要在你有乐观锁的数据库table上建立一个新的column，比如为number型，当你数据每更新一次的时候，版本数就会往上增加1。比如同样有2个session同样对某条数据进行操作。两者都取到当前的数据的版本号为1，当第一个session进行数据更新后，在提交的时候查看到当前数据的版本还为1，和自己一开始取到的版本相同。就正式提交，然后把版本号增加1，这个时候当前数据的版本为2。当第二个session也更新了数据提交的时候，发现数据库中版本为2，和一开始这个session取到的版本号不一致，就知道别人更新过此条数据，这个
+
+时候再进行业务处理，比如整个Transaction都Rollback等等操作。在用版本戳的时候，可以在应用程序侧使用版本戳的验证，也可以在数据库侧采用Trigger(触发器)来进行验证。不过数据库的Trigger的性能开销还是比较的大，所以能在应用侧进行验证的话还是推荐不用Trigger。
+
+[3]第三种做法和第二种做法有点类似，就是也新增一个Table的Column，不过这次这个column是采用timestamp型，存储数据最后更新的时间。在Oracle9i以后可以采用新的数据类型，也就是timestamp with time zone类型来做时间戳。这种Timestamp的数据精度在Oracle的时间类型中是最高的，精确到微秒(还没与到纳秒的级别)，一般来说，加上数据库处理时间和人的思考动作时间，微秒级别是非常非常够了，其实只要精确到毫秒甚至秒都应该没有什么问题。和刚才的版本戳类似，也是在更新提交的时候检查当前数据库中数据的时间戳和自己更新前取到的时间戳进行对比，如果一致则OK，否则就是版本冲突。如果不想把代码写在程序中或者由于别的原因无法把代码写在现有的程序中，也可以把这个时间戳乐观锁逻辑写在Trigger或者存储过程中。
+
+
+六、spring事务超时处理
+
+
+七、spring的作用
+
+
+八、JTA
+
+</2015-5-8>
+<2015-5-11>
+一、
+定时任务不要写在static代码块中。因为服务器启动的时候，jvm启动时static块一起被初始化，此时Spring配置并未调用，对象注入会失败。
+
+二、
+
+
+</2015-5-11>
+<2015-5-12>
+一、SpringMVC与Struts2不同
+SpringMVC的设计与Struts2完全不同，Struts2采取的是一种完全和Web容器隔离和解耦的机制，而SpringMVC就是基于最基本的request和response进行设计。
+
+二、归档日志
+
+
+三、modelandview
+
+
+四、ContextLoaderListener作用
+ContextLoaderListener监听器的作用就是启动Web容器时，自动装配ApplicationContext的配置信息。因为它实现了ServletContextListener这个接口，在web.xml配置这个监听器，启动容器时，就会默认执行它实现的方法。
+
+
+
+</2015-5-12>
+<2015-5-14>
+一、Eclipse RCP开发
+
+</2015-5-14>
+<2015-5-16>
+curl http://10.8.8.93:20002/cms-ft/rest/fileUploadForHtml5?attachmentType=&titleFieldId=restitle
+wget http://10.8.8.93:20002/cms-ft/rest/fileUploadForHtml5?attachmentType=
+telnet 10.8.8.93 20002
+
+
+</2015-5-16>
+<2015-5-20>
+一、集群
+catalina.sh加
+JAVA_OPTS="$JAVA_OPTS -DzkHost=192.168.50.73:2181,192.168.50.91:2181,192.168.50.92:2181 -Dbootstrap_conf=true -DnumShards=2"
+
+二、jiathis
+
+
+
+
+三、java对象在内存中是如何存放的?
+
+java中内存主要包含4块，即heap(堆内存)、stack(栈内存)、data segment(静态变量或是常量存放区)、code segment(方法区). 
+堆内存中存放的是new出的对象，new出的对象只包含成员变量。 
+栈内存中：存放的是局部成员变量。对于基本的数据类型存放的是基本变量的值，而对于对象变量，存放的是堆内存的地址。 
+静态、常量区：存放的是静态变量(类变量)或是常量。 
+方法区：存放的是对象的方法。因此即使new出多个对象也是只是存在一个方法。 
+
+如 
+A a = new A(); A中含有一个work方法，2个成员变量a,b。那么对应的内存分配为 
+则 a是分配在栈内存中。里面存放了一个指向堆内存中存放的new A()的地址。 
+new A()会导致在堆内存中分配一块空间，该内存中的A对象同时会含有a和b。 
+work()方法会在codesegment区中分配内存。 
+如果此时 A b = a;则表示把a的值复制给b，即b的值为a中保存的地址
+
+
+
+四、coding.net支持在线编辑和发布，这个比git要好很多
+
+
+五、一个ticket对应多个sessionuserid
+
+
+</2015-5-20>
+<2015-5-22>
+一、bootstrap
+
+</2015-5-22>
+<2015-5-25>
+一、puppet
+
+二、crontab
+使用crontab命令添加定时任务
+
+       1.在终端上，键入“crontab -e”，进入定时任务文件
+       2.键入“a”，对文件进行编辑
+          输入如下内容： 
+23 11 10 02 * /mnt/kettle/test.sh
+        其中 23为分钟，11为小时，10为日，02为月，*为星期几，crontab命令的使用这里不再赘述。
+       3.键盘敲击exc，终端键入“:wq”，保存文件
+       4.重启crond服务
+          键入“cd /etc/init.d”，进入该目录
+          键入“./crond restart”，重启crond服务
+      5.等待执行结果
+      6.执行成功，oh..nice! 
+
+在/var/log里面发现有cron的日志文件
+
+除了root用户之外的用户可以执行crontab配置计划任务。所有用户定义的crontab存储在目录/var/spool/cron下，任务会以创建者的身份被执行。要以特定用户创建一个crontab，先以该用户登录，执行命令crontab -e，系统会启动在VISUAL或者EDITOR中指定的的编辑软件编辑crontab。
+
+
+三、获取表字段
+SELECT lower(column_name) FROM user_tab_columns t WHERE t.TABLE_NAME=upper('t_subject_nation') order by COLUMN_ID asc ;
+
+
+</2015-5-25>
+<2015-5-27>
+linux下jdk路径的配置
+1：安装linux下的jdk， 到sun.com上去下载linux版本的jdk（我一般喜欢下载二进制的，文件名一般为*.bin(*因jdk的版本不同而不同），我喜欢把软件安装在 /usr/myLinux(Created by myself)目录下， 首先将文件移动到/usr/local文件夹下（当然不移动也行的）。一般通过firefox下载的东西会放在桌面上的。可以用mv ～/Desktop/jdk-6u16-linux-i586.bin /usr/myLinux,然后./jdk-6u16-linux-i586.bin,如果不能执行，很可能是没有执行的权限，先执行chmod a+x jdk-6u16-linux-i586.bin ,在运行./jdk-6u16-linux-i586.bin，会在当前目录下生成一个jdk1.6.0_16目录，
+2：配置路径， 配置路径， 据我所知有四种方法，
+2.1:vi /etc/profile文件， 在该文件的最后加入，
+export JAVA_HOME=/usr/myLinux/jdk1.6.0_16
+export PATH=$JAVA_HOME/bin:$PATH
+export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
+对 这里有几点说明， 对变量的引用用$,在windows中用%变量名%，每一部分之间用：分开，windows中用；分开。还有PATH中的两部分的顺序不要改动。这种方法 对初学者来说很有用 ， 配置之后， 对所有的用户都可以用。当然这个文件需要重启才能起作用， 如果是服务器不方便重启，用source /etc/profile即可。
+然后再终端中执行javac和java -version，如果配置正确则会有输出。
+2.2：在～/.bashrc中(文件的末尾）
+export JAVA_HOME=/usr/myLinux/jdk1.6.0_16
+export PATH=$JAVA_HOME/bin:$PATH
+export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
+然后source  .bashrc
+    source .bash_profile
+此种方法仅对当前用户生效。当然检验也用javac和java -version
+2.3：也可在～/.bash_profile配置， 
+export JAVA_HOME=/usr/myLinux/jdk1.6.0_16
+export PATH=$JAVA_HOME/bin:$PATH
+export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
+然后source .bash_profile ,检验也用javac和java -version
+2.4: 还有一种方式就是公司长用的，把
+export JAVA_HOME=/usr/myLinux/jdk1.6.0_16
+export PATH=$JAVA_HOME/bin:$PATH
+export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar写在一个.java.sh中（当然文件名随你）， 然后在.bashrc中调用它
+在该文件的最后：
+. /.java.sh
+
+</2015-5-27>
+<2015-5-28>
+一、数据库连接
+127.0.200.55:1521/edu
+
+二、tomcat指定jdk
+在catalina.sh中加export JAVA_HOME=/home/cmsuser/jdk1.7.0_67
+
+三、java -jar xx.jar
+
+
+四、ping 域名 查看ip
+
+五、java.sql.SQLException: 结果集已耗尽
+
+</2015-5-28>
+<2015-6-4>
+一、client credentials授权
+采用client credentials方式，即应用公钥、密钥方式获取Access Token，适用于任何类型应用，但通过它所获取的Access Token只能用于访问与用户无关的Open API，并且需要开发者提前向百度开放平台申请，成功对接后方能使用。
+对于应用而言，其流程只有一步，即直接获取Access Token.
+</2015-6-4>
+
+<2015-6-5>
+导数据不要用域名，应该用外网ip
+
+</2015-6-5>
+<2015-6-11>
+一、jQuery ajax的traditional参数的作用
+一般的，可能有些人在一个参数有多个值的情况下，可能以某个字符分隔的形式传递，比如页面上有多个checkbox：
+$.ajax{
+      url:"xxxx",
+      data:{
+            p: "123,456,789"
+      }
+}
+
+如果某一个参数值中出现了分隔符所使用的字符，会出现什么情况呢？
+
+var classIds = new Array();
+	var classNames = new Array();
+	var intro = $("#intro").val();
+	$("input[name='classIds']:checked").each(function(i) {
+		if ($(this).attr("checked") && $(this).val() != "0") {
+			classIds.push($(this).val());
+			if ($("#userType").val()!='0') {
+				classNames.push($(this).parent().text());
+			}else{
+				classNames.push($("#className").val());
+			}
+		}
+	});
+$.ajax({
+		url : "doShareToClassRes.do",
+		type : "post",
+		traditional: true,
+		dataType : "json",
+		data : {
+			"resId": $("#resId").val(),
+			"classIds": classIds,
+			"classNames": classNames,
+			"intro": intro,
+			"subjectId": subjectId,
+			"title": $("#shareTitle").val()
+		},
+		success : function(result) {
+			var parentId = $("#parentId").val();
+			location.href = "myNetdisk_new.htm?parentId="+parentId;
+		}
+	})
+
+</2015-6-11>
+<2015-6-12>
+一、获取类的属性
+Object tableObject;
+BeanInfo beanInfo = Introspector.getBeanInfo(tableObject.getClass(), Object.class);
+PropertyDescriptor[] fields = beanInfo.getPropertyDescriptors();
+fieldName = fields[i].getName();
+
+</2015-6-12>
+<2015-6-15>
+一、在JAVA中 System.getProperty 和 System.setProperty 方法
+这是对操作系统变量操作的方法.
+
+System还提供一个静态方法 System.getProperties(). 这个方法可以罗列出你系统的全部变量.
+
+调用System.getProperties() 的结果是.
+, com.ibm.util.extralibs.properties=, java.vm.specification.vendor=Sun Microsystems Inc., user.variant=, java.awt.fonts=, os.name=Windows XP, sun.java2d.fontpath=, java.jcl.version=20081016a, sun.jnu.encoding=Cp1252, java.library.path=C:/Program Files/IBM/Java50/jre/bin;.;C:/Program Files/ThinkPad/Utilities;C:/WINDOWS/system32;C:/WINDOWS;C:/WINDOWS/System32/Wbem;C:/Program Files/IBM/Infoprint Select;C:/Notes;C:/Program Files/XLView;C:/lotus/compnent;C:/Utilities;C:/Program Files/IBM/Personal Communications/;C:/Program Files/IBM/Trace Facility/;
+
+这里我可以调用 System.getProperties("os.name")方法来得到 Windows XP.
+
+可以判断当前使用的操作系统是什么操作系统.
+
+static {
+		if (System.getProperty("os.name") != null
+				&& System.getProperty("os.name").toLowerCase()
+						.contains("windows")) {
+			isWindows = true;
+			splash = "\\";
+			root = "D:";
+		} else {
+			isWindows = false;
+			splash = "/";
+			root = "/search";
+		}
+	}
+
+二、crontab -e
+用某个用户登录：比如cmsuser，然后输入crontab -e,然后写入下面语句：
+*/1 * * * *  sh /home/cmsuser/nation/hello.sh >> /home/cmsuser/nation/tmp/tmp.txt
+保存之后改文件会保存在/var/spool/cron文件下，且是该用户命名的。
+
+用户配置文件
+每个用户都有自己的cron配置文件,通过crontab -e 就可以编辑,一般情况下我们编辑好用户的cron配置文件保存退出后,系统会自动就存放于/var/spool/cron/目录中,文件以用户名命名.
+linux的cron服务是每隔一分钟去读取一次/var/spool/cron,/etc/crontab,/etc/cron.d下面所有的内容.
+
+先来看一下我原来写的task.sh脚本吧：
+#!/bin/sh
+java -jar offergateway.biz.offer-1.0-SNAPSHOT.jar
+
+crontab定时任务的写法为：
+* * * * *  /task.sh
+
+后来我查了网上说要运行crontab，必须使用绝对路径，然后我把路径都改成绝对路径了。
+在crontab的执行环境变量中，没有相应用户设置的环境变量，你需要手动设置一下环境变量，才能让它生效。于是我把上面的脚本改成：
+#!/bin/sh
+. /etc/profile
+java -jar /home/zhang/offergateway.biz.offer-1.0-SNAPSHOT.jar
+
+crontab也改成绝对路径：
+* * * * *  sh /home/zhang/task.sh
+
+三、Linux 后台运行jar程序
+nohup java -jar xx.jar
+
+nohup命令：如果你正在运行一个进程，而且你觉得在退出帐户时该进程还不会结束，那么可以使用nohup命令。该命令可以在你退出帐户/关闭终端之后继续运行相应的进程。nohup就是不挂起的意思( no hang up)。
+要用exit退出，不要直接关闭窗口。
+
+四、
+
+</2015-6-15>
+<2015-6-16>
+一、java 动态代理 proxy InvocationHandler
+在一些框架中有所谓的截面(aop),这些应用主要就是使用了JAVA的动态代理机制。截面或者说是拦截器所做的事情就是把一些共同的功能代码进行了抽取，简化开发以及维护。
+Proxy类主要用来获取动态代理对象，InvocationHandler接口用来约束调用者实现。
+
+二、.bash_profile
+PATH=$PATH:$HOME/bin
+
+export PATH
+
+export JAVA_HOME=/home/cmsuser/jdk1.7.0_67
+export JRE_HOME=$JAVA_HOME/jre
+export CLASSPATH=.:$JAVA_HOME/lib:$JRE_HOME/lib/rt.jar:$JAVA_HOME/lib/tools.jar
+export PATH=$JAVA_HOME/bin:$PATH
+然后
+source .bash_profile
+
+在linux中，小数点“.”表示当前路径，冒号“：”在此表示分隔符。
+rt.jar是JAVA基础类库，dt.jar是关于运行环境的类库，tools.jar是工具类库.
+dt.jar和tools.jar位于：{Java_Home}/lib/下，而rt.jar位于：{Java_Home}/jre/lib/下
+
+三、DNS
+DNS就是Domain Name System，它能够把形如www.21php.com这样的域名转换为211.152.50.35这样的IP地址；没有DNS，浏览21php.com 这个网站时，就必须用211.152.50.35这么难记的数字来访问。提供DNS服务的就是DNS服务器。DNS服务器可以分为三种，高速缓存服务器 (Cache-only server)、主服务器(Primary Name server)、辅助服务器(Second Name Server)。
+
+四、zookeeper ---> zoo.cfg
+tickTime=2000
+initLimit=10
+syncLimit=5
+dataDir=/home/cmsuser/edu-cms/zookeeper-3.4.6/data
+dataLogDir=/home/cmsuser/edu-cms/zookeeper-3.4.6/dataLog
+clientPort=2181
+server.1=192.168.50.73:2788:3788
+server.2=192.168.50.91:2788:3788
+server.3=192.168.50.92:2788:3788
+
+五、curl
+Curl是Linux下一个很强大的http/ftp/dict协议命令行工具.
+
+HTTP是一种用于从Web服务器获取数据的协议。它是一种非常简单地协议，构建于TCP/IP之上。该协议允许客户端使用一些不同的方法获取信息发送到服务器。
+
+六、wget
+wget是一个从网络上自动下载文件的自由工具，支持通过HTTP、HTTPS、FTP三个最常见的TCP/IP协议下载，并可以使用HTTP代理。wget名称的由来是“World Wide Web”与“get”的结合。
+
+七、DNS服务器
+DNS服务器是计算机域名系统 (Domain Name System 或Domain Name Service) 的缩写，它是由域名解析器和域名服务器组成的。域名服务器是指保存有该网络中所有主机的域名和对应IP地址，并具有将域名转换为IP地址功能的服务器。其中域名必须对应一个IP地址，而IP地址不一定有域名。域名系统采用类似目录树的等级结构。域名服务器为客户机/服务器模式中的服务器方，它主要有两种形式：主服务器和转发服务器。将域名映射为IP地址的过程就称为“域名解析”。
+
+八、linux不能将域名解析成IP地址
+修改/etc/resolv.conf,添加DNS服务器比如
+nameserver 192.168.1.1
+
+九、Dubbo与Zookeeper、SpringMVC整合使用
+ Zookeeper作为Dubbo服务的注册中心，Dubbo原先基于数据库的注册中心，没采用Zookeeper，Zookeeper一个分布式的服务框架，是树型的目录服务的数据存储，能做到集群管理数据 ，这里能很好的作为Dubbo服务的注册中心，Dubbo能与Zookeeper做到集群部署，当提供者出现断电等异常停机时，Zookeeper注册中心能自动删除提供者信息，当提供者重启时，能自动恢复注册数据，以及订阅请求。
+
+十、<context:component-scan>使用说明
+在xml配置了这个标签后，spring可以自动去扫描base-pack下面或者子包下面的java文件，如果扫描到有@Component @Controller@Service等这些注解的类，则把这些类注册为bean。
+
+十一、github
+
+十二、SAE（云计算平台）
+Sina App Engine（简称SAE）是新浪研发中心于2009年8月开始内部开发，并在2009年11月3日正式推出第一个Alpha版本的国内首个公有App Engine，SAE是新浪云计算战略的核心组成部分。
+
+十三、Java中native方法
+Java不是完美的，Java的不足除了体现在运行速度上要比传统的C++慢许多之外，Java无法直接访问到操作系统底层（如系统硬件等)，为此Java使用native方法来扩展Java程序的功能。
+native是与C++联合开发的时候用的！使用native关键字说明这个方法是原生函数，也就是这个方法是用C/C++语言实现的，并且被编译成了DLL，由java去调用。 这些函数的实现体在DLL中，JDK的源代码中并不包含，你应该是看不到的。对于不同的平台它们也是不同的。这也是java的底层机制，实际上java就是在不同的平台上调用不同的native方法实现对操作系统的访问的。总而言之：
+native 是用做java 和其他语言（如c++）进行协作时使用的，也就是native 后的函数的实现不是用java写的。
+ 既然都不是java，那就别管它的源代码了，我们只需要知道这个方法已经被实现即可。
+native的意思就是通知操作系统， 这个函数你必须给我实现，因为我要使用。 所以native关键字的函数都是操作系统实现的， java只能调用。
+java是跨平台的语言，既然是跨了平台，所付出的代价就是牺牲一些对底层的控制，而java要实现对底层的控制，就需要一些其他语言的帮助，这个就是native的作用了
+
+</2015-6-16>
+<2015-6-17>
+一、spring
+其实用spring最好的地方就是实现代码的复用。 
+首先spring的设计原则是非侵入性的，就是实际业务逻辑代码中感觉不到spring框架的存在，spring只是在其中起到一个实例产生的作用，然后把实例分配给需要的对象。这种设计的好事就是可以随时随地的把某个业务逻辑很轻松的从整个系统中抽离出来再在无任何修改的情况下用到其他系统中去。 
+然后就是切面的编程，这种设计是灵活的操作织入，例如你的某个业务逻辑是执行存款，存款这个业务之前之后都应该有某些附加操作，例如用户登录，检查余额，记录存款日志信息，但是这些不能够放在存款主业务当中，这个时候就可以用面向切面的方式灵活织入到存款业务中，但是这个过程有不需要改变原存款业务代码和逻辑实现。如果将来某个时候这些副业务刚改，例如我不想记录存款日志信息，但是我又要加入打印出存款细节的附加操作，这个时候只要把记录日志剥离出来，再植入打印功能。同样不需要更改源代码。 
+
+spring这些设计的终极目标就是避免同样或者相似功能在不同系统中的重复开发而设计的
+
+
+二、Java学习之Hessian通信基础(http://blog.sina.com.cn/s/blog_7f73e06d0100xn9j.html)
+Hessian:hessian是一个轻量级的remoting onhttp工具，使用简单的方法提供了RMI的功能，相比WebService，Hessian更简单、快捷。采用的是二进制RPC协议，因为采用了二进制协议，所以它很适合于发送二进制数据，Hessian主要作面向对象的消息通信。Hessian的初衷就是支持动态类型，格式紧凑，跨语言Hessian是使用自己的序列化机制实现的编组和反编组，其支持的数据类型是有限制的，不支持复杂的对象，可以穿透防火墙，在这里不得不说一下RMI：RMI是一组用户开发分布式应用程序的API。他使用的是java序列化机制实现调用及返回值的编组于反编组。它使用Java语言接口定义了远程对象，它集合了Java序列化和Java远程方法协议（Java Remote Method Protocol）。他可以被看做是RPC的Java版本，因为传统的RPC并不能很好的应用于分布式对象系统。而Java RMI则支持存储于不同地址空间的程序级对象之间彼此进行通信，实现远程对象之间的无缝远程调用。他也有它的缺点，他只能通过RMI协议来进行访问无法通过HTTP协议访问，无法穿透防火墙。
+    还有一种远程调用方法就是ＨttpInvoker：他也是将参数和返回值通过Java的序列化机制进行编组和反编组，它具有RMI的支持所有可序列化对象的优点。试使用Http协议传输二进制流的，同时又具有Hessian、Burlap(传输xml文本)的优点。
+
+Hessian 是一个序列化协议, 他的优点在于比 Java 原生的对象序列化/反序列化速度更快, 序列化出来以后的数据更小.
+序列化协议跟应用层协议无关, 可以将 Hessian 序列化以后的数据放在 HTTP Body 里, 也可以放在 DUBBO 里, 或者直接用 Socket 传输
+
+三、tcpdump或Wireshark抓包工具 查看传输的数据
+
+四、Project configuration is not up-to-date with pom.xml. Run Maven->Update Project or use Quick Fix.
+右键-->maven-->update project
+
+
+</2015-6-17>
+<2015-6-18>
+一、JMS
+一个消息对象分为三部分：消息头(Headers)，属性（Properties）和消息体（Payload）。对于StreamMessage和MapMessage，消息本身就有特定的结构，而对于TextMessage，ObjectMessage和BytesMessage是无结构的。一个消息可以包含一些重要的数据或者仅仅是一个事件的通知。
+    消息的Headers部分通常包含一些消息的描述信息，它们都是标准的描述信息。包含下面一些值：
+　　1）JMSDestination
+       消息的目的地，Topic或者是Queue。
+　　2）JMSDeliveryMode
+        消息的发送模式：persistent或nonpersistent。前者表示消息在被消费之前，如果JMS提供者DOWN了，重新启动后消息仍然存在。后者在这种情况下表示消息会被丢失。可以通过下面的方式设置：Producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
+       3）JMSTimestamp
+       当调用send()方法的时候，JMSTimestamp会被自动设置为当前事件。可以通过下面方式得到这个值：
+       long timestamp = message.getJMSTimestamp();
+　　4）JMSExpiration
+       表示一个消息的有效期。只有在这个有效期内，消息消费者才可以消费这个消息。默认值为0，表示消息永不过期。可以通过下面的方式设置：
+       producer.setTimeToLive(3600000); //有效期1小时 （1000毫秒 * 60秒 * 60分）
+　　5）JMSPriority
+       消息的优先级。0-4为正常的优先级，5-9为高优先级。可以通过下面方式设置：
+       producer.setPriority(9);
+　　6）JMSMessageID
+       一个字符串用来唯一标示一个消息。
+　　7）JMSReplyTo
+       有时消息生产者希望消费者回复一个消息，JMSReplyTo为一个Destination，表示需要回复的目的地。当然消费者可以不理会它。
+　　8）JMSCorrelationID
+       通常用来关联多个Message。例如需要回复一个消息，可以把JMSCorrelationID设置为所收到的消息的JMSMessageID。
+　　9）JMSType
+       表示消息体的结构，和JMS提供者有关。
+　　10）JMSRedelivered
+       如果这个值为true，表示消息是被重新发送了。因为有时消费者没有确认他已经收到消息或者JMS提供者不确定消费者是否已经收到。
+    除了Header，消息发送者可以添加一些属性(Properties)。这些属性可以是应用自定义的属性，JMS定义的属性和JMS提供者定义的属性。我们通常只适用自定义的属性。
+
+JMS应用场景：
+1.通过JMS facade更新数据库，完全解耦了客户端和服务器端处理过程。 
+2.与遗留老式系统接口 
+3.应付大访问量交易系统 
+4.协同多系统之间处理效率 
+
+JMS一般用在企业级、分布式开发中。
+现在中国流行SSH基本上用不上，只有个别根据业务需要，会有用的，但不多。
+最常见的连锁店，店铺销售数据要传回服务器，不能保证所有店铺都能正常联网，也不能断网这个店铺就不能销售。jms的异步传输，可以暂存数据，在网络正常时将之前的数据传输过去。
+网络不好的时候，同步传输则要一直等待，异步则不需要。
+
+二、多数据源事务管理 Atomikos(http://blog.chinaunix.net/uid-122937-id-3793220.html)
+JTA事务的使用方法有：Spring中直接集成JOTM提供JTA事务管理、将JOTM集成到Tomcat中，Spring通过引用Tomcat JNDI数据源提供JTA事务管理、引用其它功能完善JavaEE应用服务器所提供的JTA事务管理.
+最常见的二个如下：
+JOTM
+    JOTM(Java Open Transaction Manager)是ObjectWeb的一个开源JTA实现，它本身也是开源应用程序服务器JOnAS(Java Open Application Server)的一部分，为其提供JTA分布式事务的功能。
+    存在的问题：使用中不能自动rollback，无论什么情况都commit。
+
+Atomikos(http://blog.csdn.net/taxuexunmei414923794/article/details/7673246)
+    大家推荐最多的。和JOTM相比Atomikos Transactions Essentials更加稳定，它原来是商业项目，现在开源了。象mysql一样卖服务支持的。而且论坛页比较活跃，有问题很快可以解决。
+
+
+三、
+
+
+</2015-6-18>
+<2015-6-19>
+一、类加载器ClassLoader
+JVM在运行时会产生三个ClassLoader，Bootstrap ClassLoader、Extension ClassLoader和App ClassLoader。其中，Bootstrap ClassLoader是用C++编写的，在Java中看不到它，是null。它用来加载核心类库，就是在lib下的类库，Extension ClassLoader加载lib/ext下的类库，App ClassLoader加载Classpath里的类库，三者的关系为:App ClassLoader的Parent是Extension ClassLoader，而Extension ClassLoader的Parent为Bootstrap ClassLoader。加载一个类时，首先BootStrap进行寻找，找不到再由Extension ClassLoader寻找，最后才是App ClassLoader。 
+将ClassLoader设计成委托模型的一个重要原因是出于安全考虑，比如在Applet中，如果编写了一个java.lang.String类并具有破坏性。假如不采用这种委托机制，就会将这个具有破坏性的String加载到了用户机器上，导致破坏用户安全。但采用这种委托机制则不会出现这种情况。因为要加载java.lang.String类时，系统最终会由Bootstrap进行加载，这个具有破坏性的String永远没有机会加载。
+
+
+
+
+
+</2015-6-19>
+<2015-6-23>
+一、用ClassLoader实现热部署
+
+二、JNI
+JNI是Java Native Interface的缩写，它提供了若干的API实现了Java和其他语言的通信（主要是C&C++）。
+
+
+三、java.lang.ClassCircularityError
+java.lang.ClassCircularityError类循环依赖错误。在初始化一个类时,若检测到类之间循环依赖则抛出该异常。
+
+
+四、使用Jenkins配置自动化构建
+
+
+五、现在制作报表一般有以下4个工具可以用：jFreeChart、FusionChart、HighChart、EChart。
+
+
+
+</2015-6-23>
+<2015-6-24>
+一、SEO
+SEO由英文Search Engine Optimization缩写而来， 中文意译为“搜索引擎优化”。SEO是指从自然搜索结果获得网站流量的技术和过程，是在了解搜索引擎自然排名机制的基础上， 对网站进行内部及外部的调整优化， 改进网站在搜索引擎中的关键词自然排名， 获得更多流量， 从而达成网站销售及品牌建设的目标。
+
+二、java 中new一个对象占多少内存？
+Object o=new Object():
+   在java中空对象占八个字节，对象的引用占四个字节。所以上面那条语句所占的空间是4byte+8byte=12byte.java中的内存是以8的倍数来分配的，所以分配的内存是16byte.
+举个例子：
+Class O{
+ int i;
+ byte j;
+ String s;
+}
+其所占内存的大小是空对象（8）+int(4)+byte(1)+String引用(4)=17byte,因要是8的整数倍，所以其占大小为24byte.
+当然，如果类里有其他对象的话，也要把其他对象的空间算进去。
+
+
+
+</2015-6-24>
+<2015-6-25>
+一、$(":checkbox")
+:checkbox 选择器选取类型为 checkbox 的 元素。
+$(":checkbox").each(function(i){
+});
+
+二、一个Java程序的执行过程 
+首先，JVM装载.class，也就是类装载器装载类字节码。一个类装载器本身也是一个java类，所以，类装载器自身也需要被另外一个类装载器装载，这就出现了类似先有蛋，还是先有鸡的问题。但JAVA中的类装载器的这个问题却很容易解决。JAVA的虚拟机（JVM）中内嵌了一个称为Bootstrap类装载器，它是用特定于操作系统的本地代码实现的，属于JAVA虚拟机的内核，Bootstrap类不用专门的类装载器去进行装载。Bootstrap类负责加载JAVA核心包中的类（即rt.jar文件中的类），这些类的Class.getClassLoader()方法返回值为null，即表示是Bootstrap类装载器。JAVA核心包中有另外两个类装载器：ExtClassLoader和AppClassLoader，它们都是用JAVA语言编写的JAVA类，其中ExtClassLoader类装载负责加载存放在<JAVA_HOME>/jre/lib/ext目录下的jar包中的类，AppClassLoader负责加载应用程序的启动执行类，即当使用java命令去启动执行一个类时，JAVA虚拟机使用AppClassLoader加载这个类。在编译和运行JAVA程序时，都会通过ExtClassLoader类装载器去<JAVA_HOME>/jre/lib/ext目录下的JAR包中搜索要加载的类，所以，如果将包含例如Servlet API的jar包或者是javamail.jar包复制到该目录下，在编译Servlet或JavaMail程序时,就不必在CLASSPATH环境变量中增加包含Servlet API的jar包或者是javamail.jar包文件。
+
+三、Clojure
+Clojure是一种运行在Java平台上的 Lisp 方言，Lisp是一种以表达性和功能强大著称的编程语言，但人们通常认为它不太适合应用于一般情况，而Clojure的出现彻底改变了这一现状。如今，在任何具备 Java 虚拟机的地方，您都可以利用 Lisp 的强大功能。
+作为当今最主流的运算平台JVM，把函数式编程语言引入JVM也是很多人尝试的方向，Clojure就是其中之一。Clojure是一个在JVM平台运行的动态函数式编程语言，其语法接近于LISP语言，在JVM平台运行的时候，会被编译为JVM的字节码进行运算。
+
+四、JRuby
+JRuby是一个纯Java实现的Ruby解释器。通过JRuby，你可以在JVM上直接运行Ruby程序，调用Java的类库。很多Java编写的Ruby IDE都是使用JRuby来解释语法的。
+
+五、rails
+Rails是一个全栈式的MVC框架，换句话说，通过Rails可以实现MVC模式中的各个层次，并使它们无缝地协同运转起来。
+在实际开发一个MVC模式的Web应用项目时，如果使用Java开发，需要用到Struts（View 层）、Hibernate（Model层）和Struts（Controller 层）spring 整合mvc 3个框架，而且需要额外整合3个框架开发出的内容。而使用Ruby语言开发相同的项目时，只需要用到Rails框架就可以完成。
+
+六、java.util.concurrent.forkjoin
+从分治的算法思想到fork/join框架，这种并行性的的融入可以更加高效率的解决一大批的问题。和我们一些传统的多线程应用方式如ThreadPoolExecutor比起来，它有一些自己的特点。一个典型的地方就是work-stealing，它的一个优点是在传统的线程池应用里，我们分配的每个线程执行的任务并不能够保证他们执行时间或者任务量是同样的多，这样就可能出现有的线程完成的早，有的完成的晚。在这里，一个先完成的线程可以从其他正在执行任务的线程那里拿一些任务过来执行。我们可以说这是人家学习雷锋好榜样。这样发挥主观能动性的线程框架肯定办起事来就效率高了。
+
+七、divide and conquer策略的处理问题方式
+
+
+八、阈值（yu` zhi）
+阈值又叫临界值，是指一个效应能够产生的最低值或最高值。
+阙值及阀值
+
+九、Hadoop Map/Reduce
+
+十、Lambda和Java 8
+
+十一、AsyncContext
+AsyncContext ctx = request.startAsync();
+
+</2015-6-25>
+<2015-6-26>
+一、几个概念
+1、JVM 
+JVM是class以及jar(实际上就是很多个class压缩在一起)的运行环境，特征就是java和javaw命令，通过这两个命令，你可以执行class和jar文件。你可以通过-classpath参数指定你需要加载的jar文件 
+
+2、JDK 
+JDK就是JAVA的命令行开发环境，内置了JVM，特征就是javac命令，这个命令允许你将.java源文件批量或者单个编译成.class文件，从而可以通过JVM的java命令执行。在编译时你可以通过-classpath参数指定你的源代码依赖的jar文件。 
+
+3、Tomcat等JEE中间件 
+JEE中间件主要是为了让JAVA程序能够提供http服务、向客户展现html及相关资源而准备的一个运行环境，通常已经包含了JDK（或者像tomcat一样需要配置JDK所在路径）.这个运行环境的特征是能够让你部署一个war包，运行环境能够自动加载WEB-INF/classes下的.class文件和WEB-INF/lib下jar文件。当用户通过浏览器访问中间件中你的war包所部署的路径时，中间件能够按照J2EE标准调用你的war包中的class和jsp页面，并将执行结果返回给浏览器。 在这种情况下你只需要将你的.java文件编译好放到WEB-INF/classes目录下。 
+
+然后说说纯文本JAVA WEB开发，有这么几种类型： 
+1、纯文本只有JSP 
+如果项目中只有jsp页面，就很稀松平常了，你只需要在tomcat的webapps下新建一个目录，然后在里面新建.jsp文件，就可以通过类似于http://localhost:8080/app/a.jsp的方式执行这个jsp文件了。早期的JAVA WEB项目都差不多是这么干的，那时候IDE的用处确实不大。别的技术像ASP和PHP之类十几年了一直是用这种纯文本的方式来编写代码，效率和有IDE没太大差别。 
+
+2、除了JSP还有辅助JAVA类 
+如果除了JSP以外，你还需要一些JAVA类来辅助JSP页面，这时候你必须手工新建.java文件，然后用通过文本编辑器（记事本/vi/UE等）打开他，往里面手工写代码。你将代码写完后，还需要将这个.java文件编译成.class，然后才能放到WEB-INF/classes下执行， 
+有两种方式完成编译动作： 
+方式一：JDK+构建工具（ANT或者MAVEN），通过配置ANT调用JDK中的javac命令将你的JAVA代码编译成class并放置到你的WEB-INF/classes目录下 
+方式二：ANT实际上也是将你的配置转换成javac命令中的各种参数，所以你也可以直接在命令行输出javac，然后javac就会提示你需要提供什么样的参数以及各种参数有什么用途，你可以根据提示自己调用javac编译.java文件成.class文件。 
+两种方式效率都有点低，所以你还需要有一个.bat（或者.sh）批处理文件来帮助你每隔几十秒就自动编译一下指定目录下的.java文件。 
+你可能需要写的辅助JAVA类有： 
+一、全局性的ServletFilter（例如用于用户权限检查） 
+二、复杂输出的Servlet(jsp不适合用来动态向浏览器提供图片等资源，这时候写Servlet) 
+三、在JSP中使用的Tag类，以减少JSP中大量的<%%>代码。 
+这种类不会很多，一般项目能有二三十个就差不多了，所以最初写辅助类的痛苦时期过去以后，开发效率就和使用IDE没什么区别了 
+
+3、除了JSP还有大量JAVA类 
+你的系统比较庞大了，需要一些框架性的东西来进行总体约束，然后在按照框架的要求来编写大量的JAVA类，通过这些JAVA类来完成浏览器端的请求。 
+这时候你的系统状态已经比较类型与SSH这种形态了，每个页面都会有对应的Action/Controller，以及FormBean/Model，或者还有专门的Service/BL类和DAO类。 
+这样你的系统中就会有大量的.java文件需要编译成.class，而且要引用的jar数量也显著增加，这时候你作为一个没有IDE的人，痛苦就要来了： 
+大量的时间花在等待编译上了，无论是使用构建工具的增量编译功能还是自己写一个更强大的批处理文件来扫描改动过的类，每次编译都需要一点时间，并且都不是非常可靠。特别是“减量编译”通常都支持不好，可能会有潜在的错误。 
+如果每次都使用全部重新编译以得到可靠的编译结果，那么最好的做法是让你每个JAVA类都一次写完一次编译成功，如果多出几个错误或者多修改几次，你会发现编译用的时间就显著大于你写代码的时间。 
+这种情况下纯文本和IDE的开发效率会有显著的区别。 
+如果我必须在这种痛苦的纯文本条件下工作，我会先写一个JAVA类，让这个JAVA类单独开一个进程运行，这个进程会自动扫描相应目录下的java文件增/改/删, 
+然后调用sun.tools.javac.Main类来进行编译，如果只是新增和修改则只单独编译几个类，如果有删除则全部重新编译。 
+
+那么Eclipse做了些什么？ 
+1、Eclipse提供了WEB项目工程向导，帮助你快速创建项目 
+2、Eclipse将你的WEB-INF/lib下的jar文件管理起来，并对其中的class类进行了索引，以便于你快速查看相关类的位置、继承关系、引用关系。 
+3、Eclipse提供一个完善的增量编译器，所写即所得。Eclipse当年能够胜出的一个重要原因就在他的编译器，Eclipse的JDT实现了自己的编译器（因此Eclipse甚至都不需要JDK，只要有JVM就可以了）,能够快速、增量地将你对代码的修改反映到class文件上。这是当时的JBuilder望尘莫及的，当时每次改完类都得重新编译一下，那个痛苦呀，当时我在公司引进Eclipse的时候，两个月之内大家就全部抛弃JBuilder X了（当时花了钱买了正版）。 
+4、提供了完善的调试功能，基于IDE的调试效率会远高于命令行调试。 
+5、提供了语法加亮、语法提示、中间件管理等辅助工具。
+
+
+二、shell sed
+sed是一种在线编辑器，它一次处理一行内容。处理时，把当前处理的行存储在临时缓冲区中，称为“模式空间”（pattern space），接着用sed命令处理缓冲区中的内容，处理完成后，把缓冲区的内容送往屏幕。接着处理下一行，这样不断重复，直到文件末尾。文件内容并没有 改变，除非你使用重定向存储输出。Sed主要用来自动编辑一个或多个文件；
+
+三、awk
+awk是一个强大的文本分析工具，相对于grep的查找，sed的编辑，awk在其对数据分析并生成报告时，显得尤为强大。简单来说awk就是把文件逐行的读入，以空格为默认分隔符将每行切片，切开的部分再进行各种分析处理。
+
+四、Linux hostname , pwd
+Linux操作系统的hostname是一个kernel变量，可以通过hostname命令来查看本机的hostname。也可以直接cat /proc/sys/kernel/hostname查看。
+
+　　#hostname
+
+　　#cat /proc/sys/kernel/hostname
+
+　　上面两种输出结果相同。
+
+pwd来判定当前目录在文件系统内的确切位置。
+
+五、Linux dirname、basename 指令
+dirname指令
+功能：从给定的包含绝对路径的文件名中去除文件名（非目录的部分），然后返回剩下的路径（目录的部分）
+basename
+功能：从给定的包含绝对路径的文件名中去除左边目录部分或者同时去除某个后缀的内容（目录的部分），然后返回剩下的部分（非目录的部分）
+
+六、cd `dirname $0`
+这个命令写在脚本文件里才有作用，他返回这个脚本文件放置的目录，并可以根据这个目录来定位所要运行程序的相对位置（绝对位置除外）。
+#!/bin/bash
+cd `dirname $0`
+echo `pwd`
+
+七、GFS和NFS比较分析
+首先从它们的功能上进行分析。NFS即网络文件系统，是由SUN公司开发的。它是FreeBSD支持的文件系统中的一种，允许一个系统在网络上与它人共享目录和文件。通过使用NFS，用户和程序访问远端系统上的文件就像访问本地文件一样。
+      而GFS是Google为了满足本公司迅速增长的数据处理要求而开发的文件系统。GFS是一个可扩展的分布式文件系统，用于大型的、分布式的、对大量数据 进行访问的应用。它是针对Google的计算机集群进行设计的，专门是为Google页面搜索的存储进行了优化。
+所以从功能上看，它们两者是完全不同的概念。
+      其次从结构上比较，NFS至少包括两个主要部分：一台服务器，以及至少一台客户机。被共享的目录和文件存放在服务器上，客户机远程地访问保存在服务器上的数据。
+      GFS则由一台Master(通常有几台备份)和若干台TrunkServer构成。GFS中文件备份成固定大小的Trunk分别存储在不同的 TrunkServer上，每个Trunk有多份(比如3)拷贝，也存储在不同的TrunkServer上。Master负责维护GFS中的 Metadata，即文件名及其Trunk信息。客户端先从Master上得到文件的Metadata，根据要读取的数据在文件中的位置与相应的 TrunkServer通信，获取文件数据。
+
+      再从跨平台性上，NFS的基本原则是“容许不同的客户端及服务端通过一组RPCs分享相同的文件系统”，它是独立于操作系统的，容许不同的操作系统共同地进行文件的共享。
+      而GFS则没有这一特点，文件只能被集群系统中的PC所访问，而且这些PC的操作系统一般是Linux。
+
+      最后从规模上比较，目前Google拥有超过200个的GFS集群，其中有些集群的PC数量超过5000台。集群的数据存储规模可以达到5个PB，并且集群中的数据读写吞吐量可达到每秒40G。
+      而NFS一般没有这么巨大的规模。
+
+八、使用Servlet3.0新特性asyncSupported=true时抛异常java.lang.IllegalStateException: Not support...
+
+
+九、Socket异常5: Broken pipe
+
+该异常在客户端和服务器均有可能发生。在第4个异常的第一种情况中（也就是抛出SocketExcepton:Connect reset by peer:Socket write error后），如果再继续写数据则抛出该异常。前两个异常的解决方法是首先确保程序退出前关闭所有的网络连接，其次是要检测对方的关闭连接操作，发现对方关闭连接后自己也要关闭该连接。
+</2015-6-26>
+<2015-6-27>
+一、NodeDataChanged path:/clusterstate.json, has occurred - updating(solr recovery)
+
+这个时候往collection update数据进去，以shard1为例，数据转发过程，IP1_leader –> IP2_replica。 在前文Recovery策略中介绍过，在这个数据转发过程中，如果IP1_leader没有收到IP2_replica的success反应，就会发送recovery命令到IP2_replica，使得IP2_replica触发recovery。那么现在我把IP2服务器关掉一会，此时数据仍然会往shard1打入，仍然会往IP1_leader update数据，但是不会往IP2_replica。过几分钟后，我重新启动IP2服务器，这个时候IP2_replica就会进行版本检查，发现跟IP1_leader commit版本不一致，随机就触发recovery。这个时候，我立马把IP1服务器关掉，即IP1_leader就是down了。此时SolrCloud会出现什么现象呢？由于IP2_replica正在进行recovery，它会从IP1_leader下载索引文件，这个时候IP1_leader处于down了，那么IP2_replica就无法获取需要recovery的索引文件了，因此在尝试多次recovery后，IP2_replica就会处于recovery_failed状态。又由于本来shard1的leader down了，会触发IP2_replica重新进行选举，但是由于IP2_replica处于recovery_failed状态而无法选举为leader，所以此时SolrCloud的shard1就会处于没有leader的，那么SolrCloud就会处于宕机状态。
+
+
+二、
+SolrCloud也能被配置成: 
+分片(shard)索引 
+每个shard可以有一个或多个副本(replica) 
+
+多个shard和replica可以组成一个Collection(从图中可以看出就是一个SolrCloud), 多个Collection可以部署到一个SolrCloud集群. 而一个搜索请求可以同时搜索多个Collection.
+
+SolrCloud Shard, Replica, Replication 
+就像上图那样, 一个新的doc将发送到一个SolrCloud集群中任何一个节点. doc能自动选择发送到哪一个Shard, 如果Shard有多个副本, doc会自动进行同步, 与原来的master/slave结构有所不同, 数据同步是实时的(原来则是定期批量同步). 
+
+集群配置 
+SolrCloud集群的所有的配置存储在ZooKeeper. 一旦一个SolrCloud节点启动, 该节点的配置信息将发送到ZooKeeper上存储. 
+
+Shard Replica除了作为容灾备份存在, 另外一个作用就是分散查询请求, 提高整个集群的查询能力. 
+
+索引处理 
+索引文档的更新在Shard和Replica之间是自动和实时的. 因为不存在master server, doc可以发送到任何一个SolrCloud(也就是一个Collection), 然后由SolrCloud完成剩下的事情. 这样就不再存在以前master/slave的单点问题. 
+
+
+三、json在线解析
+
+
+</2015-6-27>
+<2015-6-29>
+一、SolrCloud
+SolrCloud是基于Solr和Zookeeper的分布式搜索方案，是正在开发中的Solr4.0的核心组件之一，它的主要思想是使用Zookeeper作为集群的配置信息中心。它有几个特色功能：1）集中式的配置信息 2）自动容错 3）近实时搜索 4）查询时自动负载均衡。
+
+二、catalina.sh
+JAVA_OPTS="$JAVA_OPTS -Dbootstrap_conf=true -DzkHost=192.168.10.1:10001,192.168.10.2:10001 -DnumShards=1"
+
+三、IP过滤器
+<!-- IP访问过滤器,测试完成后取消该过滤器 -->
+	<filter>
+		<filter-name>IPAccessFilter</filter-name>
+		<filter-class>com.whty.cms.common.filter.IPAccessFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>IPAccessFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+public class IPAccessFilter implements Filter {
+	
+	private static final Logger LOGGER = LogManager.getLogger(IPAccessFilter.class);
+	
+	private List<String> ignoreIPList;
+
+	@Override
+	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
+			FilterChain chain) throws IOException, ServletException {
+		HttpServletRequest request = (HttpServletRequest) servletRequest;
+		String remoteAddr = request.getRemoteAddr();
+		LOGGER.info("remoteAddr: " + remoteAddr);
+		if (ignoreIPList.contains(remoteAddr)) {
+			chain.doFilter(servletRequest, servletResponse);
+		} else {
+			HttpServletResponse response = (HttpServletResponse) servletResponse;
+			response.sendRedirect("http://www.wuhaneduyun.cn/notice/");
+		}
+	}
+
+	@Override
+	public void destroy() {}
+	
+	@Override
+	public void init(FilterConfig filterConfig) throws ServletException {
+		ignoreIPList = CollectionUtils.newArrayList();
+		ignoreIPList.add("61.183.248.34");
+		ignoreIPList.add("61.183.248.35");
+		ignoreIPList.add("61.183.248.36");
+		ignoreIPList.add("61.183.248.37");
+		ignoreIPList.add("61.183.248.38");
+		ignoreIPList.add("221.234.47.81");
+		ignoreIPList.add("221.234.47.82");
+		ignoreIPList.add("221.234.47.83");
+		ignoreIPList.add("221.234.47.84");
+		ignoreIPList.add("221.234.47.85");
+		ignoreIPList.add("116.211.105.33");
+		ignoreIPList.add("116.211.105.34");
+		ignoreIPList.add("116.211.105.35");
+		ignoreIPList.add("116.211.105.36");
+		ignoreIPList.add("116.211.105.37");
+		ignoreIPList.add("116.211.105.38");
+		ignoreIPList.add("116.211.105.39");
+		ignoreIPList.add("116.211.105.40");
+		ignoreIPList.add("116.211.105.41");
+		ignoreIPList.add("116.211.105.42");
+		ignoreIPList.add("116.211.105.43");
+		ignoreIPList.add("116.211.105.44");
+		ignoreIPList.add("116.211.105.45");
+		ignoreIPList.add("116.211.105.46");
+		ignoreIPList.add("113.57.219.33");
+		ignoreIPList.add("113.57.219.34");
+		ignoreIPList.add("113.57.219.35");
+		ignoreIPList.add("113.57.219.36");
+		ignoreIPList.add("113.57.219.37");
+		ignoreIPList.add("113.57.219.38");
+		ignoreIPList.add("113.57.219.39");
+		ignoreIPList.add("113.57.219.40");
+		ignoreIPList.add("113.57.219.41");
+		ignoreIPList.add("113.57.219.42");
+		ignoreIPList.add("113.57.219.43");
+		ignoreIPList.add("113.57.219.44");
+		ignoreIPList.add("113.57.219.45");
+		ignoreIPList.add("113.57.219.46");
+		ignoreIPList.add("111.47.123.33");
+		ignoreIPList.add("111.47.123.34");
+		ignoreIPList.add("111.47.123.35");
+		ignoreIPList.add("111.47.123.36");
+		ignoreIPList.add("111.47.123.37");
+		ignoreIPList.add("111.47.123.38");
+		ignoreIPList.add("111.47.123.39");
+		ignoreIPList.add("111.47.123.40");
+		ignoreIPList.add("111.47.123.41");
+		ignoreIPList.add("111.47.123.42");
+		ignoreIPList.add("111.47.123.43");
+		ignoreIPList.add("111.47.123.44");
+		ignoreIPList.add("111.47.123.45");
+		ignoreIPList.add("111.47.123.46");
+		ignoreIPList.add("116.211.105.49");
+		ignoreIPList.add("116.211.105.50");
+		ignoreIPList.add("116.211.105.51");
+		ignoreIPList.add("116.211.105.52");
+		ignoreIPList.add("116.211.105.53");
+		ignoreIPList.add("116.211.105.54");
+	}
+
+}
+
+四、
+</2015-6-29>
+<2015-6-30>
+一、web服务器的启动流程与上下文创建
+1.启动一个WEB项目的时候,容器(如:Tomcat)会去读它的配置文件web.xml.读两个节点: <listener></listener> 和 <context-param></context-param>
+
+2.紧接着,容器创建一个ServletContext(上下文),这个WEB项目所有部分都将共享这个上下文.
+
+3.容器将<context-param></context-param>转化为键值对,并交给ServletContext.
+
+4.容器创建<listener></listener>中的类实例,即创建监听.
+
+5.在监听中会有contextInitialized(ServletContextEvent args)初始化方法,在这个方法中获得 
+ServletContext = ServletContextEvent.getServletContext(); 
+context-param的值 = ServletContext.getInitParameter("context-param的键");
+
+6.得到这个context-param的值之后,你就可以做一些操作了.注意,这个时候你的WEB项目还没有完全启动完成.这个动作会比所有的Servlet都要早.
+换句话说,这个时候,你对<context-param>中的键值做的操作,将在你的WEB项目完全启动之前被执行.
+
+7.举例.你可能想在项目启动之前就打开数据库. 
+那么这里就可以在<context-param>中设置数据库的连接方式,在监听类中初始化数据库的连接.
+
+8.这个监听是自己写的一个类,除了初始化方法,它还有销毁方法.用于关闭应用前释放资源.比如说数据库连接的关闭.
+
+
+好，在web项目中使用过Spring框架的都知道，必须在web.xml中配置一个一：
+
+<listener>
+   <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+</listener>
+
+
+</2015-6-30>
+<2015-7-1>
+一、Servlet 3.0异步
+Servlet 3.0之前，一个普通Servlet的主要工作流程大致如下：首先，Servlet接收到请求之后，可能需要对请求携带的数据进行一些预处理；接着，调用业务接口的某些方法，以完成业务处理；最后，根据处理的结果提交响应，Servlet线程结束。
+
+其中第二步的业务处理通常是最耗时的，这主要体现在数据库操作，以及其它的跨网络调用等，在此过程中，Servlet线程一直处于阻塞状态，直到业务方法执行完毕。在处理业务的过程中，Servlet资源一直被占用而得不到释放，对于并发较大的应用，这有可能造成性能的瓶颈。对此，在以前通常是采用私有解决方案来提前结束Servlet线程，并及时释放资源。
+
+Servlet 3.0针对这个问题做了开创性的工作，现在通过使用Servlet 3.0的异步处理支持，之前的Servlet处理流程可以调整为如下的过程：首先，Servlet接收到请求之后，可能首先需要对请求携带的数据进行一些预处理；接着，Servlet线程将请求转交给一个异步线程来执行业务处理，线程本身返回至容器，此时Servlet还没有生成响应数据，异步线程处理完业务以后，可以直接生成响应数据（异步线程拥有ServletRequest和ServletResponse对象的引用），或者将请求继续转发给其它Servlet。如此一来，Servlet线程不再是一直处于阻塞状态以等待业务逻辑的处理，而是启动异步线程之后可以立即返回。
+
+异步处理特性可以应用于Servlet和过滤器两种组件，由于异步处理的工作模式和普通工作模式在实现上有着本质的区别，因此默认情况下，Servlet和过滤器并没有开启异步处理特性，如果希望使用该特性，则必须按照如下的方式启用：
+
+对于使用传统的部署描述文件(web.xml)配置Servlet和过滤器的情况，Servlet 3.0为<servlet>和<filter>标签增加了<async-supported>子标签，该标签的默认取值为false，要启用异步处理支持，则将其设为true即可。以Servlet为例，其配置方式如下所示：
+
+<servlet> 
+<servlet-name>DemoServlet</servlet-name> 
+<servlet-class>footmark.servlet.DemoServlet</servlet-class> 
+<async-supported>true</async-supported> 
+</servlet> 
+对于使用Servlet 3.0提供的@WebServlet和@WebFilter进行Servlet或过滤器配置的情况，这两个注解都提供了asyncSupported属性，默认该属性的取值为false，要启用异步处理支持，只需将该属性设置为true即可。以@WebFilter为例，其配置方式如下所示：
+
+@WebFilter(urlPatterns="/demo",asyncSupported=true)  
+publicclassDemoFilterimplementsFilter{...} 
+除此之外，Servlet 3.0还为异步处理提供了一个监听器，使用AsyncListener接口表示。它可以监控如下四种事件：
+
+1.异步线程开始时，调用AsyncListener的onStartAsync(AsyncEventevent)方法；
+
+2.异步线程出错时，调用AsyncListener的onError(AsyncEventevent)方法；
+
+3.异步线程执行超时，则调用AsyncListener的onTimeout(AsyncEventevent)方法；
+
+4.异步执行完毕时，调用AsyncListener的onComplete(AsyncEventevent)方法；
+
+要注册一个AsyncListener，只需将准备好的AsyncListener对象传递给AsyncContext对象的addListener()方法即可，如下所示：
+
+AsyncContextctx=req.startAsync();  
+ctx.addListener(newAsyncListener(){  
+publicvoidonComplete(AsyncEventasyncEvent)throwsIOException{  
+//做一些清理工作或者其他  
+}  
+...  
+}); 
+</2015-7-1>
+<2015-7-3>
+一、sudo su -
+
+
+</2015-7-3>
+<2015-7-9>
+一、soapui
+
+二、socket
+
+
+</2015-7-9>
+<2015-7-10>
+
+hashmap equals
+AtomicInteger 原子操作
+String StringBuffer 效率问题
+
+<2015-7-14>
+@Override
+	public int hashCode() {
+		int result = 17;
+		try {
+			Class<Textbook> clazz = Textbook.class;
+			Field[] fields = clazz.getDeclaredFields();
+			for (Field field : fields) {
+				Object value = field.get(this);
+				if (value != null) {
+					result = 31 * result + value.hashCode();
+				}
+			}
+		} catch(Exception ex) {
+			ex.printStackTrace();
+		}
+		return result;
+	}
+
+</2015-7-14>
+<2015-7-15>
+一、Unable to establish loopback connection
+
+
+
+</2015-7-15>
+<2015-7-16>
+一、No buffer space available
+
+
+</2015-7-16>
+<2015-7-17>
+一、线程安全
+比如一个 ArrayList 类，在添加一个元素的时候，它可能会有两步来完成：1. 在 Items[Size] 的位置存放此元素；2. 增大 Size 的值。
+在单线程运行的情况下，如果 Size = 0，添加一个元素后，此元素在位置 0，而且 Size=1；
+而如果是在多线程情况下，比如有两个线程，线程 A 先将元素1存放在位置 0。但是此时 CPU 调度线程A暂停，线程 B 得到运行的机会。线程B向此 ArrayList 添加元素2，因为此时 Size 仍然等于 0 （注意，我们假设的是添加一个元素是要两个步骤，而线程A仅仅完成了步骤1），所以线程B也将元素存放在位置0。然后线程A和线程B都继续运行，都增加 Size 的值，结果Size都等于1。
+那好，我们来看看 ArrayList 的情况，期望的元素应该有2个，而 实际元素是在0位置，造成丢失元素，故Size 等于 1。这就是“线程不安全”了。
+
+如果你的代码所在的进程中有多个线程在同时运行，而这些线程可能会同时运行这段代码。如果每次运行结果和单线程运行的结果是一样的，而且其他的变量的值也和预期的是一样的，就是线程安全的。
+或者说:一个类或者程序所提供的接口对于线程来说是原子操作或者多个线程之间的切换不会导致该接口的执行结果存在二义性,也就是说我们不用考虑同步的问题。
+线程安全问题都是由全局变量及静态变量引起的。
+若每个线程中对全局变量、静态变量只有读操作，而无写操作，一般来说，这个全局变量是线程安全的；若有多个线程同时执行写操作，一般都需要考虑线程同步，否则的话就可能影响线程安全。
+
+线程的安全是以牺牲效率为代价的，所谓线程安全就是多了个加锁、解锁的操作，比如100亿个操作中都要加锁和解锁，线程是安全了，但效率就下降了。而有些软件是以效率为主的，为了提高效率，就少了加锁，解锁的操作，虽然容易出现并发访问问题，但效率却提高了。
+
+二、volatile
+synchronized 
+同步块大家都比较熟悉，通过 synchronized 关键字来实现，所有加上synchronized 和 块语句，在多线程访问的时候，同一时刻只能有一个线程能够用
+synchronized 修饰的方法 或者 代码块。
+volatile
+用volatile修饰的变量，线程在每次使用变量的时候，都会读取变量修改后的最的值。volatile很容易被误用，用来进行原子性操作。
+
+
+
+</2015-7-17>
+<2015-7-20>
+一、drwxrwxrwx
+r是读，w是写，x是执行。
+d表示目录，之所以有三个，第一个是文件所有者，第二个是组用户，第三个是其他用户
+
+</2015-7-20>
+<2015-7-21>
+一、HashMap,Hashtable
+HashMap是Hashtable的轻量级实现（非线程安全的实现），他们都完成了Map接口，
+主要区别在于HashMap允许空（null）键值（key）,由于非线程安全，效率上可能高于Hashtable。
+ 
+HashMap允许将null作为一个entry的key或者value，而Hashtable不允许。
+HashMap把Hashtable的contains方法去掉了，改成containsvalue和containsKey。因为contains方法容易让人引起误解。 
+Hashtable继承自Dictionary类，而HashMap是Java1.2引进的Map interface的一个实现。
+
+最大的不同是，Hashtable的方法是Synchronize的，而HashMap不是，在多个线程访问Hashtable时，不需要自己为它的方法实现同步，而HashMap 就必须为之提供外同步(Collections.synchronizedMap)。 
+Hashtable和HashMap采用的hash/rehash算法都大概一样，所以性能不会有很大的差异。
+
+二、java属性为什么不能同时被final volatile 修饰
+volatile是一个类型修饰符，它是被设计用来修饰被不同线程访问和修改的变量，可以被异步的线程所修改。
+final必须对它赋予初值并且不能修改它。
+
+三、多语言网页
+
+四、cxf，webservice
+
+
+五、queryForMap返回结果必为1，不然报错
+String sql = "select fid as fid,platform_code as platformCode from t_file_sync_receive e where status='3' and rownum < 2 order by create_time asc";
+		Map<String,Object> map = null;
+		try{
+			map = jdbcTemplate.queryForMap(sql);
+		}catch(EmptyResultDataAccessException e){
+			map = null;
+		}
+
+六、http断点下载
+
+
+七、mobile angular ui
+
+
+
+</2015-7-21>
+<2015-7-22>
+一、 cannot use LOB locators selected from remote tables
+DB links
+
+insert into t_attach_file@wh_prod_cmsuser
+select t.* from t_attach_file t inner join t_resource t1 on t.fid=t1.fid
+inner join t_prod_res t2 on t1.res_id=t2.res_id
+inner join t_product t3 on t2.product_code=t3.product_code
+where t3.is_collect='5';
+
+
+二、读文件
+public static void main(String args[]) throws Exception {
+		File file = new File("e:/resId.txt");
+		InputStream input = new FileInputStream(file);
+		BufferedInputStream in = new BufferedInputStream(input);
+		BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+		BufferedWriter writer = new BufferedWriter(new FileWriter(new File("e:/resId_1.txt")));
+		String str = null;
+		while((str = reader.readLine())!= null){
+			writer.write("'"+ str + "',");
+			//System.out.println(str);
+		}
+		writer.flush();
+		writer.close();
+		reader.close();
+		in.close();
+		input.close();
+	}
+
+
+</2015-7-22>
+<2015-7-23>
+一、serializable
+一个对象序列化的接口，一个类只有实现了Serializable接口，它的对象才是可序列化的。因此如果要序列化某些类的对象，这些类就必须实现Serializable接口。而实际上，Serializable是一个空接口，没有什么具体内容，它的目的只是简单的标识一个类的对象可以被序列化。 什么情况下需要序列化 a）当你想把的内存中的对象写入到硬盘的时候； b）当你想用套接字在网络上传送对象的时候； c）当你想通过RMI传输对象的时候； 再稍微解释一下:a)比如说你的内存不够用了，那计算机就要将内存里面的一部分对象暂时的保存到硬盘中，等到要用的时候再读入到内存中，硬盘的那部分存储空间就是所谓的虚拟内存。在比如过你要将某个特定的对象保存到文件中，我隔几天在把它拿出来用，那么这时候就要实现Serializable接口。
+序列化是指将对象实例的状态存储到存储媒体的过程。在此过程中，先将对象的公共字段和私有字段以及类的名称（包括类所在的程序集）转换为字节流，然后再把字节流写入数据流。在随后对对象进行反序列化时，将创建出与原对象完全相同的副本。
+
+二、Java 中LinkedList和ArrayList的内部算法实现机制分别是怎么样的？两种List分别适合怎样的应用场景？
+ArrayList是基于一个数组（注意我没说是固定），然后增加时检查数组不满足增加量时进行数组扩容（进行建立一个新的大些的数组）和搬迁（搬旧数据并放弃旧数组），删除时还需要数据搬迁。
+LinkedList是基于链表的，通过内部的一个元素类内存放元素，增加和删除只需要在上下指针增加新的元素类就可以了。
+
+如上面文章所说，ArrayList的读取率好（基于数组索引），但写入率不太好（尤其需要扩容时的添加和任何时的删除，需要数据搬迁），比较适合随机读取，LinkedList的读取率不太好（需要链表遍历），但写入率可以，而且更适合顺序读取。
+
+三、response
+public static final String JSON = "application/json";
+HttpServletResponse response;
+response.setContentType(JSON);
+String responseString = "";
+byte[] responseBytes = responseString.getBytes();
+response.setContentLength(responseBytes.length);
+ServletOutputStream output = response.getOutputStream();
+output.write(responseBytes);
+output.flush();
+
+四、java outer:
+outer: for(int i=0;i<3; i++){
+   inner: for(int j=0;j<3;j++)
+   {
+   if(j==1) continue outer;
+   System.out.println(j+ "and "+i);
+   }
+ }
+ -->
+五、快速排序算法
+Arrays.sort(int a[]={2,3,10});
+jdk 1.7之后用的是DualPivotQuicksort.sort(a);
+
+六、javaeye技术网站，effective java书
+尝试做些新的东西，比如小游戏，生活助手
+
+
+</2015-7-23>
+<2015-7-27>
+一、TCP/IP、Http、Socket的区别
+网络由下往上分为
+
+　　物理层、数据链路层、网络层、传输层、会话层、表示层和应用层。
+
+　　通过初步的了解，我知道IP协议对应于网络层，TCP协议对应于传输层，而HTTP协议对应于应用层，
+
+　　三者从本质上来说没有可比性，
+
+　　socket则是对TCP/IP协议的封装和应用(程序员层面上)。
+
+　　也可以说，TPC/IP协议是传输层协议，主要解决数据如何在网络中传输，
+
+　　而HTTP是应用层协议，主要解决如何包装数据。
+
+　　关于TCP/IP和HTTP协议的关系，网络有一段比较容易理解的介绍：
+
+　　“我们在传输数据时，可以只使用(传输层)TCP/IP协议，但是那样的话，如果没有应用层，便无法识别数据内容。
+
+　　如果想要使传输的数据有意义，则必须使用到应用层协议。
+
+　　应用层协议有很多，比如HTTP、FTP、TELNET等，也可以自己定义应用层协议。
+
+　　WEB使用HTTP协议作应用层协议，以封装HTTP文本信息，然后使用TCP/IP做传输层协议将它发到网络上。”
+
+　　而我们平时说的最多的socket是什么呢，实际上socket是对TCP/IP协议的封装，Socket本身并不是协议，而是一个调用接口(API)。
+
+　　通过Socket，我们才能使用TCP/IP协议。
+
+　　实际上，Socket跟TCP/IP协议没有必然的联系。
+
+　　Socket编程接口在设计的时候，就希望也能适应其他的网络协议。
+
+　　所以说，Socket的出现只是使得程序员更方便地使用TCP/IP协议栈而已，是对TCP/IP协议的抽象，
+
+　　从而形成了我们知道的一些最基本的函数接口，比如create、listen、connect、accept、send、read和write等等。
+实际上，传输层的TCP是基于网络层的IP协议的，而应用层的HTTP协议又是基于传输层的TCP协议的，而Socket本身不算是协议，就像上面所说，它只是提供了一个针对TCP或者UDP编程的接口。
+(面试、笔试)
+一、什么是TCP连接的三次握手
+
+　　第一次握手：客户端发送syn包(syn=j)到服务器，并进入SYN_SEND状态，等待服务器确认;
+
+　　第二次握手：服务器收到syn包，必须确认客户的SYN(ack=j+1)，同时自己也发送一个SYN包(syn=k)，即SYN+ACK包，此时服务器进入SYN_RECV状态;
+
+　　第三次握手：客户端收到服务器的SYN+ACK包，向服务器发送确认包ACK(ack=k+1)，此包发送完毕，客户端和服务器进入ESTABLISHED状态，完成三次握手。
+
+　　握手过程中传送的包里不包含数据，三次握手完毕后，客户端与服务器才正式开始传送数据。
+
+　　理想状态下，TCP连接一旦建立，在通信双方中的任何一方主动关闭连接之前，TCP 连接都将被一直保持下去。
+
+　　断开连接时服务器和客户端均可以主动发起断开TCP连接的请求，断开过程需要经过“四次握手”(过程就不细写了，就是服务器和客户端交互，最终确定断开)
+
+　　二、利用Socket建立网络连接的步骤
+
+　　建立Socket连接至少需要一对套接字，其中一个运行于客户端，称为ClientSocket ，另一个运行于服务器端，称为ServerSocket 。
+
+　　套接字之间的连接过程分为三个步骤：服务器监听，客户端请求，连接确认。
+
+　　1、服务器监听：服务器端套接字并不定位具体的客户端套接字，而是处于等待连接的状态，实时监控网络状态，等待客户端的连接请求。
+
+　　2、客户端请求：指客户端的套接字提出连接请求，要连接的目标是服务器端的套接字。
+
+　　为此，客户端的套接字必须首先描述它要连接的服务器的套接字，指出服务器端套接字的地址和端口号，然后就向服务器端套接字提出连接请求。
+
+　　3、连接确认：当服务器端套接字监听到或者说接收到客户端套接字的连接请求时，就响应客户端套接字的请求，建立一个新的线程，把服务器端套接字的描述发给客户端，一旦客户端确认了此描述，双方就正式建立连接。
+
+　　而服务器端套接字继续处于监听状态，继续接收其他客户端套接字的连接请求。
+
+　　三、HTTP链接的特点
+
+　　HTTP协议即超文本传送协议(Hypertext Transfer Protocol )，是Web联网的基础，也是手机联网常用的协议之一，HTTP协议是建立在TCP协议之上的一种应用。
+
+　　HTTP连接最显著的特点是客户端发送的每次请求都需要服务器回送响应，在请求结束后，会主动释放连接。从建立连接到关闭连接的过程称为“一次连接”。
+
+　　四、TCP和UDP的区别(考得最多。。快被考烂了我觉得- -\\)
+
+　　1、TCP是面向链接的，虽然说网络的不安全不稳定特性决定了多少次握手都不能保证连接的可靠性，但TCP的三次握手在最低限度上(实际上也很大程度上保证了)保证了连接的可靠性;
+
+　　而UDP不是面向连接的，UDP传送数据前并不与对方建立连接，对接收到的数据也不发送确认信号，发送端不知道数据是否会正确接收，当然也不用重发，所以说UDP是无连接的、不可靠的一种数据传输协议。
+
+　　2、也正由于1所说的特点，使得UDP的开销更小数据传输速率更高，因为不必进行收发数据的确认，所以UDP的实时性更好。
+
+　　知道了TCP和UDP的区别，就不难理解为何采用TCP传输协议的MSN比采用UDP的QQ传输文件慢了，但并不能说QQ的通信是不安全的，
+
+　　因为程序员可以手动对UDP的数据收发进行验证，比如发送方对每个数据包进行编号然后由接收方进行验证啊什么的，
+
+　　即使是这样，UDP因为在底层协议的封装上没有采用类似TCP的“三次握手”而实现了TCP所无法达到的传输效率。
+
+二、 注意： Socket 输出流写数据方法是 writeUTF 时，输入流读取相关数据要用 readUTF。否则会抛 EOFException 异常。
+
+
+三、HttpSession session = request.getSession(true)，这个括号里面填true和flase有什么区别？
+true: 如果session存在，则返回该session，否则创建一个新的session；
+false: 如果session存在，则返回该session，否则返回null.
+
+
+四、JS被缓存，如何让浏览器不缓存
+只是js修改不起作用，jsp修改后刷新都可以。 
+页面一直都设置了不缓存 
+<meta http-equiv="expires" content="0">
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="cache-control" content="no-cache">
+
+可以考虑引入js部分给js文件加入一个随机数作为参数. 
+比如: 
+<script type="text/javascript" src="/js/myjs.js"></script>
+// 修改为
+<script type="text/javascript" src="/js/myjs.js?randomId=<%=Math.random()%>"></script>
+
+注: 只是给个思路. 后面那个randomId=<%=Math.random()%>需要你自己考虑下. 
+可以是当前时间戳+一个随机数字之类的.
+请求URL后加个随机数，让浏览器觉得每次都是新的请求.
+
+五、
+
+</2015-7-27>
+<2015-7-28>
+一、自动化测试工具 Selenium WebDriver
+
+
+
+</2015-7-28>
+<2015-7-29>
+一、O2O
+O2O即Online To Offline（在线离线/线上到线下），是指将线下的商务机会与互联网结合，让互联网成为线下交易的前台，这个概念最早来源于美国。O2O的概念非常广泛，既可涉及到线上，又可涉及到线下,可以通称为O2O。
+一种观点是，一家企业能兼备网上商城及线下实体店两者，并且网上商城与线下实体店全品类价格相同，即可称为O2O；也有观点认为，O2O是B2C（ Business To Customers）的一种特殊形式。
+O2O商务模式的关键是：在网上寻找消费者，然后将他们带到现实的商店中。它是支付模式和为店主创造客流量的一种结合（对消费者来说，也是一种“发现”机制），实现了线上的购买，线下的服务[2] 。它本质上是可计量的，因为每一笔交易（或者是预约）都发生在网上。这种模式应该说更偏向于线下，更利于消费者，让消费者感觉消费的较踏实。
+二、B2C
+不同点
+1，O2O更侧重服务性消费（包括餐饮、电影、美容、SPA、旅游、健身、租车、租房……）；B2C更侧重购物（实物商品，如电器、服饰等等）；
+2，O2O的消费者到现场获得服务，涉及客流；；B2C的消费者待在办公室或家里，等货上门，涉及物流;
+3，O2O中库存是服务，B2C中库存是商品；
+相同点
+1，消费者与服务者第一交互面在网上（特别包括手机）；
+2，主流程是闭合的，且都是网上，如网上支付，客服等等；
+3，需求预测管理在后台，供需链管理是O2O和B2C成功的核心；
+O2O适用的行业
+餐饮业，服务业，团购几乎采取O2O模式
+
+三、RPC
+RPC（Remote Procedure Call Protocol）——远程过程调用协议，它是一种通过网络从远程计算机程序上请求服务，而不需要了解底层网络技术的协议。RPC协议假定某些传输协议的存在，如TCP或UDP，为通信程序之间携带信息数据。在OSI网络通信模型中，RPC跨越了传输层和应用层。RPC使得开发包括网络分布式多程序在内的应用程序更加容易。
+
+四、 RPC、RMI、WebService、JMS 的区别
+RPC（Remote Procedure Call Protocol）
+RPC使用C/S方式，采用http协议,发送请求到服务器，等待服务器返回结果。这个请求包括一个参数集和一个文本集，通常形成“classname.methodname”形式。优点是跨语言跨平台，C端、S端有更大的独立性，缺点是不支持对象，无法在编译器检查错误，只能在运行期检查。
+ 
+Web Service
+Web Service提供的服务是基于web容器的，底层使用http协议，类似一个远程的服务提供者，比如天气预报服务，对各地客户端提供天气预报，是一种请求应答的机制，是跨系统跨平台的。就是通过一个servlet，提供服务出去。
+ 
+首先客户端从服务器的到WebService的WSDL，同时在客户端声称一个代理类(Proxy Class) 这个代理类负责与WebService
+服务器进行Request 和Response 当一个数据（XML格式的）被封装成SOAP格式的数据流发送到服务器端的时候，就会生成一个进程对象并且把接收到这个Request的SOAP包进行解析，然后对事物进行处理，处理结束以后再对这个计算结果进行SOAP
+包装，然后把这个包作为一个Response发送给客户端的代理类(Proxy Class)，同样地，这个代理类也对这个SOAP包进行解析处理，继而进行后续操作。这就是WebService的一个运行过程。
+ 
+Web Service大体上分为5个层次:
+ 1. Http传输信道
+ 2. XML的数据格式
+ 3. SOAP封装格式
+ 4. WSDL的描述方式
+ 5. UDDI  UDDI是一种目录服务，企业可以使用它对Webservices进行注册和搜索
+ 
+RMI （Remote Method Invocation）
+RMI 采用stubs 和 skeletons 来进行远程对象(remote object)的通讯。stub 充当远程对象的客户端代理，有着和远程对象相同的远程接口，远程对象的调用实际是通过调用该对象的客户端代理对象stub来完成的，通过该机制RMI就好比它是本地工作，采用tcp/ip协议，客户端直接调用服务端上的一些方法。优点是强类型，编译期可检查错误，缺点是只能基于JAVA语言，客户机与服务器紧耦合。
+ 
+JMS（Java Messaging Service）
+JMS是Java的消息服务，JMS的客户端之间可以通过JMS服务进行异步的消息传输。JMS支持两种消息模型：Point-to-Point（P2P）和Publish/Subscribe（Pub/Sub），即点对点和发布订阅模型。
+ 
+几者的区别与联系
+ 
+1、RPC与RMI
+ 
+（1）RPC 跨语言，而 RMI只支持Java。
+（2）RMI 调用远程对象方法，允许方法返回 Java 对象以及基本数据类型，而RPC 不支持对象的概念，传送到 RPC 服务的消息由外部数据表示 (External Data Representation, XDR) 语言表示，这种语言抽象了字节序类和数据类型结构之间的差异。只有由 XDR 定义的数据类型才能被传递， 可以说 RMI 是面向对象方式的 Java RPC 。
+（3）在方法调用上，RMI中，远程接口使每个远程方法都具有方法签名。如果一个方法在服务器上执行，但是没有相匹配的签名被添加到这个远程接口上，那么这个新方法就不能被RMI客户方所调用。
+在RPC中，当一个请求到达RPC服务器时，这个请求就包含了一个参数集和一个文本值，通常形成“classname.methodname”的形式。这就向RPC服务器表明，被请求的方法在为 “classname”的类中，名叫“methodname”。然后RPC服务器就去搜索与之相匹配的类和方法，并把它作为那种方法参数类型的输入。这里的参数类型是与RPC请求中的类型是匹配的。一旦匹配成功，这个方法就被调用了，其结果被编码后返回客户方。
+  
+2、JMS和RMI
+ 
+采用JMS 服务，对象是在物理上被异步从网络的某个JVM 上直接移动到另一个JVM 上（是消息通知机制）
+而RMI 对象是绑定在本地JVM 中，只有函数参数和返回值是通过网络传送的（是请求应答机制）。
+ 
+RMI一般都是同步的，也就是说，当client调用Server的一个方法的时候，需要等到对方的返回，才能继续执行client端，这个过程调用本地方法感觉上是一样的，这也是RMI的一个特点。
+JMS 一般只是一个点发出一个Message到Message Server,发出之后一般不会关心谁用了这个message。
+所以，一般RMI的应用是紧耦合，JMS的应用相对来说是松散耦合应用。
+ 
+3、Webservice与RMI
+ 
+RMI是在tcp协议上传递可序列化的java对象，只能用在java虚拟机上，绑定语言，客户端和服务端都必须是java
+webservice没有这个限制，webservice是在http协议上传递xml文本文件，与语言和平台无关
+ 
+4、Webservice与JMS
+ 
+Webservice专注于远程服务调用，jms专注于信息交换。
+ 
+大多数情况下Webservice是两系统间的直接交互（Consumer <--> Producer），而大多数情况下jms是三方系统交互（Consumer <- Broker -> Producer）。当然，JMS也可以实现request-response模式的通信，只要Consumer或Producer其中一方兼任broker即可。
+ 
+JMS可以做到异步调用完全隔离了客户端和服务提供者，能够抵御流量洪峰； WebService服务通常为同步调用，需要有复杂的对象转换，相比SOAP，现在JSON，rest都是很好的http架构方案；（举一个例子，电子商务的分布式系统中，有支付系统和业务系统，支付系统负责用户付款，在用户在银行付款后需要通知各个业务系统，那么这个时候，既可以用同步也可以用异步，使用异步的好处就能抵御网站暂时的流量高峰，或者能应对慢消费者。）
+ 
+JMS是java平台上的消息规范。一般jms消息不是一个xml，而是一个java对象，很明显，jms没考虑异构系统，说白了，JMS就没考虑非java的东西。但是好在现在大多数的jms provider（就是JMS的各种实现产品）都解决了异构问题。相比WebService的跨平台各有千秋吧。
+
+四、网络七层协议
+OSI是一个开放性的通行系统互连参考模型，他是一个定义的非常好的协议规范。OSI模型有7层结构，每层都可以有几个子层。 OSI的7层从上到下分别是 7 应用层 6 表示层 5 会话层 4 传输层 3 网络层 2 数据链路层 1 物理层 其中高层，即7、6、5、4层定义了应用程序的功能，下面3层，即3、2、1层主要面向通过网络的端到端的数据流。
+
+应用层
+与其它计算机进行通讯的一个应用，它是对应应用程序的通信服务的。例如，一个没有通信功能的字处理程序就不能执行通信的代码，从事字处理工作的程序员也不关心OSI的第7层。但是，如果添加了一个传输文件的选项，那么字处理器的程序员就需要实现OSI的第7层。示例：telnet，HTTP,FTP,NFS,SMTP等。
+表示层
+这一层的主要功能是定义数据格式及加密。例如，FTP允许你选择以二进制或ASCII格式传输。如果选择二进制，那么发送方和接收方不改变文件的内容。如果选择ASCII格式，发送方将把文本从发送方的字符集转换成标准的ASCII后发送数据。在接收方将标准的ASCII转换成接收方计算机的字符集。示例：加密，ASCII等。
+会话层
+它定义了如何开始、控制和结束一个会话，包括对多个双向消息的控制和管理，以便在只完成连续消息的一部分时可以通知应用，从而使表示层看到的数据是连续的，在某些情况下，如果表示层收到了所有的数据，则用数据代表表示层。示例：RPC，SQL等。
+传输层
+这层的功能包括是否选择差错恢复协议还是无差错恢复协议，及在同一主机上对不同应用的数据流的输入进行复用，还包括对收到的顺序不对的数据包的重新排序功能。示例：TCP，UDP，SPX。
+网络层
+这层对端到端的包传输进行定义，它定义了能够标识所有结点的逻辑地址，还定义了路由实现的方式和学习的方式。为了适应最大传输单元长度小于包长度的传输介质，网络层还定义了如何将一个包分解成更小的包的分段方法。示例：IP,IPX等。
+数据链路层
+它定义了在单个链路上如何传输数据。这些协议与被讨论的各种介质有关。示例：ATM，FDDI等。
+物理层
+OSI的物理层规范是有关传输介质的特性标准，这些规范通常也参考了其他组织制定的标准。连接头、帧、帧的使用、电流、编码及光调制等都属于各种物理层规范中的内容。物理层常用多个规范完成对所有细节的定义。示例：Rj45，802.3等。
+
+应用层--表示层--会话层--传输层--网络层--数据链路层--物理层
+五、jetty
+Jetty 是一个开源的servlet容器，它为基于Java的web容器，例如JSP和servlet提供运行环境。Jetty是使用Java语言编写的，它的API以一组JAR包的形式发布。开发人员可以将Jetty容器实例化成一个对象，可以迅速为一些独立运行（stand-alone）的Java应用提供网络和web连接。
+
+六、JMX(http://maimode.iteye.com/blog/1354377)
+JMX（Java Management Extensions，即Java管理扩展）是一个为应用程序、设备、系统等植入管理功能的框架。JMX可以跨越一系列异构操作系统平台、系统体系结构和网络传输协议，灵活的开发无缝集成的系统、网络和服务管理应用。
+
+</2015-7-29>
+<2015-7-30>
+一、jconsole的图形界面
+在windows下进入控制台（win+r->cmd），然后输入jconsole命令，稍等片刻打开jconsole的图形界面
+
+
+
+</2015-7-30>
+<2015-7-31>
+一、SOA(http://blog.vsharing.com/fengjicheng/A1059842.html)
+SOA是一种粗粒度、松耦合服务架构，服务之间通过简单、精确定义接口进行通讯，不涉及底层编程接口和通讯模型。SOA可以看作是B/S模型、XML（标准通用标记语言的子集）/Web Service技术之后的自然延伸。
+
+二、umask
+使用挂载目录时。请先执行如下命令：
+echo 'umask 0000' >> ~/.bashrc  ;source ~/.bashrc     
+然后在重启程序！要不然会造成其他用户不能读写 权限 的问题！
+
+在一个目录下，使用umask，如果返回时0000则不会造成其他用户不能读写权限的问题！
+
+
+</2015-7-31>
+<2015-8-3>
+一、转码
+文档转码：
+office文档 ---- aspose(可去水印)或openffice工具 ----- 转成pdf格式 ----- swftools工具 ---- 转成swf格式（一页就是一个swf），转码成功率为90%----使用flexpaper播放
+
+视频转码：
+视频 ---- ffmpegz转码工具 ---- 转成flv格式，或mp4格式(转码成功率为70%) ---- ckplayer播放(mp4可使用HTML5)
+
+流媒体：
+Red5, 热点,云储存
+
+二、公寓贴墙
+
+三、微信游戏（http://www.zzfriend.com/xiazai/youxi/）
+
+四、http://jsfiddle.net/(http://jsfiddle.net/sandesh2302/FghFZ/)
+
+五、html5（http://blog.csdn.net/horkychen/article/details/7831206）
+
+</2015-8-3>
+<2015-8-4>
+一、NL Exception was generated
+
+</2015-8-4>
+<2015-8-6>
+一、www.fenzhi.com
+
+二、如果GROUP BY和ORDER BY一起使用，那ORDER BY引用的字段必须在GROUP BY或SELECT子句中出现的字段
+select e.platform_code,t.sort_num from t_sys_role_auth e left join t_platform t on e.platform_code=t.platform_id  where E.ROLE_ID='64d9aecfd6fd49c8b956743da7d62239'  group by E.PLATFORM_CODE,t.sort_num order by t.sort_num asc;
+
+</2015-8-6>
+<2015-8-7>
+一、java.io.EOFException
+
+
+二、CORS
+请求资源跨域是目前普遍存在的问题，实现的方式也有很多:如JSONP 或CORS....
+在WebApp日益风靡的时代，跨域已经不可避免。
+以前在做跨域的时候采用JSONP的方式，但是该实现有弊端，如只提供get方式请求，get请求会导致什么问题 详情百度。
+以前使用struts2的时候 ，对jsonp的请求还是比较方便的。只需要配置一个param就可以了。
+但是学习了JFinal之后，已经深深的爱上它了。但是尝试跨域的时候 ，采用jsonp的方式总感觉别扭。
+于是我找到了 CORS
+下面是具体的与jfinal整合实现。
+
+1.第一步：下载两个jar包。分别是：cors-filter-1.7.1.jar和java-property-utils-1.9.jar
+
+2.第二步：修改项目的web.xml文件，增加以下代码。
+<filter>
+        <filter-name>CORS</filter-name>
+        <filter-class>com.thetransactioncompany.cors.CORSFilter</filter-class>
+        <init-param>
+            <param-name>cors.allowOrigin</param-name>
+            <param-value>*</param-value>
+        </init-param>
+        <init-param>
+            <param-name>cors.supportedMethods</param-name>
+            <param-value>GET, POST, HEAD, PUT, DELETE</param-value>
+        </init-param>
+        <init-param>
+            <param-name>cors.supportedHeaders</param-name>
+            <param-value>Accept, Origin, X-Requested-With, Content-Type, Last-Modified</param-value>
+        </init-param>
+        <init-param>
+            <param-name>cors.exposedHeaders</param-name>
+            <param-value>Set-Cookie</param-value>
+        </init-param>
+        <init-param>
+            <param-name>cors.supportsCredentials</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>CORS</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+注意：cors的拦截需要在jfinal的拦截之前。
+最后。你可以使用原来的请求方式进行请求。 是不是很简单呢？
+三、Apache POI
+Apache POI 是用Java编写的免费开源的跨平台的 Java API，Apache POI提供API给Java程式对Microsoft Office格式档案读和写的功能。
+
+四、数据库连接池
+主流数据库连接池之一(DBCP、c3p0、proxool)，单独使用DBCP需要使用commons-dbpc.jar、commons-collections.jar、commons-pool.jar三个包
+
+五、aspectj
+ spring AOP就是用aspectj来实现的，是依赖关系！AspectJ是动态代理的一种实现！而spring默认使用的就是AspectJ来实现的动态代理，spring自己的AOP就是使用AspectJ来实现的！当然你也可以使用其他的实现，如cglib!
+
+六、maven设定项目编码
+<properties>  
+	<!-- 文件拷贝时的编码 -->  
+	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>  
+	<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>  
+	<!-- 编译时的编码 -->  
+	<maven.compiler.encoding>UTF-8</maven.compiler.encoding>  
+</properties>  
+或者添加如下代码：
+<plugin>  
+	<groupId>org.apache.maven.plugins</groupId>  
+	<artifactId>maven-compiler-plugin</artifactId>  
+	<version>3.1</version>  
+	<configuration>  
+		<source>1.5</source>  
+		<target>1.5</target>  
+		<encoding>UTF-8</encoding><!-- 指定编码格式，否则在DOS下运行mvn compile命令时会出现莫名的错误，因为系统默认使用GBK编码 -->  
+	</configuration>  
+</plugin>  
+<plugin>  
+	<groupId>org.apache.maven.plugins</groupId>  
+	<artifactId>maven-resources-plugin</artifactId>  
+	<version>2.6</version>  
+	<configuration>  
+		<encoding>UTF-8</encoding><!-- 指定编码格式，否则在DOS下运行mvn命令时当发生文件资源copy时将使用系统默认使用GBK编码 -->  
+	</configuration>  
+</plugin> 
+
+七、commons-fileupload实现文件上传、下载、在线打开
+
+</2015-8-7>
